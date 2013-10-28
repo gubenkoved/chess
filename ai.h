@@ -44,7 +44,7 @@ private:
     static bool MoveComparator(const Move& m1, const Move& m2);
     // NOTE:
     // Call with (-INT_MAX to INT_MAX) alpha beta window to avoid int overflow issues
-    int AlphaBetaNegamax(Figure::FigureSide side, int depth, int alpha, int beta, int& analyzed, Move*& bestMove);
+    int AlphaBetaNegamax(Figure::FigureSide side, int depth, int alpha, int beta, int& analyzed, Move*& bestMove, bool isTopLevel);
 
 public:
     AI(Board* board, Rules* rules);

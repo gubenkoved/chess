@@ -253,7 +253,7 @@ bool AI::MoveComparator(const Move& m1, const Move& m2)
 }
 
 // main alpha beta worker function
-int AI::AlphaBetaNegamax(Figure::FigureSide side, int depth, int alpha, int beta, int& analyzed, Move*& bestMove)
+int AI::AlphaBetaNegamax(Figure::FigureSide side, int depth, int alpha, int beta, int& analyzed, Move*& bestMove, bool isTopLevel)
 {
 #ifdef USE_TRANSPOSITION_TABLE
     const TranspositionTableEntry* hashEntry = m_transpositionTable->FindEntry(m_board->GetCurrentPositionHash());
@@ -289,7 +289,7 @@ int AI::AlphaBetaNegamax(Figure::FigureSide side, int depth, int alpha, int beta
         // temporary make move
         m_rules->MakeMove(possibleMove);
 
-        int estimation = -AlphaBetaNegamax(m_rules->OpponentSide(side), depth - 1, -beta, -alpha, analyzed, bestMove);
+        int estimation = -AlphaBetaNegamax(m_rules->OpponentSide(side), depth - 1, -beta, -alpha, analyzed, bestMove, false);
 
         // unmake temporary move
         m_rules->UnMakeMove(possibleMove);
@@ -297,15 +297,23 @@ int AI::AlphaBetaNegamax(Figure::FigureSide side, int depth, int alpha, int beta
         // good move finded
         if (estimation > alpha)
         {
-            if (bestMove != NULL)
-                delete bestMove;
+            if (isTopLevel)
+            {
+                if (bestMove != NULL)
+                {
+                    delete bestMove;
+                }
 
-            bestMove = new Move(possibleMove);
+                bestMove = new Move(possibleMove);
+            }
 
             alpha = estimation;
         } else if (bestMove == NULL) // or best move is not filled yet
         {
-            bestMove = new Move(possibleMove);
+            if (isTopLevel)
+            {
+                bestMove = new Move(possibleMove);
+            }
         }
 
         if (alpha >= beta)
@@ -335,7 +343,7 @@ Move AI::BestMoveByAlphaBeta(Figure::FigureSide side, int depth, int& bestEstima
     Move* bestMove = NULL;
     analyzed = 0;
 
-    bestEstimation = AlphaBetaNegamax(side, depth, -INT_MAX, +INT_MAX, analyzed, bestMove);
+    bestEstimation = AlphaBetaNegamax(side, depth, -INT_MAX, +INT_MAX, analyzed, bestMove, true);
 
     Move result = *bestMove;
     delete bestMove;

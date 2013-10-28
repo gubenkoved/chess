@@ -32,7 +32,6 @@ void ChessApp::SetBoardControl(QObject *board)
 
 void ChessApp::HandleFindedBestMove(Move bestMove)
 {
-    //qDebug() << "Best move finded!!11";
     qDebug() << "AI best move:" << bestMove;
 
     m_rules->MakeMove(bestMove.From, bestMove.To);

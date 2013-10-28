@@ -31,6 +31,10 @@ private:
     POSITION m_to;
     Figure* m_captured; // actual only when is capture move, otherwise NULL    
 
+#ifdef QT_DEBUG
+    QString m_stringRep;
+#endif
+
 public:
     Move();
     Move(MoveType type, POSITION from, POSITION to, Figure* figure, Figure* captured);
