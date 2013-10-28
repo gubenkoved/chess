@@ -8,6 +8,8 @@
 #include "figure.h"
 #include "transpositiontable.h"
 
+//#define USE_TRANSPOSITION_TABLE
+
 // This class contains algorithms to find best move
 class AI
 {
@@ -17,11 +19,19 @@ private:
 
     Board* m_board;
     Rules* m_rules;
-    TranspositionTable* m_transpositionTable;
 
+#ifdef USE_TRANSPOSITION_TABLE
+    TranspositionTable* m_transpositionTable;
+#endif
+
+    // usage example:
+    // m_staticFigurePositionEstimation[Figure::White][Figure::Pawn][CreateFigurePosition(1, 1)]
+    static int m_staticFigurePositionEstimation[SIDE_COUNT][FIGURE_COUNT][8 * 8];
+    static void InitStaticFigurePositionEstimations();
 
     static int GetFigureWeight(Figure::FigureType type);
     static int GetFigurePositionEstimation(Figure::FigureType type, POSITION position, Figure::FigureSide side);
+    static int CalculateFigurePositionEstimation(Figure::FigureType type, POSITION position, Figure::FigureSide side);
 
     int GetFiguresEstimation(Figure::FigureSide side) const;
     // Returns posibive value if current side has benefits compared with the opponent
@@ -34,13 +44,11 @@ private:
     static bool MoveComparator(const Move& m1, const Move& m2);
     // NOTE:
     // Call with (-INT_MAX to INT_MAX) alpha beta window to avoid int overflow issues
-    int AlphaBetaNegamax(Figure::FigureSide side, int depth, int alpha, int beta, int& analyzed);
+    int AlphaBetaNegamax(Figure::FigureSide side, int depth, int alpha, int beta, int& analyzed, Move*& bestMove);
 
 public:
     AI(Board* board, Rules* rules);
     ~AI();
-
-    bool UseTranspositionTable;
 
     Move BestMoveByAlphaBeta(Figure::FigureSide side, int depth, int& bestEstimation, int& analyzed);
     Move NegamaxSearch(Figure::FigureSide side, int depth, int& bestEstimation, int& analyzed);

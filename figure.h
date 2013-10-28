@@ -5,6 +5,10 @@
 #include <QChar>
 #include "lightfigureposition.h"
 
+#define FIGURE_COUNT 6
+#define SIDE_COUNT 2
+
+
 class Figure
 {
 public:

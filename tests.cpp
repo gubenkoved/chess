@@ -100,7 +100,7 @@ bool Tests::TestIt(QString str, bool (Tests::*method)(void))
     QString timeMessage;
     QTime timer;
     timer.start();
-    int milliseconds;
+    int milliseconds = 0;
 
     try
     {
@@ -134,12 +134,13 @@ bool Tests::TestIt(QString str, bool (Tests::*method)(void))
     }
 
     if (exc)
+    {
         excMessage = "(exception: " + excMessage + ")";
+    }
     else
     {
         timeMessage = "[" + QString::number(milliseconds) + "ms]";
     }
-
 
     qDebug() << " " << str.toStdString().c_str()
              << QString(".").repeated(50 - str.length()).toStdString().c_str()
@@ -288,7 +289,6 @@ bool Tests::GetGuardedPositionsTest6()
 bool Tests::MoveFigureTest()
 {
     Board board = Board();
-    Rules rules = Rules(&board);
 
     board.SetupStartPosition();
 

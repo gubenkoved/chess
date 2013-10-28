@@ -3,7 +3,7 @@
 #include "figure.h"
 #include "lightfigureposition.h"
 
-#include <QtConcurrentRun>
+//#include <QtConcurrentRun>
 
 
 ChessApp::ChessApp(QObject *parent)

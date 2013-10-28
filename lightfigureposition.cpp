@@ -54,8 +54,8 @@ POSITION CreateFigurePosition(std::string str)
 
 QString ToString(POSITION p)
 {
-    QChar c1 = QChar::fromAscii('a' + X(p) - 1);
-    QChar c2 = QChar::fromAscii('1' + Y(p) - 1);
+    QChar c1 = 'a' + X(p) - 1; //QChar::fromAscii('a' + X(p) - 1);
+    QChar c2 = '1' + Y(p) - 1; //QChar::fromAscii('1' + Y(p) - 1);
 
     QString s = QString(c1) + QString(c2);
 
