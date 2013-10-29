@@ -5,6 +5,8 @@
 
 typedef unsigned char POSITION;
 typedef unsigned char UCHAR;
+typedef signed char BYTE;
+typedef signed short SHORT;
 typedef int INT32;
 typedef bool BOOL;
 

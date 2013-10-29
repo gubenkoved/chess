@@ -61,26 +61,26 @@ void Tests::TestAll()
     TEST_EXPAND(PerftTest1)
     TEST_EXPAND(PerftTest2)
     TEST_EXPAND(PerftTest3)
-    TEST_EXPAND(PerftTest4) // ~ 2 sec
+    //TEST_EXPAND(PerftTest4)
 
     TEST_EXPAND(AlphaBetaTime1)
     TEST_EXPAND(AlphaBetaTime2)
     TEST_EXPAND(AlphaBetaTime3)
     TEST_EXPAND(AlphaBetaTime4)
-    //TEST_EXPAND(AlphaBetaTime5) // ~ 1 sec
-    TEST_EXPAND(AlphaBetaTime5_2) // ~ 5 sec
-    //TEST_EXPAND(AlphaBetaTime6) // ~ 20 sec
-    //TEST_EXPAND(AlphaBetaTime7) // ~ 4 min
+    //TEST_EXPAND(AlphaBetaTime5)
+    TEST_EXPAND(AlphaBetaTime5_2)
+    //TEST_EXPAND(AlphaBetaTime6)
+    //TEST_EXPAND(AlphaBetaTime7)
 
     TEST_EXPAND(AlphaBetaTest1)
     TEST_EXPAND(AlphaBetaTest2)
     TEST_EXPAND(AlphaBetaTest3)
-    //TEST_EXPAND(AlphaBetaTest4) // ~ 10 sec
+    //TEST_EXPAND(AlphaBetaTest4)
 
     TEST_EXPAND(AlphaBetaTest_2_1)
     TEST_EXPAND(AlphaBetaTest_2_2)
     TEST_EXPAND(AlphaBetaTest_2_3)
-    //TEST_EXPAND(AlphaBetaTest_2_4) // ~ 25 sec
+    //TEST_EXPAND(AlphaBetaTest_2_4)
 
     TEST_EXPAND(PositionCountingTest1)
     TEST_EXPAND(PositionCountingTest2)

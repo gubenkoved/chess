@@ -76,5 +76,9 @@ Move &Move::operator =(const Move &another)
     m_figure = another.m_figure;
     m_captured = another.m_captured;
 
+#ifdef QT_DEBUG
+    m_stringRep = another.m_stringRep;
+#endif
+
     return *this;
 }
