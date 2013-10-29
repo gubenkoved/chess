@@ -6,6 +6,7 @@
 #include "rules.h"
 #include "move.h"
 #include "figure.h"
+#include "typedefs.h"
 #include "transpositiontable.h"
 
 //#define USE_TRANSPOSITION_TABLE
@@ -23,6 +24,16 @@ private:
 #ifdef USE_TRANSPOSITION_TABLE
     TranspositionTable* m_transpositionTable;
 #endif
+
+    struct PrioritizedMove
+    {
+        UCHAR PriorityClass;
+        UCHAR PriorityValue;
+        Move UnderlyingMove;
+    };
+
+    static PrioritizedMove CalculatePriority(const Move &move);
+    static bool MoveComparator2(const PrioritizedMove& m1, const PrioritizedMove& m2);
 
     // usage example:
     // m_staticFigurePositionEstimation[Figure::White][Figure::Pawn][Serial(CreateFigurePosition(1, 1))]
@@ -54,6 +65,7 @@ public:
     ~AI();
 
     bool ExtendSearchDepthOnCaptures;
+    bool UseMovesOrdering;
 
     Move BestMoveByAlphaBeta(Figure::FigureSide side, int depth, int& bestEstimation, int& analyzed);
     Move NegamaxSearch(Figure::FigureSide side, int depth, int& bestEstimation, int& analyzed);
