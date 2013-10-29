@@ -8,6 +8,8 @@ AI::AI(Board* board, Rules *rules)
     m_board = board;
     m_rules = rules;
 
+    ExtendSearchDepthOnCaptures = true;
+
 #ifdef USE_TRANSPOSITION_TABLE
     m_transpositionTable = new TranspositionTable();
 #endif
@@ -289,7 +291,18 @@ int AI::AlphaBetaNegamax(Figure::FigureSide side, int depth, int alpha, int beta
         // temporary make move
         m_rules->MakeMove(possibleMove);
 
-        int estimation = -AlphaBetaNegamax(m_rules->OpponentSide(side), depth - 1, -beta, -alpha, analyzed, bestMove, false);
+        int estimation;
+
+        // extend search depth when move is capture
+        if (ExtendSearchDepthOnCaptures && depth < 2 && possibleMove.Type == Move::Capture)
+        {
+            estimation = -AlphaBetaNegamax(m_rules->OpponentSide(side), depth, -beta, -alpha, analyzed, bestMove, false);
+        }
+        else
+        {
+            estimation = -AlphaBetaNegamax(m_rules->OpponentSide(side), depth - 1, -beta, -alpha, analyzed, bestMove, false);
+        }
+
 
         // unmake temporary move
         m_rules->UnMakeMove(possibleMove);

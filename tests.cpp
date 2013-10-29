@@ -722,6 +722,7 @@ bool Tests::AlphaBetaTest1()
     Board board = Board::StartPosition();
     Rules rules = Rules(&board);
     AI ai = AI(&board, &rules);
+    ai.ExtendSearchDepthOnCaptures = false;
 
     rules.MakeMove(CreateFigurePosition("e2"), CreateFigurePosition("e4"));
     rules.MakeMove(CreateFigurePosition("e7"), CreateFigurePosition("e6"));
@@ -751,6 +752,7 @@ bool Tests::AlphaBetaTest2()
     Board board = Board::StartPosition();
     Rules rules = Rules(&board);
     AI ai = AI(&board, &rules);
+    ai.ExtendSearchDepthOnCaptures = false;
 
     rules.MakeMove(CreateFigurePosition("e2"), CreateFigurePosition("e4"));
     rules.MakeMove(CreateFigurePosition("e7"), CreateFigurePosition("e6"));
@@ -779,6 +781,7 @@ bool Tests::AlphaBetaTest3()
     Board board = Board::StartPosition();
     Rules rules = Rules(&board);
     AI ai = AI(&board, &rules);
+    ai.ExtendSearchDepthOnCaptures = false;
 
     rules.MakeMove(CreateFigurePosition("e2"), CreateFigurePosition("e4"));
     rules.MakeMove(CreateFigurePosition("e7"), CreateFigurePosition("e6"));
@@ -808,6 +811,7 @@ bool Tests::AlphaBetaTest4()
     Board board = Board::StartPosition();
     Rules rules = Rules(&board);
     AI ai = AI(&board, &rules);
+    ai.ExtendSearchDepthOnCaptures = false;
 
     rules.MakeMove(CreateFigurePosition("e2"), CreateFigurePosition("e4"));
     rules.MakeMove(CreateFigurePosition("e7"), CreateFigurePosition("e6"));
@@ -837,6 +841,7 @@ bool Tests::AlphaBetaTest_2_1()
     Board board = Board::StartPosition();
     Rules rules = Rules(&board);
     AI ai = AI(&board, &rules);
+    ai.ExtendSearchDepthOnCaptures = false;
 
     rules.MakeMove(CreateFigurePosition("e2"), CreateFigurePosition("e4"));
     rules.MakeMove(CreateFigurePosition("e7"), CreateFigurePosition("e5"));
@@ -869,6 +874,7 @@ bool Tests::AlphaBetaTest_2_2()
     Board board = Board::StartPosition();
     Rules rules = Rules(&board);
     AI ai = AI(&board, &rules);
+    ai.ExtendSearchDepthOnCaptures = false;
 
     rules.MakeMove(CreateFigurePosition("e2"), CreateFigurePosition("e4"));
     rules.MakeMove(CreateFigurePosition("e7"), CreateFigurePosition("e5"));
@@ -901,6 +907,7 @@ bool Tests::AlphaBetaTest_2_3()
     Board board = Board::StartPosition();
     Rules rules = Rules(&board);
     AI ai = AI(&board, &rules);
+    ai.ExtendSearchDepthOnCaptures = false;
 
     rules.MakeMove(CreateFigurePosition("e2"), CreateFigurePosition("e4"));
     rules.MakeMove(CreateFigurePosition("e7"), CreateFigurePosition("e5"));
@@ -933,6 +940,7 @@ bool Tests::AlphaBetaTest_2_4()
     Board board = Board::StartPosition();
     Rules rules = Rules(&board);
     AI ai = AI(&board, &rules);
+    ai.ExtendSearchDepthOnCaptures = false;
 
     rules.MakeMove(CreateFigurePosition("e2"), CreateFigurePosition("e4"));
     rules.MakeMove(CreateFigurePosition("e7"), CreateFigurePosition("e5"));
