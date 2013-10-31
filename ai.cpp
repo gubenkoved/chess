@@ -12,6 +12,7 @@ AI::AI(Board* board, Rules *rules)
     MaxCurrentDepthToExtendSearchOnCaptures = 1;
 
     UseMovesOrdering = true;
+    UseTranspositionTable = true;
 
 #ifdef USE_TRANSPOSITION_TABLE
     m_transpositionTable = new TranspositionTable();
@@ -255,13 +256,15 @@ bool AI::MoveByPriorityGreaterThan(const PrioritizedMove& pm1, const Prioritized
 // main alpha beta worker function
 int AI::AlphaBetaNegamax(Figure::FigureSide side, int depth, int alpha, int beta, int& analyzed, Move*& bestMove, bool isTopLevel)
 {
-#ifdef USE_TRANSPOSITION_TABLE
-    const TranspositionTableEntry* hashEntry = m_transpositionTable->FindEntry(m_board->GetCurrentPositionHash());
-    if (hashEntry != NULL && hashEntry->Depth >= depth)
+    if (UseTranspositionTable)
     {
-        return hashEntry->Estimation;
+        // if position evaluated before with equal or bigger depth use it as estimation
+        const TranspositionTableEntry* hashEntry = m_transpositionTable->FindEntry(m_board->GetCurrentPositionHash());
+        if (hashEntry != NULL && hashEntry->Depth >= depth)
+        {
+            return hashEntry->Estimation;
+        }
     }
-#endif
 
     // checks passive end game rule
     if (m_rules->IsPassiveEndGame())
@@ -340,18 +343,14 @@ int AI::AlphaBetaNegamax(Figure::FigureSide side, int depth, int alpha, int beta
 
         if (alpha >= beta)
         {
-
-#ifdef USE_TRANSPOSITION_TABLE
-            m_transpositionTable->Store(m_board->GetCurrentPositionHash(), alpha, depth);
-#endif
-
-            return alpha; // prune
+            return alpha; // alpha prune
         }
     }
 
-#ifdef USE_TRANSPOSITION_TABLE
-    m_transpositionTable->Store(m_board->GetCurrentPositionHash(), alpha, depth);
-#endif
+    if (UseTranspositionTable)
+    {
+        m_transpositionTable->Store(m_board->GetCurrentPositionHash(), alpha, depth);
+    }
 
     return alpha;
 }
@@ -359,9 +358,10 @@ int AI::AlphaBetaNegamax(Figure::FigureSide side, int depth, int alpha, int beta
 // alpha beta serach initializer
 Move AI::BestMoveByAlphaBeta(Figure::FigureSide side, int depth, int& bestEstimation, int& analyzed)
 {
-#ifdef USE_TRANSPOSITION_TABLE
-    m_transpositionTable->Clear();
-#endif
+    if (UseTranspositionTable)
+    {
+        m_transpositionTable->Clear();
+    }
 
     Move* bestMove = NULL;
     analyzed = 0;
@@ -370,6 +370,10 @@ Move AI::BestMoveByAlphaBeta(Figure::FigureSide side, int depth, int& bestEstima
 
     Move result = *bestMove;
     delete bestMove;
+
+//#ifdef QT_DEBUG
+    qDebug() << "Amount of records in transposition table: " << m_transpositionTable->Count();
+//#endif
 
     return result;
 }

@@ -30,6 +30,7 @@ public:
 
     void Store(TranspositionTableEntry entry);
     void Store(PositionHash hash, int estimation, int depth);
+    int Count();
     void Clear();
 
     const TranspositionTableEntry* FindEntry(const PositionHash& hash) const;

@@ -9,7 +9,7 @@
 #include "typedefs.h"
 #include "transpositiontable.h"
 
-//#define USE_TRANSPOSITION_TABLE
+#define USE_TRANSPOSITION_TABLE
 
 // This class contains algorithms to find best move
 class AI
@@ -79,6 +79,9 @@ public:
 
     // Indicates that AI should sort moves by priority before proccesing it.
     bool UseMovesOrdering;
+
+    // Indicates that AI should use transposition table.
+    bool UseTranspositionTable;
 
     Move BestMoveByAlphaBeta(Figure::FigureSide side, int depth, int& bestEstimation, int& analyzed);
     Move NegamaxSearch(Figure::FigureSide side, int depth, int& bestEstimation, int& analyzed);

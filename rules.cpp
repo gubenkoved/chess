@@ -611,7 +611,9 @@ MoveList Rules::GetPossibleMoves(Figure::FigureSide side)
     MoveList moves;
 
     if (m_board->GetTurningSide() != side)
+    {
         return moves;
+    }
 
     foreach(Figure* figure, figures)
     {

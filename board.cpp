@@ -157,7 +157,9 @@ void Board::ResurrectFigure(Figure *figure)
 void Board::PromotePawn(Figure *pawn, Figure::FigureType type)
 {
     if (type == Figure::Pawn)
+    {
         throw Exception("Not allowed promotion to pawn");
+    }
 
     pawn->SetFigureType(type);
 
