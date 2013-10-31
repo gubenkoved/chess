@@ -9,8 +9,6 @@
 #include "typedefs.h"
 #include "transpositiontable.h"
 
-#define USE_TRANSPOSITION_TABLE
-
 // This class contains algorithms to find best move
 class AI
 {
@@ -21,9 +19,7 @@ private:
     Board* m_board;
     Rules* m_rules;
 
-#ifdef USE_TRANSPOSITION_TABLE
     TranspositionTable* m_transpositionTable;
-#endif
 
     struct PrioritizedMove
     {

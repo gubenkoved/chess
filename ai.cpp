@@ -8,15 +8,13 @@ AI::AI(Board* board, Rules *rules)
     m_board = board;
     m_rules = rules;
 
+    m_transpositionTable = new TranspositionTable();
+
     ExtendSearchDepthOnCaptures = true;
     MaxCurrentDepthToExtendSearchOnCaptures = 1;
 
     UseMovesOrdering = true;
     UseTranspositionTable = true;
-
-#ifdef USE_TRANSPOSITION_TABLE
-    m_transpositionTable = new TranspositionTable();
-#endif
 
     InitStaticFigurePositionEstimations();
 }
@@ -67,7 +65,7 @@ int AI::GetFigureWeight(Figure::FigureType type)
         case Figure::Queen:
             return 900;
         case Figure::King:
-            return 0; // can not be killed
+            return 0; // can not be killed -> it weight doesn't not matter
         default:
             throw Exception("Invalid figure type");
     }
@@ -358,10 +356,7 @@ int AI::AlphaBetaNegamax(Figure::FigureSide side, int depth, int alpha, int beta
 // alpha beta serach initializer
 Move AI::BestMoveByAlphaBeta(Figure::FigureSide side, int depth, int& bestEstimation, int& analyzed)
 {
-    if (UseTranspositionTable)
-    {
-        m_transpositionTable->Clear();
-    }
+    m_transpositionTable->Clear();
 
     Move* bestMove = NULL;
     analyzed = 0;
@@ -371,9 +366,9 @@ Move AI::BestMoveByAlphaBeta(Figure::FigureSide side, int depth, int& bestEstima
     Move result = *bestMove;
     delete bestMove;
 
-//#ifdef QT_DEBUG
+#ifdef QT_DEBUG
     qDebug() << "Amount of records in transposition table: " << m_transpositionTable->Count();
-//#endif
+#endif
 
     return result;
 }
