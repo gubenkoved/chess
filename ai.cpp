@@ -21,9 +21,7 @@ AI::AI(Board* board, Rules *rules)
 
 AI::~AI()
 {
-#ifdef USE_TRANSPOSITION_TABLE
     delete m_transpositionTable;
-#endif
 }
 
 void AI::InitStaticFigurePositionEstimations()
@@ -280,7 +278,8 @@ int AI::AlphaBetaNegamax(Figure::FigureSide side, int depth, int alpha, int beta
     int possibleMovesCount = possibleMoves.count();
 
     QVector<PrioritizedMove> prioritizedMoves(possibleMovesCount);
-    for (int i = 0; i < possibleMovesCount; ++i) {
+    for (int i = 0; i < possibleMovesCount; ++i)
+    {
         prioritizedMoves[i] = CalculatePriority(possibleMoves.at(i));
     }
 

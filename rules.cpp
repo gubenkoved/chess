@@ -242,7 +242,7 @@ bool Rules::IsUnderCheckFastImpl(Figure::FigureSide side) const
     Figure::FigureSide opponentSide = OpponentSide(side);
 
     // checks for knight threat
-    PositionList knightCheckPositions;
+    QVarLengthArray<POSITION> knightCheckPositions;
     knightCheckPositions.reserve(8); // to speed up
 
     Helpers::AppendIfValid(knightCheckPositions, ForwardFor(p, side, +2, +1));
@@ -259,13 +259,15 @@ bool Rules::IsUnderCheckFastImpl(Figure::FigureSide side) const
         Figure* figure = m_board->FigureAt(position);
 
         if (figure != NULL && figure->Type == Figure::Knight && figure->Side == opponentSide)
+        {
             return true;
+        }
     }
 
     // checks for long-range figures and pawns
 
     // check for enemy rocks and queen in non tilted directions
-    FigureList nonTiltedDirectionObstacles;
+    QVarLengthArray<Figure*> nonTiltedDirectionObstacles;
     nonTiltedDirectionObstacles.reserve(4); // to speed up
 
     Helpers::AppendIfNotNull(nonTiltedDirectionObstacles, GetObstacleInDirection(p, side, 0, +1)); // forward direction
@@ -288,13 +290,15 @@ bool Rules::IsUnderCheckFastImpl(Figure::FigureSide side) const
                 bool isNeighbor = std::max(dx, dy) == 1;
 
                 if (isNeighbor)
+                {
                     return true;
+                }
             }
         }
     }
 
     // check for enemy bishops, queen and pawns in tilted direction
-    FigureList tiltedDirectionObstacles;
+    QVarLengthArray<Figure*> tiltedDirectionObstacles;
     tiltedDirectionObstacles.reserve(4); // to speed up
 
     Helpers::AppendIfNotNull(tiltedDirectionObstacles, GetObstacleInDirection(p, side, +1, +1)); // forward+ direction
@@ -330,7 +334,9 @@ bool Rules::IsUnderCheckFastImpl(Figure::FigureSide side) const
                 bool isNeighbor = std::max(dx, dy) == 1;
 
                 if (isNeighbor)
+                {
                     return true;
+                }
             }
         }
     }
@@ -341,9 +347,13 @@ bool Rules::IsUnderCheckFastImpl(Figure::FigureSide side) const
 Figure::FigureSide Rules::OpponentSide(Figure::FigureSide side) const
 {
     if (side == Figure::White)
+    {
         return Figure::Black;
+    }
     else
+    {
         return Figure::White;
+    }
 }
 
 MoveList& Rules::DeleteMovesToCheck(MoveList& moves)
