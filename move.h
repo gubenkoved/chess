@@ -5,13 +5,12 @@
 #include "figure.h"
 #include "lightfigureposition.h"
 
-class Move;
+struct Move;
 
 typedef QList<Move> MoveList;
 
-class Move
+struct Move
 {
-public:
     enum MoveType
     {
         Normal, // just move from one to another position
@@ -24,28 +23,19 @@ public:
         Invalid // when default constructor used
     };
 
-private:
-    Figure* m_figure;
-    MoveType m_type;
-    POSITION m_from;
-    POSITION m_to;
-    Figure* m_captured; // actual only when is capture move, otherwise NULL    
-
 #ifdef QT_DEBUG
-    QString m_stringRep;
+    //QString m_stringRep;
 #endif
 
-public:
+    POSITION From;
+    POSITION To;
+    MoveType Type;
+    Figure* MovingFigure;
+    Figure* CapturedFigure; // actual only when is capture move, otherwise NULL
+
     Move();
     Move(MoveType type, POSITION from, POSITION to, Figure* figure, Figure* captured);
     Move(const Move& another);
-    ~Move();
-
-    const POSITION& From;
-    const POSITION& To;
-    Figure* const& MovingFigure;
-    Figure* const& CapturedFigure;
-    const MoveType& Type;
 
     QString GetTypeName() const;
     bool IsCastling() const;
