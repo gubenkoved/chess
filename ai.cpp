@@ -11,7 +11,7 @@ AI::AI(Board* board, Rules *rules)
     m_transpositionTable = new TranspositionTable();
 
     ExtendSearchDepthOnCaptures = true;
-    MaxCurrentDepthToExtendSearchOnCaptures = 1;
+    MaxCurrentDepthToExtendSearchOnCaptures = 0;
 
     UseMovesOrdering = true;
     UseTranspositionTable = true;

@@ -664,7 +664,7 @@ PositionList Rules::GetPossibleDestinations(Figure *figure)
     MoveList moves = GetPossibleMoves(figure);
     PositionList destinations;
 
-    foreach(Move move, moves)
+    foreach(const Move& move, moves)
     {
         destinations.append(move.To);
     }
@@ -731,7 +731,7 @@ void Rules::MakeMove(POSITION from, POSITION to)
         MoveList possible = GetPossibleMoves(f);
         bool isValidMove = false;
 
-        foreach(Move move, possible)
+        foreach(const Move& move, possible)
         {
             if (move.From == from && move.To == to)
             {

@@ -77,9 +77,13 @@ int Board::GetAfterLastCaptureOrPawnMoveHalfMoveCount() const
     for (int i = m_history.count() - 1; i >= 0; --i)
     {
         if (m_history[i].Type == Move::Capture || m_history[i].MovingFigure->Type == Figure::Pawn)
+        {
             return halfMoveCounter;
+        }
         else
+        {
             ++halfMoveCounter;
+        }
     }
 
     return halfMoveCounter;
@@ -104,7 +108,9 @@ void Board::AddAliveFigure(Figure *figure)
     m_aliveFigures[side].append(figure);
 
     if (figure->Type == Figure::King)
+    {
         m_kings[side] = figure;
+    }
 
     int key = Serial(figure->Position);
 
@@ -119,7 +125,9 @@ void Board::MoveFigure(Figure *figure, POSITION newPosition)
     int newKey = Serial(newPosition);
 
     if (m_aliveFiguresVector[newKey] != NULL)
+    {
         throw Exception("Can not move figure because cell is not empty");
+    }
 
     m_aliveFiguresVector[oldKey] = NULL;
     m_aliveFiguresVector[newKey] = figure;
@@ -146,7 +154,9 @@ void Board::ResurrectFigure(Figure *figure)
     int key = Serial(figure->Position);
 
     if (m_aliveFiguresVector[key] != NULL)
+    {
         throw Exception("Can not reserrect because cell is empty");
+    }
 
     m_aliveFigures[figure->Side].append(figure);    
     m_aliveFiguresVector[key] = figure;
@@ -232,7 +242,9 @@ void Board::IncreaseCurrentPositionCount()
 void Board::DecreaseCurrentPositionCount()
 {
     if (m_positionHashHistory.isEmpty())
+    {
         throw Exception("Invalid operation. Position history is empty");
+    }
 
     m_positionHashHistory.pop_back();
 //    int count = --m_positionCounter[m_positionHash];
@@ -248,10 +260,12 @@ int Board::GetCurrentPositionCount()
 {
     int count = 0;
 
-    foreach (QString s, m_positionHashHistory)
+    foreach (const QString& s, m_positionHashHistory)
     {
         if (s == m_positionHash)
+        {
             ++count;
+        }
     }
 
     return count;
@@ -261,7 +275,9 @@ int Board::GetCurrentPositionCount()
 Move Board::GetLastMove() const
 {
     if (IsHistoryEmpty())
+    {
         throw Exception("History is empty");
+    }
 
     return m_history.last();
 }
