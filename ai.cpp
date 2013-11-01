@@ -11,7 +11,7 @@ AI::AI(Board* board, Rules *rules)
     m_transpositionTable = new TranspositionTable();
 
     ExtendSearchDepthOnCaptures = true;
-    MaxCurrentDepthToExtendSearchOnCaptures = 0;
+    MaxCurrentDepthToExtendSearchOnCaptures = 1;
 
     UseMovesOrdering = true;
     UseTranspositionTable = true;
@@ -59,9 +59,9 @@ int AI::GetFigureWeight(Figure::FigureType type)
         case Figure::Knight:
             return 300;
         case Figure::Rock:
-            return 500;
+            return 600;
         case Figure::Queen:
-            return 900;
+            return 1000;
         case Figure::King:
             return 0; // can not be killed -> it weight doesn't not matter
         default:
