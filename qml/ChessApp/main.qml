@@ -1,10 +1,11 @@
 // import QtQuick 1.0 // to target S60 5th Edition or Maemo 5
 import QtQuick 1.1
+//import QtQuick.Controls 1.0
 
 Rectangle {
-    id: rectangle1
+    id: rootRect
     width: 600
-    height: 630
+    height: 676
     //id: root
     //objectName: 'root'
 
@@ -47,6 +48,8 @@ Rectangle {
                 //child.cellText = '2';
                 //child.;
                 //console.log(child);
+
+                fenText.text = app.GetFEN();
             }
         }
 
@@ -75,6 +78,7 @@ Rectangle {
                 }
             }
         }
+
         function createField()
         {
             for (var x = 1; x <= 8; x++)
@@ -92,7 +96,9 @@ Rectangle {
 
             updateField();
         }
-        function createCell() {
+
+        function createCell()
+        {
             var cellComponent = Qt.createComponent("cell.qml");
             return cellComponent.createObject(cellsContainer);
         }
@@ -187,7 +193,7 @@ Rectangle {
 
     Rectangle {
         id: menu
-        height: 20
+        height: 40
         color: "#00000000"
         anchors.right: parent.right
         anchors.rightMargin: 0
@@ -196,60 +202,74 @@ Rectangle {
         anchors.left: parent.left
         anchors.leftMargin: 0
 
-        Rectangle {
-            id: backButton
-            width: 100
-            color: "white"
-            radius: 0
-            border.color: "#959595"
-            z: 0
-            rotation: 0
-            scale: 1
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 0
-            anchors.left: parent.left
-            anchors.leftMargin: 0
-            anchors.top: parent.top
-            anchors.topMargin: 0
+        Flow {
+            id: flow
+            anchors.rightMargin: 5
+            anchors.leftMargin: 5
+            anchors.bottomMargin: 5
+            anchors.topMargin: 5
+            anchors.fill: parent
 
-            ColorAnimation {
-                id: mouseEnterAnimation;
-                target: backButton;
-                property: "color";
-                to: "orange";
-                duration: 100;
-            }
+            Rectangle {
+                id: backButton
+                width: 100
+                color: "white"
+                radius: 0
+                anchors.top: parent.top
+                anchors.topMargin: 0
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: 0
+                border.width: 2
+                border.color: "#959595"
 
-            ColorAnimation {
-                id: mouseLeaveAnimation;
-                target: backButton;
-                property: "color";
-                to: "white";
-                duration: 300;
-            }
+                ColorAnimation {
+                    id: mouseEnterAnimation;
+                    target: backButton;
+                    property: "color";
+                    to: "orange";
+                    duration: 100;
+                }
 
-            Text {
-                x: 52
-                y: 36
-                text: qsTr("Turn back")
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.verticalCenter: parent.verticalCenter
-                font.pixelSize: 12
-            }
+                ColorAnimation {
+                    id: mouseLeaveAnimation;
+                    target: backButton;
+                    property: "color";
+                    to: "white";
+                    duration: 300;
+                }
 
-            MouseArea {
-                anchors.fill: parent
-                hoverEnabled: true
-                onEntered: mouseEnterAnimation.start();
-                onExited:  mouseLeaveAnimation.start();
+                Text {
+                    x: 52
+                    y: 36
+                    text: qsTr("Turn back")
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.verticalCenter: parent.verticalCenter
+                    font.pixelSize: 12
+                }
 
-                onClicked: {
-                    app.TurnBack();
-                    app.Draw();
+                MouseArea {
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    onEntered: mouseEnterAnimation.start();
+                    onExited:  mouseLeaveAnimation.start();
+
+                    onClicked: {
+                        app.TurnBack();
+                        app.Draw();
+                    }
                 }
             }
         }
+    }
 
-
+    TextInput {
+        id: fenText
+        text: "fen"
+        cursorVisible: true
+        anchors.left: parent.left
+        anchors.leftMargin: 10
+        font.pointSize: 11
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 10
     }
 }

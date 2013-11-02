@@ -1,5 +1,6 @@
 #include "chessapp.h"
 
+#include "fen.h"
 #include "figure.h"
 #include "lightfigureposition.h"
 
@@ -190,4 +191,9 @@ void ChessApp::TurnBack()
             m_rules->UnMakeMove(m_board->GetLastMove());
         }
     }
+}
+
+QString ChessApp::GetFEN()
+{
+    return FEN::Evaluate(m_board);
 }

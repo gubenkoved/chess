@@ -37,6 +37,7 @@ public slots:
     Q_INVOKABLE void Step(int fromX, int fromY, int toX, int toY);
     Q_INVOKABLE QVariantList GetPossible(int x, int y);
     Q_INVOKABLE void TurnBack();
+    Q_INVOKABLE QString GetFEN();
 };
 
 #endif // CHESSAPP_H
