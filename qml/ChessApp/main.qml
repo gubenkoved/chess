@@ -4,8 +4,8 @@ import QtQuick 1.1
 
 Rectangle {
     id: rootRect
-    width: 600
-    height: 676
+    width: 800
+    height: 671
     //id: root
     //objectName: 'root'
 
@@ -13,10 +13,6 @@ Rectangle {
     {
         id: board
         objectName: 'board'
-        anchors.right: parent.right
-        anchors.rightMargin: 0
-        anchors.left: parent.left
-        anchors.leftMargin: 0
 
         property real cellWidth: width / 8.0
         property real cellHeight: height / 8.0
@@ -24,9 +20,14 @@ Rectangle {
         property bool _figureSelected: false;
         property int _selectedX;
         property int _selectedY;
+        width: 600
         height: 600
+        border.width: 2
+        border.color: "#000000"
         anchors.top: menu.bottom
         anchors.topMargin: 0
+        anchors.left: parent.left
+        anchors.leftMargin: 5
 
         function showNotification(message)
         {
@@ -50,6 +51,7 @@ Rectangle {
                 //console.log(child);
 
                 fenText.text = app.GetFEN();
+                moveList.text = app.BoardToString();
             }
         }
 
@@ -156,25 +158,45 @@ Rectangle {
             width: 200
             height: 50
             color: "#136ab5"
-            radius: 2
+            radius: 0
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
             z: 1
-            opacity: 0.85
-            border.width: 2
+            opacity: 0.6
+            border.width: 1
             border.color: "#000000"
             visible: false;
+
             Text
             {
                 id: notificationMessage
                 color: "#ffffff"
                 text: "Notification";
-                font.bold: true
-                font.family: "Segoe Print"
+                font.bold: false
+                font.family: "Segoe UI"
                 font.pointSize: 14
                 anchors.verticalCenterOffset: 0
                 anchors.horizontalCenterOffset: 0
                 anchors.centerIn: parent;
+            }
+
+            Text
+            {
+                color: "#ffffff"
+                text: "click to close";
+                font.family: "Segoe UI"
+                anchors.right: parent.right
+                anchors.rightMargin: 2
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: 2
+            }
+
+            MouseArea {
+                anchors.fill: parent
+                hoverEnabled: true
+                onEntered: parent.opacity = 1
+                onExited: parent.opacity = 0.6
+                onClicked: parent.visible = false;
             }
         }
 
@@ -222,22 +244,6 @@ Rectangle {
                 border.width: 2
                 border.color: "#959595"
 
-                ColorAnimation {
-                    id: mouseEnterAnimation;
-                    target: backButton;
-                    property: "color";
-                    to: "orange";
-                    duration: 100;
-                }
-
-                ColorAnimation {
-                    id: mouseLeaveAnimation;
-                    target: backButton;
-                    property: "color";
-                    to: "white";
-                    duration: 300;
-                }
-
                 Text {
                     x: 52
                     y: 36
@@ -250,12 +256,43 @@ Rectangle {
                 MouseArea {
                     anchors.fill: parent
                     hoverEnabled: true
-                    onEntered: mouseEnterAnimation.start();
-                    onExited:  mouseLeaveAnimation.start();
-
+                    onEntered: parent.color = "orange"
+                    onExited: parent.color = "white"
                     onClicked: {
                         app.TurnBack();
                         app.Draw();
+                    }
+                }
+            }
+
+            Rectangle {
+                id: startComputerMoveButton
+                width: 140
+                color: "white"
+                radius: 0
+                anchors.top: parent.top
+                anchors.topMargin: 0
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: 0
+                border.width: 2
+                border.color: "#959595"
+
+                Text {
+                    x: 52
+                    y: 36
+                    text: qsTr("Step by computer")
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.verticalCenter: parent.verticalCenter
+                    font.pixelSize: 12
+                }
+
+                MouseArea {
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    onEntered: parent.color = "orange"
+                    onExited: parent.color = "white"
+                    onClicked: {
+                        app.StartStepByComputer();
                     }
                 }
             }
@@ -265,11 +302,68 @@ Rectangle {
     TextInput {
         id: fenText
         text: "fen"
+        font.family: "Segoe UI"
         cursorVisible: true
-        anchors.left: parent.left
-        anchors.leftMargin: 10
         font.pointSize: 11
+        anchors.right: parent.right
+        anchors.rightMargin: 5
+        anchors.left: parent.left
+        anchors.leftMargin: 5
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 10
+        anchors.bottomMargin: 5
+    }
+
+    TextEdit {
+        id: moveList
+        text: "move list move list move list move list move list move list move list move list move list move list move list move list move list move list move list"
+        font.pointSize: 10
+        font.family: "Segoe UI"
+        textFormat: TextEdit.PlainText
+        wrapMode: TextEdit.WordWrap
+        verticalAlignment: Text.AlignTop
+        anchors.left: board.right
+        anchors.leftMargin: 5
+        anchors.bottom: loadButton.top
+        anchors.bottomMargin: 5
+        anchors.top: menu.bottom
+        anchors.topMargin: 0
+        anchors.right: parent.right
+        anchors.rightMargin: 5
+    }
+
+    Rectangle {
+        id: loadButton
+        height: 30
+        color: "white"
+        radius: 0
+        anchors.right: parent.right
+        anchors.rightMargin: 5
+        anchors.left: board.right
+        anchors.leftMargin: 5
+        anchors.bottom: fenText.top
+        anchors.bottomMargin: 5
+        border.width: 2
+        border.color: "#959595"
+
+        Text {
+            x: 52
+            y: 36
+            text: qsTr("Load")
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.verticalCenter: parent.verticalCenter
+            font.pixelSize: 12
+        }
+
+        MouseArea {
+            anchors.fill: parent
+            hoverEnabled: true
+            onEntered: parent.color = "orange"
+            onExited: parent.color = "white"
+            onClicked: {
+                //app.TurnBack();
+                app.BoardFromString(moveList.text);
+                app.Draw();
+            }
+        }
     }
 }

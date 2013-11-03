@@ -12,14 +12,14 @@ class Rules
 {
     Board* m_board;    
 
-    POSITION ForwardFor(POSITION position, Figure::FigureSide side, int dx, int dy) const;
+    POSITION ForwardFor(POSITION position, FigureSide side, int dx, int dy) const;
 
-    int PawnPromotionYFor(Figure::FigureSide side) const;
-    int EnPassantPawnYFor(Figure::FigureSide side) const;
+    int PawnPromotionYFor(FigureSide side) const;
+    int EnPassantPawnYFor(FigureSide side) const;
 
-    bool IsUnderCheckImpl(Figure::FigureSide side) const;
-    Figure* GetObstacleInDirection(POSITION position, Figure::FigureSide side, int xMult, int yMult) const;
-    bool IsUnderCheckFastImpl(Figure::FigureSide side) const;
+    bool IsUnderCheckImpl(FigureSide side) const;
+    Figure* GetObstacleInDirection(POSITION position, FigureSide side, int xMult, int yMult) const;
+    bool IsUnderCheckFastImpl(FigureSide side) const;
 
     // DeleteMovesToCheck
     // -------------------
@@ -29,7 +29,7 @@ class Rules
     // because it SHOULD BE filtered by DeleteMovesToCheck and DeleteSelfCaptureDesination functions
     // to avoid moves, that causes check to turning side and self-capture turns
     // ONLY FOR PRIVATE USAGE!
-    void DeleteSelfCaptureDesination(PositionList* destinations, Figure::FigureSide selfSide) const;
+    void DeleteSelfCaptureDesination(PositionList* destinations, FigureSide selfSide) const;
     PositionList _GetPossibleDestinations(Figure* figure) const;    
     PositionList _GetPawnPossibleDestinations(Figure* figure) const;
     PositionList _GetKnightPossibleDestinations(Figure* figure) const;
@@ -59,7 +59,7 @@ class Rules
     //
     // EXAMPLE: function runned with xMult = 0, yMult = 1 and lenLimit = 2 (...,0,1,2) returns
     // pawn first move possibilities;
-    PositionList GetOnLinePositions(POSITION position, Figure::FigureSide side, int xMult, int yMult, int lenLimit) const;
+    PositionList GetOnLinePositions(POSITION position, FigureSide side, int xMult, int yMult, int lenLimit) const;
     PositionList GetGuardedPositions(Figure* figure) const;
     PositionList GetPawnGuardedPositions(Figure* figure) const;
     PositionList GetKinghtGuardedPositions(Figure* figure) const;
@@ -70,15 +70,15 @@ class Rules
 public:
     Rules(Board* board);
 
-    Figure::FigureSide OpponentSide(Figure::FigureSide side) const;
-    int FirstHorizonatalYFor(Figure::FigureSide side) const;
+    FigureSide OpponentSide(FigureSide side) const;
+    int FirstHorizonatalYFor(FigureSide side) const;
 
-    PositionList GetGuardedPositions(Figure::FigureSide side) const;
-    MoveList GetPossibleMoves(Figure::FigureSide side);
+    PositionList GetGuardedPositions(FigureSide side) const;
+    MoveList GetPossibleMoves(FigureSide side);
     MoveList GetPossibleMoves(Figure* figure);
     PositionList GetPossibleDestinations(Figure* figure);
 
-    bool IsUnderCheck(Figure::FigureSide side) const;
+    bool IsUnderCheck(FigureSide side) const;
     bool IsPassiveEndGame() const;
 
     void MakeMove(Move move);

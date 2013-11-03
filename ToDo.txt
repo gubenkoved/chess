@@ -1,2 +1,3 @@
 + full depth captures calculatiog
 + parallel alpha beta implementation?
++ alter move generator to get ability generate only captures

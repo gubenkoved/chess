@@ -5,7 +5,7 @@
 
 Board::Board()
 {
-    m_turningSide = Figure::White;
+    m_turningSide = FigureSide::White;
 
     m_aliveFiguresVector = QVector<Figure*>(64);
 }
@@ -76,7 +76,7 @@ int Board::GetAfterLastCaptureOrPawnMoveHalfMoveCount() const
 
     for (int i = m_history.count() - 1; i >= 0; --i)
     {
-        if (m_history[i].Type == Move::Capture || m_history[i].MovingFigure->Type == Figure::Pawn)
+        if (m_history[i].Type == MoveType::Capture || m_history[i].MovingFigure->Type == FigureType::Pawn)
         {
             return halfMoveCounter;
         }
@@ -100,20 +100,18 @@ PositionHash Board::GetCurrentPositionHash() const
 }
 
 void Board::AddAliveFigure(Figure *figure)
-{    
+{
+    FigureSide side = figure->Side;
+
     m_allFigures.append(figure);
-
-    Figure::FigureSide side = figure->Side;
-
     m_aliveFigures[side].append(figure);
 
-    if (figure->Type == Figure::King)
+    if (figure->Type == FigureType::King)
     {
         m_kings[side] = figure;
     }
 
     int key = Serial(figure->Position);
-
     m_aliveFiguresVector[key] = figure;
 
     m_positionHash = PositionHashCalculator::Calculate(this);
@@ -135,7 +133,7 @@ void Board::MoveFigure(Figure *figure, POSITION newPosition)
     PositionHashCalculator::Update(m_positionHash, this, figure->Position);
     PositionHashCalculator::Update(m_positionHash, this, newPosition);
 
-    figure->SetPosition(newPosition);
+    figure->Position = newPosition;
 }
 
 void Board::KillFigure(Figure *figure)
@@ -164,21 +162,21 @@ void Board::ResurrectFigure(Figure *figure)
     PositionHashCalculator::Update(m_positionHash, this, figure->Position);
 }
 
-void Board::PromotePawn(Figure *pawn, Figure::FigureType type)
+void Board::PromotePawn(Figure *pawn, FigureType type)
 {
-    if (type == Figure::Pawn)
+    if (type == FigureType::Pawn)
     {
         throw Exception("Not allowed promotion to pawn");
     }
 
-    pawn->SetFigureType(type);
+    pawn->Type = type;
 
     PositionHashCalculator::Update(m_positionHash, this, pawn->Position);
 }
 
 void Board::UnpromotePawn(Figure *pawn)
 {
-    pawn->SetFigureType(Figure::Pawn);
+    pawn->Type = FigureType::Pawn;
 
     PositionHashCalculator::Update(m_positionHash, this, pawn->Position);
 }
@@ -190,15 +188,15 @@ Figure* Board::FigureAt(POSITION position) const
     return m_aliveFiguresVector[key];
 }
 
-FigureList Board::FiguresAt(Figure::FigureSide side) const
+FigureList Board::FiguresAt(FigureSide side) const
 {
     return m_aliveFigures[side];
 }
 
 FigureList Board::GetAllAliveFigures() const
 {
-    FigureList alive = m_aliveFigures[Figure::White];
-    alive.append(m_aliveFigures[Figure::Black]);
+    FigureList alive = m_aliveFigures[FigureSide::White];
+    alive.append(m_aliveFigures[FigureSide::Black]);
 
     return alive;
 }
@@ -208,7 +206,7 @@ bool Board::HasFigureAt(POSITION position) const
     return FigureAt(position) != NULL;
 }
 
-bool Board::HasFigureAt(POSITION position, Figure::FigureSide side) const
+bool Board::HasFigureAt(POSITION position, FigureSide side) const
 {
     Figure* f = FigureAt(position);
 
@@ -227,7 +225,7 @@ void Board::PopHistory()
 
 void Board::TurnTransition()
 {
-    m_turningSide = m_turningSide == Figure::White ? Figure::Black : Figure::White;
+    m_turningSide = m_turningSide == FigureSide::White ? FigureSide::Black : FigureSide::White;
 }
 
 void Board::IncreaseCurrentPositionCount()
@@ -292,12 +290,12 @@ bool Board::IsHistoryEmpty() const
     return m_history.count() == 0;
 }
 
-Figure *Board::KingAt(Figure::FigureSide side) const
+Figure *Board::KingAt(FigureSide side) const
 {
     return m_kings[side];
 }
 
-Figure::FigureSide Board::GetTurningSide() const
+FigureSide Board::GetTurningSide() const
 {
     return m_turningSide;
 }
@@ -313,47 +311,47 @@ Board Board::StartPosition()
 
 void Board::SetupStartPosition()
 {
-    m_turningSide = Figure::White;
+    m_turningSide = FigureSide::White;
 
-    AddAliveFigure(new Figure(Figure::White, Figure::Queen, "d1"));
-    AddAliveFigure(new Figure(Figure::White, Figure::Rock, "a1"));
-    AddAliveFigure(new Figure(Figure::White, Figure::Rock, "h1"));
-    AddAliveFigure(new Figure(Figure::White, Figure::Knight, "b1"));
-    AddAliveFigure(new Figure(Figure::White, Figure::Knight, "g1"));
-    AddAliveFigure(new Figure(Figure::White, Figure::Bishop, "c1"));
-    AddAliveFigure(new Figure(Figure::White, Figure::Bishop, "f1"));
-    AddAliveFigure(new Figure(Figure::White, Figure::King, "e1"));
+    AddAliveFigure(new Figure(FigureSide::White, FigureType::Queen, "d1"));
+    AddAliveFigure(new Figure(FigureSide::White, FigureType::Rock, "a1"));
+    AddAliveFigure(new Figure(FigureSide::White, FigureType::Rock, "h1"));
+    AddAliveFigure(new Figure(FigureSide::White, FigureType::Knight, "b1"));
+    AddAliveFigure(new Figure(FigureSide::White, FigureType::Knight, "g1"));
+    AddAliveFigure(new Figure(FigureSide::White, FigureType::Bishop, "c1"));
+    AddAliveFigure(new Figure(FigureSide::White, FigureType::Bishop, "f1"));
+    AddAliveFigure(new Figure(FigureSide::White, FigureType::King, "e1"));
 
-    AddAliveFigure(new Figure(Figure::White, Figure::Pawn, "a2"));
-    AddAliveFigure(new Figure(Figure::White, Figure::Pawn, "b2"));
-    AddAliveFigure(new Figure(Figure::White, Figure::Pawn, "c2"));
-    AddAliveFigure(new Figure(Figure::White, Figure::Pawn, "d2"));
-    AddAliveFigure(new Figure(Figure::White, Figure::Pawn, "e2"));
-    AddAliveFigure(new Figure(Figure::White, Figure::Pawn, "f2"));
-    AddAliveFigure(new Figure(Figure::White, Figure::Pawn, "g2"));
-    AddAliveFigure(new Figure(Figure::White, Figure::Pawn, "h2"));
+    AddAliveFigure(new Figure(FigureSide::White, FigureType::Pawn, "a2"));
+    AddAliveFigure(new Figure(FigureSide::White, FigureType::Pawn, "b2"));
+    AddAliveFigure(new Figure(FigureSide::White, FigureType::Pawn, "c2"));
+    AddAliveFigure(new Figure(FigureSide::White, FigureType::Pawn, "d2"));
+    AddAliveFigure(new Figure(FigureSide::White, FigureType::Pawn, "e2"));
+    AddAliveFigure(new Figure(FigureSide::White, FigureType::Pawn, "f2"));
+    AddAliveFigure(new Figure(FigureSide::White, FigureType::Pawn, "g2"));
+    AddAliveFigure(new Figure(FigureSide::White, FigureType::Pawn, "h2"));
 
-    AddAliveFigure(new Figure(Figure::Black, Figure::Queen, "d8"));
-    AddAliveFigure(new Figure(Figure::Black, Figure::Rock, "a8"));
-    AddAliveFigure(new Figure(Figure::Black, Figure::Rock, "h8"));
-    AddAliveFigure(new Figure(Figure::Black, Figure::Knight, "b8"));
-    AddAliveFigure(new Figure(Figure::Black, Figure::Knight, "g8"));
-    AddAliveFigure(new Figure(Figure::Black, Figure::Bishop, "f8"));
-    AddAliveFigure(new Figure(Figure::Black, Figure::Bishop, "c8"));
-    AddAliveFigure(new Figure(Figure::Black, Figure::King, "e8"));
+    AddAliveFigure(new Figure(FigureSide::Black, FigureType::Queen, "d8"));
+    AddAliveFigure(new Figure(FigureSide::Black, FigureType::Rock, "a8"));
+    AddAliveFigure(new Figure(FigureSide::Black, FigureType::Rock, "h8"));
+    AddAliveFigure(new Figure(FigureSide::Black, FigureType::Knight, "b8"));
+    AddAliveFigure(new Figure(FigureSide::Black, FigureType::Knight, "g8"));
+    AddAliveFigure(new Figure(FigureSide::Black, FigureType::Bishop, "f8"));
+    AddAliveFigure(new Figure(FigureSide::Black, FigureType::Bishop, "c8"));
+    AddAliveFigure(new Figure(FigureSide::Black, FigureType::King, "e8"));
 
-    AddAliveFigure(new Figure(Figure::Black, Figure::Pawn, "a7"));
-    AddAliveFigure(new Figure(Figure::Black, Figure::Pawn, "b7"));
-    AddAliveFigure(new Figure(Figure::Black, Figure::Pawn, "c7"));
-    AddAliveFigure(new Figure(Figure::Black, Figure::Pawn, "d7"));
-    AddAliveFigure(new Figure(Figure::Black, Figure::Pawn, "e7"));
-    AddAliveFigure(new Figure(Figure::Black, Figure::Pawn, "f7"));
-    AddAliveFigure(new Figure(Figure::Black, Figure::Pawn, "g7"));
-    AddAliveFigure(new Figure(Figure::Black, Figure::Pawn, "h7"));
+    AddAliveFigure(new Figure(FigureSide::Black, FigureType::Pawn, "a7"));
+    AddAliveFigure(new Figure(FigureSide::Black, FigureType::Pawn, "b7"));
+    AddAliveFigure(new Figure(FigureSide::Black, FigureType::Pawn, "c7"));
+    AddAliveFigure(new Figure(FigureSide::Black, FigureType::Pawn, "d7"));
+    AddAliveFigure(new Figure(FigureSide::Black, FigureType::Pawn, "e7"));
+    AddAliveFigure(new Figure(FigureSide::Black, FigureType::Pawn, "f7"));
+    AddAliveFigure(new Figure(FigureSide::Black, FigureType::Pawn, "g7"));
+    AddAliveFigure(new Figure(FigureSide::Black, FigureType::Pawn, "h7"));
 }
 
 void Board::SetupKings()
 {
-    AddAliveFigure(new Figure(Figure::White, Figure::King, "e1"));
-    AddAliveFigure(new Figure(Figure::Black, Figure::King, "e8"));
+    AddAliveFigure(new Figure(FigureSide::White, FigureType::King, "e1"));
+    AddAliveFigure(new Figure(FigureSide::Black, FigureType::King, "e8"));
 }

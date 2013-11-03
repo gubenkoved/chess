@@ -32,6 +32,7 @@ void Tests::TestAll()
 
     TEST_EXPAND(BoardStartPositionTest)
     TEST_EXPAND(BoardGetSideFiguresTest)
+
     TEST_EXPAND(GetGuardedPositionsTest1)
     TEST_EXPAND(GetGuardedPositionsTest2)
     TEST_EXPAND(GetGuardedPositionsTest3)
@@ -53,24 +54,30 @@ void Tests::TestAll()
 
     TEST_EXPAND(BoardDeepCopyTest);
 
-    TEST_EXPAND(FENTest1);
-    TEST_EXPAND(FENTest2);
-    TEST_EXPAND(FENTest3);
-    TEST_EXPAND(FENTest4);
+    TEST_EXPAND(ToFENTest1);
+    TEST_EXPAND(ToFENTest2);
+    TEST_EXPAND(ToFENTest3);
+    TEST_EXPAND(ToFENTest4);
+
+//    TEST_EXPAND(FromFENTest1);
+//    TEST_EXPAND(FromFENTest2);
+//    TEST_EXPAND(FromFENTest3);
+//    TEST_EXPAND(FromFENTest4);
 
     TEST_EXPAND(PerftTest1)
     TEST_EXPAND(PerftTest2)
     TEST_EXPAND(PerftTest3)
     //TEST_EXPAND(PerftTest4)
 
-    TEST_EXPAND(AlphaBetaTime1)
-    TEST_EXPAND(AlphaBetaTime2)
-    TEST_EXPAND(AlphaBetaTime3)
-    TEST_EXPAND(AlphaBetaTime4)
-    //TEST_EXPAND(AlphaBetaTime5)
-    TEST_EXPAND(AlphaBetaTime5_2)
-    //TEST_EXPAND(AlphaBetaTime6)
-    //TEST_EXPAND(AlphaBetaTime7)
+    TEST_EXPAND(ABFromStartD1)
+    TEST_EXPAND(ABFromStartD2)
+    TEST_EXPAND(ABFromStartD3)
+    //TEST_EXPAND(ABFromStartD4)
+    //TEST_EXPAND(ABFromStartD5)
+    //TEST_EXPAND(ABFromStartD6)
+
+    //TEST_EXPAND(ABAfter6PlyD5)
+    //TEST_EXPAND(ABAfter6PlyD6)
 
     TEST_EXPAND(AlphaBetaTest1)
     TEST_EXPAND(AlphaBetaTest2)
@@ -85,7 +92,9 @@ void Tests::TestAll()
     TEST_EXPAND(PositionCountingTest1)
     TEST_EXPAND(PositionCountingTest2)
 
-    TEST_EXPAND(BoardSerializationTest1)
+    TEST_EXPAND(BoardSerializationTest)
+
+    TEST_EXPAND(WM1)
 
     qDebug() << "Passed:" << passed << "test(s)";
     qDebug() << "Failed:" << failed << "test(s)";
@@ -186,7 +195,7 @@ bool Tests::BoardStartPositionTest()
 {
     Board board = Board::StartPosition();
 
-    QMap<Figure::FigureType, int> counter;
+    QMap<FigureType, int> counter;
 
     for (int x = 1; x <= 8; ++x)
     {
@@ -205,20 +214,20 @@ bool Tests::BoardStartPositionTest()
         }
     }    
 
-    return counter[Figure::Pawn] == 16
-            && counter[Figure::Rock] == 4
-            && counter[Figure::Bishop] == 4
-            && counter[Figure::Knight] == 4
-            && counter[Figure::King] == 2
-            && counter[Figure::Queen] == 2;
+    return counter[FigureType::Pawn] == 16
+            && counter[FigureType::Rock] == 4
+            && counter[FigureType::Bishop] == 4
+            && counter[FigureType::Knight] == 4
+            && counter[FigureType::King] == 2
+            && counter[FigureType::Queen] == 2;
 }
 
 bool Tests::BoardGetSideFiguresTest()
 {
     Board board = Board::StartPosition();
 
-    return board.FiguresAt(Figure::White).count() == 16
-            && board.FiguresAt(Figure::Black).count() == 16;
+    return board.FiguresAt(FigureSide::White).count() == 16
+            && board.FiguresAt(FigureSide::Black).count() == 16;
 }
 
 bool Tests::GetGuardedPositionsTest1()
@@ -226,7 +235,7 @@ bool Tests::GetGuardedPositionsTest1()
     Board board = Board::StartPosition();
     Rules rules = Rules(&board);
 
-    PositionList guarded = rules.GetGuardedPositions(Figure::White);
+    PositionList guarded = rules.GetGuardedPositions(FigureSide::White);
 
     return guarded.count() == 22;
 }
@@ -236,7 +245,7 @@ bool Tests::GetGuardedPositionsTest2()
     Board board = Board::StartPosition();
     Rules rules = Rules(&board);
 
-    PositionList guarded = rules.GetGuardedPositions(Figure::Black);
+    PositionList guarded = rules.GetGuardedPositions(FigureSide::Black);
 
     return guarded.count() == 22;
 }
@@ -246,9 +255,9 @@ bool Tests::GetGuardedPositionsTest3()
     Board board = Board();
     Rules rules = Rules(&board);
 
-    board.AddAliveFigure(new Figure(Figure::White, Figure::Knight, CreateFigurePosition("e5")));
+    board.AddAliveFigure(new Figure(FigureSide::White, FigureType::Knight, CreateFigurePosition("e5")));
 
-    PositionList guarded = rules.GetGuardedPositions(Figure::White);
+    PositionList guarded = rules.GetGuardedPositions(FigureSide::White);
 
     return guarded.count() == 8;
 }
@@ -257,9 +266,9 @@ bool Tests::GetGuardedPositionsTest4()
     Board board = Board();
     Rules rules = Rules(&board);
 
-    board.AddAliveFigure(new Figure(Figure::White, Figure::Rock, CreateFigurePosition("e4")));
+    board.AddAliveFigure(new Figure(FigureSide::White, FigureType::Rock, CreateFigurePosition("e4")));
 
-    PositionList guarded = rules.GetGuardedPositions(Figure::White);
+    PositionList guarded = rules.GetGuardedPositions(FigureSide::White);
 
     return guarded.count() == 14;
 }
@@ -268,9 +277,9 @@ bool Tests::GetGuardedPositionsTest5()
     Board board = Board();
     Rules rules = Rules(&board);
 
-    board.AddAliveFigure(new Figure(Figure::White, Figure::Queen, CreateFigurePosition("b2")));
+    board.AddAliveFigure(new Figure(FigureSide::White, FigureType::Queen, CreateFigurePosition("b2")));
 
-    PositionList guarded = rules.GetGuardedPositions(Figure::White);
+    PositionList guarded = rules.GetGuardedPositions(FigureSide::White);
 
     return guarded.count() == 23;
 }
@@ -279,9 +288,9 @@ bool Tests::GetGuardedPositionsTest6()
     Board board = Board();
     Rules rules = Rules(&board);
 
-    board.AddAliveFigure(new Figure(Figure::White, Figure::Pawn, CreateFigurePosition("h7")));
+    board.AddAliveFigure(new Figure(FigureSide::White, FigureType::Pawn, CreateFigurePosition("h7")));
 
-    PositionList guarded = rules.GetGuardedPositions(Figure::White);
+    PositionList guarded = rules.GetGuardedPositions(FigureSide::White);
 
     return guarded.count() == 1;
 }
@@ -325,7 +334,7 @@ bool Tests::MoveFindingTest1()
 
     board.SetupStartPosition();
 
-    MoveList moves = rules.GetPossibleMoves(Figure::White);
+    MoveList moves = rules.GetPossibleMoves(FigureSide::White);
 
     return moves.count() == 20;
 }
@@ -347,11 +356,11 @@ bool Tests::MoveFindingTest3()
     Board board;
     Rules rules = Rules(&board);
 
-    board.AddAliveFigure(new Figure(Figure::White, Figure::King, CreateFigurePosition("d4")));
-    board.AddAliveFigure(new Figure(Figure::Black, Figure::Pawn, CreateFigurePosition("e4")));
-    board.AddAliveFigure(new Figure(Figure::Black, Figure::King, CreateFigurePosition("f4")));
+    board.AddAliveFigure(new Figure(FigureSide::White, FigureType::King, CreateFigurePosition("d4")));
+    board.AddAliveFigure(new Figure(FigureSide::Black, FigureType::Pawn, CreateFigurePosition("e4")));
+    board.AddAliveFigure(new Figure(FigureSide::Black, FigureType::King, CreateFigurePosition("f4")));
 
-    return rules.GetPossibleMoves(Figure::White).count() == 4;
+    return rules.GetPossibleMoves(FigureSide::White).count() == 4;
 }
 
 bool Tests::EnPassonTest1()
@@ -362,8 +371,8 @@ bool Tests::EnPassonTest1()
     board.SetupKings();
     board.TurnTransition(); // to black
 
-    board.AddAliveFigure(new Figure(Figure::White, Figure::Pawn, CreateFigurePosition("e5")));
-    board.AddAliveFigure(new Figure(Figure::Black, Figure::Pawn, CreateFigurePosition("d7")));
+    board.AddAliveFigure(new Figure(FigureSide::White, FigureType::Pawn, CreateFigurePosition("e5")));
+    board.AddAliveFigure(new Figure(FigureSide::Black, FigureType::Pawn, CreateFigurePosition("d7")));
 
     rules.MakeMove(CreateFigurePosition("d7"), CreateFigurePosition("d5"));
 
@@ -378,8 +387,8 @@ bool Tests::EnPassonTest2()
 
     board.SetupKings();
 
-    board.AddAliveFigure(new Figure(Figure::White, Figure::Pawn, CreateFigurePosition("e2")));
-    board.AddAliveFigure(new Figure(Figure::Black, Figure::Pawn, CreateFigurePosition("d4")));
+    board.AddAliveFigure(new Figure(FigureSide::White, FigureType::Pawn, CreateFigurePosition("e2")));
+    board.AddAliveFigure(new Figure(FigureSide::Black, FigureType::Pawn, CreateFigurePosition("d4")));
 
     rules.MakeMove(CreateFigurePosition("e2"), CreateFigurePosition("e4"));
 
@@ -404,8 +413,8 @@ bool Tests::BoardDeepCopyTest()
     Rules copyRules = Rules(&copy);
 
     // checks what figuers has been copied by value, not by reference
-    FigureList boardFigures = board.FiguresAt(Figure::White); boardFigures.append(board.FiguresAt(Figure::Black));
-    FigureList copyBoardFigures = copy.FiguresAt(Figure::White); copyBoardFigures.append(copy.FiguresAt(Figure::Black));
+    FigureList boardFigures = board.FiguresAt(FigureSide::White); boardFigures.append(board.FiguresAt(FigureSide::Black));
+    FigureList copyBoardFigures = copy.FiguresAt(FigureSide::White); copyBoardFigures.append(copy.FiguresAt(FigureSide::Black));
 
     if (boardFigures.count() != copyBoardFigures.count())
         return false;
@@ -427,10 +436,10 @@ bool Tests::BoardDeepCopyTest()
     copyRules.UnMakeMove(copy.GetLastMove());
     copyRules.UnMakeMove(copy.GetLastMove());
 
-    if ((copy.FiguresAt(Figure::White).count() + copy.FiguresAt(Figure::Black).count()) != 32)
+    if ((copy.FiguresAt(FigureSide::White).count() + copy.FiguresAt(FigureSide::Black).count()) != 32)
         return false;
 
-    if ((board.FiguresAt(Figure::White).count() + board.FiguresAt(Figure::Black).count()) != 30)
+    if ((board.FiguresAt(FigureSide::White).count() + board.FiguresAt(FigureSide::Black).count()) != 30)
         return false;
 
     // unmake all in old one
@@ -441,20 +450,20 @@ bool Tests::BoardDeepCopyTest()
     rules.UnMakeMove(board.GetLastMove());
     rules.UnMakeMove(board.GetLastMove());
 
-    if ((board.FiguresAt(Figure::White).count() + board.FiguresAt(Figure::Black).count()) != 32)
+    if ((board.FiguresAt(FigureSide::White).count() + board.FiguresAt(FigureSide::Black).count()) != 32)
         return false;
 
-    if ((copy.FiguresAt(Figure::White).count() + copy.FiguresAt(Figure::Black).count()) != 32)
+    if ((copy.FiguresAt(FigureSide::White).count() + copy.FiguresAt(FigureSide::Black).count()) != 32)
         return false;
 
     return true;
 }
 
-bool Tests::FENTest1()
+bool Tests::ToFENTest1()
 {
     Board board = Board::StartPosition();
 
-    QString fen = FEN::Evaluate(&board);
+    QString fen = FEN::Evaluate(board);
     QString rightFen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
     if (fen != rightFen)
@@ -468,14 +477,14 @@ bool Tests::FENTest1()
     return true;
 }
 
-bool Tests::FENTest2()
+bool Tests::ToFENTest2()
 {
     Board board = Board::StartPosition();
     Rules rules = Rules(&board);
 
     rules.MakeMove(CreateFigurePosition("e2"), CreateFigurePosition("e4"));
 
-    QString fen = FEN::Evaluate(&board);
+    QString fen = FEN::Evaluate(board);
     QString rightFen = "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1";
 
     if (fen != rightFen)
@@ -489,7 +498,7 @@ bool Tests::FENTest2()
     return true;
 }
 
-bool Tests::FENTest3()
+bool Tests::ToFENTest3()
 {
     Board board = Board::StartPosition();
     Rules rules = Rules(&board);
@@ -497,7 +506,7 @@ bool Tests::FENTest3()
     rules.MakeMove(CreateFigurePosition("e2"), CreateFigurePosition("e4"));
     rules.MakeMove(CreateFigurePosition("c7"), CreateFigurePosition("c5"));
 
-    QString fen = FEN::Evaluate(&board);
+    QString fen = FEN::Evaluate(board);
     QString rightFen = "rnbqkbnr/pp1ppppp/8/2p5/4P3/8/PPPP1PPP/RNBQKBNR w KQkq c6 0 2";
 
     if (fen != rightFen)
@@ -511,7 +520,7 @@ bool Tests::FENTest3()
     return true;
 }
 
-bool Tests::FENTest4()
+bool Tests::ToFENTest4()
 {
     Board board = Board::StartPosition();
     Rules rules = Rules(&board);
@@ -520,7 +529,7 @@ bool Tests::FENTest4()
     rules.MakeMove(CreateFigurePosition("c7"), CreateFigurePosition("c5"));
     rules.MakeMove(CreateFigurePosition("g1"), CreateFigurePosition("f3"));
 
-    QString fen = FEN::Evaluate(&board);
+    QString fen = FEN::Evaluate(board);
     QString rightFen = "rnbqkbnr/pp1ppppp/8/2p5/4P3/5N2/PPPP1PPP/RNBQKB1R b KQkq - 1 2";
 
     if (fen != rightFen)
@@ -534,6 +543,74 @@ bool Tests::FENTest4()
     return true;
 }
 
+//bool Tests::FromFENTest1()
+//{
+//    QString fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+//    Board board = FEN::BoardFromFEN(fen);
+//    QString evaluatedFen = FEN::Evaluate(&board);
+
+//    if (fen != evaluatedFen)
+//    {
+//        qDebug() << "   Initial   FEN:" << fen;
+//        qDebug() << "   Evaluated FEN:" << evaluatedFen;
+
+//        return false;
+//    }
+
+//    return true;
+//}
+
+//bool Tests::FromFENTest2()
+//{
+//    QString fen = "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1";
+//    Board board = FEN::BoardFromFEN(fen);
+//    QString evaluatedFen = FEN::Evaluate(&board);
+
+//    if (fen != evaluatedFen)
+//    {
+//        qDebug() << "   Initial   FEN:" << fen;
+//        qDebug() << "   Evaluated FEN:" << evaluatedFen;
+
+//        return false;
+//    }
+
+//    return true;
+//}
+
+//bool Tests::FromFENTest3()
+//{
+//    QString fen = "rnbqkbnr/pp1ppppp/8/2p5/4P3/8/PPPP1PPP/RNBQKBNR w KQkq c6 0 2";
+//    Board board = FEN::BoardFromFEN(fen);
+//    QString evaluatedFen = FEN::Evaluate(&board);
+
+//    if (fen != evaluatedFen)
+//    {
+//        qDebug() << "   Initial   FEN:" << fen;
+//        qDebug() << "   Evaluated FEN:" << evaluatedFen;
+
+//        return false;
+//    }
+
+//    return true;
+//}
+
+//bool Tests::FromFENTest4()
+//{
+//    QString fen = "rnbqkbnr/pp1ppppp/8/2p5/4P3/5N2/PPPP1PPP/RNBQKB1R b KQkq - 1 2";
+//    Board board = FEN::BoardFromFEN(fen);
+//    QString evaluatedFen = FEN::Evaluate(&board);
+
+//    if (fen != evaluatedFen)
+//    {
+//        qDebug() << "   Initial   FEN:" << fen;
+//        qDebug() << "   Evaluated FEN:" << evaluatedFen;
+
+//        return false;
+//    }
+
+//    return true;
+//}
+
 bool Tests::PerftTest1()
 {
     Board board = Board::StartPosition();
@@ -542,7 +619,7 @@ bool Tests::PerftTest1()
 
     int analyzed;
     int bestEstimation;
-    ai.NegamaxSearch(Figure::White, 1, bestEstimation, analyzed);
+    ai.NegamaxSearch(FigureSide::White, 1, bestEstimation, analyzed);
     //qDebug() << "   Analyzed:" << analized << ", best estimation:" << bestEstimation;
 
     return analyzed == 20;
@@ -556,7 +633,7 @@ bool Tests::PerftTest2()
 
     int analyzed;
     int bestEstimation;
-    ai.NegamaxSearch(Figure::White, 2, bestEstimation, analyzed);
+    ai.NegamaxSearch(FigureSide::White, 2, bestEstimation, analyzed);
     //qDebug() << "   Analyzed:" << analized << ", best estimation:" << bestEstimation;
 
     return analyzed == 400;
@@ -570,7 +647,7 @@ bool Tests::PerftTest3()
 
     int analyzed;
     int bestEstimation;
-    ai.NegamaxSearch(Figure::White, 3, bestEstimation, analyzed);
+    ai.NegamaxSearch(FigureSide::White, 3, bestEstimation, analyzed);
     //qDebug() << "   Analyzed:" << analized << ", best estimation:" << bestEstimation;
 
     return analyzed == 8902;
@@ -584,13 +661,13 @@ bool Tests::PerftTest4()
 
     int analyzed;
     int bestEstimation;
-    ai.NegamaxSearch(Figure::White, 4, bestEstimation, analyzed);
+    ai.NegamaxSearch(FigureSide::White, 4, bestEstimation, analyzed);
     //qDebug() << "   Analyzed:" << analized << ", best estimation:" << bestEstimation;
 
     return analyzed == 197281;
 }
 
-bool Tests::AlphaBetaTime1()
+bool Tests::ABFromStartD1()
 {
     Board board = Board::StartPosition();
     Rules rules = Rules(&board);
@@ -598,14 +675,14 @@ bool Tests::AlphaBetaTime1()
 
     int analyzed;
     int bestEstimation;
-    ai.BestMoveByAlphaBeta(Figure::White, 1, bestEstimation, analyzed);
+    ai.BestMoveByAlphaBeta(FigureSide::White, 1, bestEstimation, analyzed);
 
     qDebug() << "   Analyzed:" << analyzed << ", best estimation:" << bestEstimation;
 
     return true;
 }
 
-bool Tests::AlphaBetaTime2()
+bool Tests::ABFromStartD2()
 {
     Board board = Board::StartPosition();
     Rules rules = Rules(&board);
@@ -613,14 +690,14 @@ bool Tests::AlphaBetaTime2()
 
     int analyzed;
     int bestEstimation;
-    ai.BestMoveByAlphaBeta(Figure::White, 2, bestEstimation, analyzed);
+    ai.BestMoveByAlphaBeta(FigureSide::White, 2, bestEstimation, analyzed);
 
     qDebug() << "   Analyzed:" << analyzed << ", best estimation:" << bestEstimation;
 
     return true;
 }
 
-bool Tests::AlphaBetaTime3()
+bool Tests::ABFromStartD3()
 {
     Board board = Board::StartPosition();
     Rules rules = Rules(&board);
@@ -628,14 +705,14 @@ bool Tests::AlphaBetaTime3()
 
     int analyzed;
     int bestEstimation;
-    ai.BestMoveByAlphaBeta(Figure::White, 3, bestEstimation, analyzed);
+    ai.BestMoveByAlphaBeta(FigureSide::White, 3, bestEstimation, analyzed);
 
     qDebug() << "   Analyzed:" << analyzed << ", best estimation:" << bestEstimation;
 
     return true;
 }
 
-bool Tests::AlphaBetaTime4()
+bool Tests::ABFromStartD4()
 {
     Board board = Board::StartPosition();
     Rules rules = Rules(&board);
@@ -643,14 +720,14 @@ bool Tests::AlphaBetaTime4()
 
     int analyzed;
     int bestEstimation;
-    ai.BestMoveByAlphaBeta(Figure::White, 4, bestEstimation, analyzed);
+    ai.BestMoveByAlphaBeta(FigureSide::White, 4, bestEstimation, analyzed);
 
     qDebug() << "   Analyzed:" << analyzed << ", best estimation:" << bestEstimation;
 
     return true;
 }
 
-bool Tests::AlphaBetaTime5()
+bool Tests::ABFromStartD5()
 {
     Board board = Board::StartPosition();
     Rules rules = Rules(&board);
@@ -658,14 +735,44 @@ bool Tests::AlphaBetaTime5()
 
     int analyzed;
     int bestEstimation;
-    ai.BestMoveByAlphaBeta(Figure::White, 5, bestEstimation, analyzed);
+    ai.BestMoveByAlphaBeta(FigureSide::White, 5, bestEstimation, analyzed);
 
     qDebug() << "   Analyzed:" << analyzed << ", best estimation:" << bestEstimation;
 
     return true;
 }
 
-bool Tests::AlphaBetaTime5_2()
+bool Tests::ABFromStartD6()
+{
+    Board board = Board::StartPosition();
+    Rules rules = Rules(&board);
+    AI ai = AI(&board, &rules);
+
+    int analyzed;
+    int bestEstimation;
+    ai.BestMoveByAlphaBeta(FigureSide::White, 6, bestEstimation, analyzed);
+
+    qDebug() << "   Analyzed:" << analyzed << ", best estimation:" << bestEstimation;
+
+    return true;
+}
+
+bool Tests::ABFromStartD7()
+{
+    Board board = Board::StartPosition();
+    Rules rules = Rules(&board);
+    AI ai = AI(&board, &rules);
+
+    int analyzed;
+    int bestEstimation;
+    ai.BestMoveByAlphaBeta(FigureSide::White, 7, bestEstimation, analyzed);
+
+    qDebug() << "   Analyzed:" << analyzed << ", best estimation:" << bestEstimation;
+
+    return true;
+}
+
+bool Tests::ABAfter6PlyD5()
 {
     Board board = Board::StartPosition();
     Rules rules = Rules(&board);
@@ -680,42 +787,35 @@ bool Tests::AlphaBetaTime5_2()
 
     int analyzed;
     int bestEstimation;
-    ai.BestMoveByAlphaBeta(Figure::White, 5, bestEstimation, analyzed);
+    ai.BestMoveByAlphaBeta(FigureSide::White, 5, bestEstimation, analyzed);
 
     qDebug() << "   Analyzed:" << analyzed << ", best estimation:" << bestEstimation;
 
     return true;
 }
 
-bool Tests::AlphaBetaTime6()
+bool Tests::ABAfter6PlyD6()
 {
     Board board = Board::StartPosition();
     Rules rules = Rules(&board);
     AI ai = AI(&board, &rules);
 
+    rules.MakeMove(CreateFigurePosition("e2"), CreateFigurePosition("e4")); // w
+    rules.MakeMove(CreateFigurePosition("d7"), CreateFigurePosition("d5")); // b
+    rules.MakeMove(CreateFigurePosition("e4"), CreateFigurePosition("d5")); // w pawn captures b pawn
+    rules.MakeMove(CreateFigurePosition("c8"), CreateFigurePosition("e6")); // b bishop
+    rules.MakeMove(CreateFigurePosition("d2"), CreateFigurePosition("d4")); // w pawn long
+    rules.MakeMove(CreateFigurePosition("e6"), CreateFigurePosition("d5")); // b bishop captures w pawn
+
     int analyzed;
     int bestEstimation;
-    ai.BestMoveByAlphaBeta(Figure::White, 6, bestEstimation, analyzed);    
+    ai.BestMoveByAlphaBeta(FigureSide::White, 6, bestEstimation, analyzed);
 
     qDebug() << "   Analyzed:" << analyzed << ", best estimation:" << bestEstimation;
 
     return true;
 }
 
-bool Tests::AlphaBetaTime7()
-{
-    Board board = Board::StartPosition();
-    Rules rules = Rules(&board);
-    AI ai = AI(&board, &rules);
-
-    int analyzed;
-    int bestEstimation;
-    ai.BestMoveByAlphaBeta(Figure::White, 7, bestEstimation, analyzed);
-
-    qDebug() << "   Analyzed:" << analyzed << ", best estimation:" << bestEstimation;
-
-    return true;
-}
 
 bool Tests::AlphaBetaTest1()
 {
@@ -1000,7 +1100,7 @@ bool Tests::PositionCountingTest2()
     return board.GetCurrentPositionCount() == 3;
 }
 
-bool Tests::BoardSerializationTest1()
+bool Tests::BoardSerializationTest()
 {
     Board board = Board::StartPosition();
     Rules rules = Rules(&board);
@@ -1010,7 +1110,7 @@ bool Tests::BoardSerializationTest1()
     rules.MakeMove(CreateFigurePosition("e4"), CreateFigurePosition("d5"));
     rules.MakeMove(CreateFigurePosition("d8"), CreateFigurePosition("d5"));
 
-    QString boardSerializedString = BoardSerializer::Save(&board);
+    QString boardSerializedString = BoardSerializer::Save(board);
 
     Board deserializedBoard = BoardSerializer::Load(boardSerializedString);
 
@@ -1021,4 +1121,10 @@ bool Tests::BoardSerializationTest1()
     }
 
     return board.GetAllAliveFigures().count() == deserializedBoard.GetAllAliveFigures().count();
+}
+
+bool Tests::WM1()
+{
+
+    return true;
 }

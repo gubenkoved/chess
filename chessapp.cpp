@@ -1,8 +1,12 @@
+#include <QMessageBox>
+
 #include "chessapp.h"
 
 #include "fen.h"
 #include "figure.h"
 #include "lightfigureposition.h"
+#include "boardserializer.h"
+#include "exception.h"
 
 //#include <QtConcurrentRun>
 
@@ -15,6 +19,8 @@ ChessApp::ChessApp(QObject *parent)
 
     m_rules = new Rules(m_board);
     m_asyncAI = new AsyncAI(m_board);
+
+    m_aiThinking = false;
 
     connect(m_asyncAI, SIGNAL(BestMoveFinded(Move)), this, SLOT(HandleFindedBestMove(Move)), Qt::DirectConnection);
 }
@@ -31,23 +37,65 @@ void ChessApp::SetBoardControl(QObject *board)
     m_boardControl = board;
 }
 
-void ChessApp::HandleFindedBestMove(Move bestMove)
+void ChessApp::CheckForGameOver()
 {
-    qDebug() << "AI best move:" << bestMove;
+    FigureSide turningSide = m_board->GetTurningSide();
 
-    m_rules->MakeMove(bestMove.From, bestMove.To);
-
-    if (m_rules->GetPossibleMoves(Figure::White).count() == 0)
+    if (m_rules->GetPossibleMoves(turningSide).count() == 0)
     {
-        if (m_rules->IsUnderCheck(Figure::White))
+        if (m_rules->IsUnderCheck(turningSide))
         {
-            QMetaObject::invokeMethod(m_boardControl, "showNotification", Q_ARG(QVariant, "You lose"));
-            qDebug() << "You lose";
+            if (turningSide == FigureSide::White)
+            {
+                QMetaObject::invokeMethod(m_boardControl, "showNotification", Q_ARG(QVariant, "Black wins"));
+                qDebug() << "Black wins";
+            } else
+            {
+                QMetaObject::invokeMethod(m_boardControl, "showNotification", Q_ARG(QVariant, "White wins"));
+                qDebug() << "White wins";
+            }
         } else
         {
             QMetaObject::invokeMethod(m_boardControl, "showNotification", Q_ARG(QVariant, "Draw game"));
             qDebug() << "Draw game";
         }
+    }
+
+}
+
+void ChessApp::StartStepByComputer()
+{
+    if (!m_aiThinking)
+    {
+        if (m_rules->GetPossibleMoves(m_board->GetTurningSide()).count() != 0)
+        {
+            qDebug() << "Search started...";
+
+            m_asyncAI->StartBestMoveSearch(m_board->GetTurningSide(), DEPTH);
+            m_aiThinking = true;
+            m_boardChangedSinceAiStart = false;
+        } else
+        {
+            qDebug() << "There are no moves available to turning side.";
+        }
+    } else
+    {
+        qDebug() << "Computer is already thinking now...";
+    }
+}
+
+void ChessApp::HandleFindedBestMove(Move bestMove)
+{
+    qDebug() << "AI best move:" << bestMove;
+
+    if (!m_boardChangedSinceAiStart)
+    {
+        m_rules->MakeMove(bestMove.From, bestMove.To);
+
+        CheckForGameOver();
+    } else
+    {
+        qDebug() << "Board was changed since AI start.";
     }
 
     m_aiThinking = false;
@@ -96,9 +144,6 @@ bool ChessApp::IsPossibleStep(int fromX, int fromY, int toX, int toY)
     //return true;
     //qDebug() << "ChessApp::IsPossibleStep";
 
-    if (m_board->GetTurningSide() == Figure::Black) // is AI turn
-        return false;
-
     Figure* f = m_board->FigureAt(CreateFigurePosition(fromX, fromY));
 
     if (f != NULL)
@@ -118,23 +163,20 @@ void ChessApp::Step(int fromX, int fromY, int toX, int toY)
 {
     //qDebug() << "ChessApp::Step";
 
+    if (m_aiThinking)
+    {
+        m_boardChangedSinceAiStart = true;
+    }
+
     m_rules->MakeMove(CreateFigurePosition(fromX, fromY), CreateFigurePosition(toX, toY));
 
-    if (m_rules->GetPossibleMoves(Figure::Black).count() == 0)
+    FigureSide turningSide = m_board->GetTurningSide();
+
+    CheckForGameOver();
+
+    if (!m_aiThinking && m_rules->GetPossibleMoves(turningSide).count() != 0)
     {
-        if (m_rules->IsUnderCheck(Figure::Black))
-        {
-            QMetaObject::invokeMethod(m_boardControl, "showNotification", Q_ARG(QVariant, "You win!"));
-            qDebug() << "You win";
-        } else
-        {
-            QMetaObject::invokeMethod(m_boardControl, "showNotification", Q_ARG(QVariant, "Draw game"));
-            qDebug() << "Draw game";
-        }
-    } else
-    {
-        m_asyncAI->StartBestMoveSearch(m_board->GetTurningSide(), DEPTH);
-        m_aiThinking = true;
+        StartStepByComputer();
     }
 
     //QSharedPointer<Move> bestAIMove = m_ai->BestMove(m_board->GetTurningSide(), 5);
@@ -145,9 +187,9 @@ void ChessApp::Step(int fromX, int fromY, int toX, int toY)
 
 //    m_rules->MakeMove(*bestAIMove.data());
 
-//    if (m_rules->IsUnderCheck(Figure::White))
+//    if (m_rules->IsUnderCheck(FigureSide::White))
 //    {
-//        if (m_rules->GetPossibleMoves(Figure::White).count() == 0)
+//        if (m_rules->GetPossibleMoves(FigureSide::White).count() == 0)
 //        {
 //            qDebug() << "You loose";
 //        } else
@@ -187,7 +229,8 @@ void ChessApp::TurnBack()
         if (!m_board->IsHistoryEmpty())
         {
             // turn back AI move and user move
-            m_rules->UnMakeMove(m_board->GetLastMove());
+
+            //m_rules->UnMakeMove(m_board->GetLastMove());
             m_rules->UnMakeMove(m_board->GetLastMove());
         }
     }
@@ -195,5 +238,45 @@ void ChessApp::TurnBack()
 
 QString ChessApp::GetFEN()
 {
-    return FEN::Evaluate(m_board);
+    return FEN::Evaluate(*m_board);
+}
+
+QString ChessApp::BoardToString()
+{
+    //return FEN::Evaluate(*m_board);
+    return BoardSerializer::Save(*m_board);
+}
+
+void ChessApp::BoardFromString(QString s)
+{
+    qDebug() << "ChessApp::BoardFromString";
+
+    try
+    {
+        Board deserialized = BoardSerializer::Load(s);
+
+        // delete old
+        disconnect(m_asyncAI, SIGNAL(BestMoveFinded(Move)), this, SLOT(HandleFindedBestMove(Move)));
+
+        delete m_board;
+        delete m_rules;
+        delete m_asyncAI;
+
+        // create new
+        m_board = new Board(deserialized);
+        m_rules = new Rules(m_board);
+        m_asyncAI = new AsyncAI(m_board);
+
+        connect(m_asyncAI, SIGNAL(BestMoveFinded(Move)), this, SLOT(HandleFindedBestMove(Move)), Qt::DirectConnection);
+
+        //return FEN::Evaluate(*m_board);
+        //m_board
+    } catch (Exception e)
+    {
+        QMessageBox m;
+        m.setText("Error while loading...");
+        m.setInformativeText(QString::fromStdString(e.GetMessage()));
+        m.exec();
+    }
+
 }

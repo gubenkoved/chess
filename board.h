@@ -37,12 +37,12 @@ class Board
 
     //MoveList m_history;
     QStack<Move> m_history;
-    Figure::FigureSide m_turningSide;
+    FigureSide m_turningSide;
 
     FigureList m_allFigures; // contains all figures, black and white, dead and alive
     QVector<Figure*> m_aliveFiguresVector; // contains only alive figures, where key is LightFigurePosition generated unique key
-    QMap<Figure::FigureSide, FigureList> m_aliveFigures; // fast access to alive figures on side
-    QMap<Figure::FigureSide, Figure*> m_kings; // fast access to kings
+    QMap<FigureSide, FigureList> m_aliveFigures; // fast access to alive figures on side
+    QMap<FigureSide, Figure*> m_kings; // fast access to kings
 
     bool IsDead(Figure* figure) const;
     void AddDeadFigure(Figure* figure); // for deep copy
@@ -61,7 +61,7 @@ public:
     void MoveFigure(Figure* figure, POSITION newPosition);
     void KillFigure(Figure* figure);
     void ResurrectFigure(Figure* figure);
-    void PromotePawn(Figure* pawn, Figure::FigureType type);
+    void PromotePawn(Figure* pawn, FigureType type);
     void UnpromotePawn(Figure* pawn);
 
     void PushToHistory(Move move);
@@ -71,17 +71,17 @@ public:
     QStack<Move> GetMoveHistory() const;
 
     void TurnTransition();
-    Figure::FigureSide GetTurningSide() const;
+    FigureSide GetTurningSide() const;
 
     void IncreaseCurrentPositionCount();
     void DecreaseCurrentPositionCount();
     int GetCurrentPositionCount();
 
     Figure* FigureAt(POSITION position) const;
-    Figure* KingAt(Figure::FigureSide side) const;
-    FigureList FiguresAt(Figure::FigureSide side) const;
+    Figure* KingAt(FigureSide side) const;
+    FigureList FiguresAt(FigureSide side) const;
     bool HasFigureAt(POSITION position) const;
-    bool HasFigureAt(POSITION position, Figure::FigureSide side) const;
+    bool HasFigureAt(POSITION position, FigureSide side) const;
 
     int GetAfterLastCaptureOrPawnMoveHalfMoveCount() const; // returns number of halfmoves since the last pawn advance or capture
     int GetFullMoveCount() const; // returns number of the full move. It starts at 1, and is incremented after Black's move

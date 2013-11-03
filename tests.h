@@ -36,24 +36,31 @@ public:
 
     bool BoardDeepCopyTest();
 
-    bool FENTest1();
-    bool FENTest2();
-    bool FENTest3();
-    bool FENTest4();
+    bool ToFENTest1();
+    bool ToFENTest2();
+    bool ToFENTest3();
+    bool ToFENTest4();
+
+//    bool FromFENTest1();
+//    bool FromFENTest2();
+//    bool FromFENTest3();
+//    bool FromFENTest4();
 
     bool PerftTest1();
     bool PerftTest2();
     bool PerftTest3();
     bool PerftTest4();
 
-    bool AlphaBetaTime1();
-    bool AlphaBetaTime2();
-    bool AlphaBetaTime3();
-    bool AlphaBetaTime4();
-    bool AlphaBetaTime5();
-    bool AlphaBetaTime5_2();
-    bool AlphaBetaTime6();
-    bool AlphaBetaTime7();
+    bool ABFromStartD1();
+    bool ABFromStartD2();
+    bool ABFromStartD3();
+    bool ABFromStartD4();
+    bool ABFromStartD5();
+    bool ABFromStartD6();
+    bool ABFromStartD7();
+
+    bool ABAfter6PlyD5();
+    bool ABAfter6PlyD6();
 
     bool AlphaBetaTest1();
     bool AlphaBetaTest2();
@@ -68,7 +75,10 @@ public:
     bool PositionCountingTest1();
     bool PositionCountingTest2();
 
-    bool BoardSerializationTest1();
+    bool BoardSerializationTest();
+
+    // countertest for detected wrong moves
+    bool WM1();
 };
 
 #endif // TESTS_H

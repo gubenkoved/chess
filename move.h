@@ -9,20 +9,20 @@ struct Move;
 
 typedef QList<Move> MoveList;
 
+enum MoveType
+{
+    Normal, // just move from one to another position
+    Capture, // capture enemy figure
+    LongPawn, // first pawn long step
+    LongCastling, // long castling
+    ShortCastling, // short castling
+    EnPassant, // one pawn takes another, when it steps through trapped cell
+    PawnPromotion, // when pawn reaches enemy home horizon
+    Invalid // when default constructor used
+};
+
 struct Move
 {
-    enum MoveType
-    {
-        Normal, // just move from one to another position
-        Capture, // capture enemy figure
-        LongPawn, // first pawn long step
-        LongCastling, // long castling
-        ShortCastling, // short castling
-        EnPassant, // one pawn takes another, when it steps through trapped cell
-        PawnPromotion, // when pawn reaches enemy home horizon
-        Invalid // when default constructor used
-    };
-
 #ifdef QT_DEBUG
     //QString m_stringRep;
 #endif

@@ -73,4 +73,5 @@ HEADERS += \
     helpers.h
 
 OTHER_FILES += \
-    ToDo.txt
+    ToDo.txt \
+    wrong-moves.txt
