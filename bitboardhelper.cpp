@@ -1,4 +1,5 @@
 #include "bitboardhelper.h"
+#include "lightfigureposition.h"
 
 PositionCollection BitBoardHelper::GetPositions(BITBOARD bitboard)
 {
@@ -14,3 +15,14 @@ PositionCollection BitBoardHelper::GetPositions(BITBOARD bitboard)
 
     return positions;
 }
+
+BITBOARD BitBoardHelper::FromPosition(POSITION p)
+{
+    return 1 << PositionHelper::Serial(p);
+}
+
+BITBOARD BitBoardHelper::AddPosition(BITBOARD bitboard, POSITION p)
+{
+    return bitboard | (1 << PositionHelper::Serial(p));
+}
+
