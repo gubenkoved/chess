@@ -61,6 +61,7 @@ class Rules
     // EXAMPLE: function runned with xMult = 0, yMult = 1 and lenLimit = 2 (...,0,1,2) returns
     // pawn first move possibilities;
     PositionList GetOnLinePositions(POSITION position, FigureSide side, int xMult, int yMult, int lenLimit) const;
+    BITBOARD GetOnLinePositions2(POSITION position, FigureSide side, int xMult, int yMult, int lenLimit) const;
 
     // Returns positions that fuarded for specified figure.
     // Position is guarded when figure can kill another figure on that position.
@@ -73,6 +74,18 @@ class Rules
     PositionList GetKingGuardedPositions    (Figure* figure) const;
 
     PositionList GetGuardedPositions(FigureSide side) const;
+
+    // Bitboard implementation
+
+    BITBOARD GetGuardedPositions2        (Figure* figure) const;
+    BITBOARD GetPawnGuardedPositions2    (Figure* figure) const;
+    BITBOARD GetKinghtGuardedPositions2  (Figure* figure) const;
+    BITBOARD GetBishopGuardedPositions2  (Figure* figure) const;
+    BITBOARD GetRockGuardedPositions2    (Figure* figure) const;
+    BITBOARD GetQueenGuardedPositions2   (Figure* figure) const;
+    BITBOARD GetKingGuardedPositions2    (Figure* figure) const;
+
+    BITBOARD GetGuardedPositions2(FigureSide side) const;
 public:
     Rules(Board* board);
 

@@ -22,7 +22,7 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
         Tests tests;
         tests.TestAll();
 
-        //return 0;
+        return 0;
 
         QScopedPointer<QApplication> application(createApplication(argc, argv));
 

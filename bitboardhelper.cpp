@@ -1,28 +1,40 @@
 #include "bitboardhelper.h"
+#include "typedefs.h"
 #include "lightfigureposition.h"
 
-PositionCollection BitBoardHelper::GetPositions(BITBOARD bitboard)
-{
-    PositionCollection positions;
+//PositionCollection BitboardHelper::GetPositions(BITBOARD bitboard)
+//{
+//    PositionCollection positions;
 
-    for(int idx = 0; i < 64; ++i)
-    {
-        if (bitboard && (1 << idx))
-        {
-            positions.append(FromSerial(idx));
-        }
-    }
+//    for(int idx = 0; idx < 64; ++idx)
+//    {
+//        if (bitboard && (1ULL << idx))
+//        {
+//            positions.append(PositionHelper::FromSerial(idx));
+//        }
+//    }
 
-    return positions;
-}
+//    return positions;
+//}
 
-BITBOARD BitBoardHelper::FromPosition(POSITION p)
-{
-    return 1 << PositionHelper::Serial(p);
-}
+//BITBOARD BitboardHelper::AddPosition(BITBOARD bitboard, POSITION p)
+//{
+//    return bitboard | (1ULL << PositionHelper::Serial(p));
+//}
 
-BITBOARD BitBoardHelper::AddPosition(BITBOARD bitboard, POSITION p)
-{
-    return bitboard | (1 << PositionHelper::Serial(p));
-}
+//BITBOARD BitboardHelper::AddPositionWhenValid(BITBOARD bitboard, POSITION p)
+//{
+//    if (!PositionHelper::IsInvalid(p))
+//    {
+//        return bitboard | (1ULL << PositionHelper::Serial(p));
+//    } else
+//    {
+//        return bitboard;
+//    }
+//}
+
+//BITBOARD BitboardHelper::Union(BITBOARD bitboard1, BITBOARD bitboard2)
+//{
+//    return bitboard1 | bitboard2;
+//}
 

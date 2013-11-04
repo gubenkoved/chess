@@ -13,7 +13,8 @@ typedef signed short SHORT;
 typedef int INT32;
 typedef bool BOOL;
 
-typedef unsigned long long BITBOARD;
+//typedef unsigned long long BITBOARD;
+typedef unsigned __int64 BITBOARD;
 
 // Complex types
 

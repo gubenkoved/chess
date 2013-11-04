@@ -1,7 +1,10 @@
 #include <algorithm>
+
 #include "rules.h"
+#include "typedefs.h"
 #include "exception.h"
 #include "helpers.h"
+#include "bitboardhelper.h"
 
 Rules::Rules(Board *board)
     :m_board(board)
@@ -38,6 +41,38 @@ PositionList Rules::GetOnLinePositions(POSITION position, FigureSide side, int x
     return guarded;
 }
 
+BITBOARD Rules::GetOnLinePositions2(POSITION position, FigureSide side, int xMult, int yMult, int lenLimit = 7) const
+{
+#ifdef QT_DEBUG
+    if (xMult != -1 && xMult != 0 && xMult != 1 || yMult != -1 && yMult != 0 && yMult != 1)
+    {
+        throw Exception("Only {-1, 0, 1} values are valid for x and y mult");
+    }
+#endif
+
+    BITBOARD bitboard = BITBOARD_EMPTY;
+
+    for (int delta = 1; delta <= lenLimit; ++delta)
+    {
+        POSITION p = ForwardFor(position, side, delta * xMult, delta * yMult);
+
+        if (!PositionHelper::IsInvalid(p))
+        {
+            bitboard = BitboardHelper::AddPosition(bitboard, p);
+
+            if (m_board->FigureAt(p) != NULL) // obstacle
+            {
+                break;
+            }
+        } else
+        {
+            break;
+        }
+    }
+
+    return bitboard;
+}
+
 PositionList Rules::GetPawnGuardedPositions(Figure *figure) const
 {
     POSITION p = figure->Position;
@@ -49,6 +84,27 @@ PositionList Rules::GetPawnGuardedPositions(Figure *figure) const
     Helpers::AppendIfValid(guarded, ForwardFor(p, side, -1, +1));
 
     return guarded;
+}
+
+BITBOARD Rules::GetPawnGuardedPositions2(Figure *figure) const
+{
+    POSITION p = figure->Position;
+    FigureSide side = figure->Side;
+    INT32 x = PositionHelper::X(p);
+
+    BITBOARD bitboard = BITBOARD_EMPTY;
+
+    if (x >= 2)
+    {
+        bitboard = BitboardHelper::AddPosition(bitboard, ForwardFor(p, side, -1, +1));
+    }
+
+    if (x <= 7)
+    {
+        bitboard = BitboardHelper::AddPosition(bitboard, ForwardFor(p, side, +1, +1));
+    }
+
+    return bitboard;
 }
 
 PositionList Rules::GetKinghtGuardedPositions(Figure *figure) const
@@ -71,6 +127,25 @@ PositionList Rules::GetKinghtGuardedPositions(Figure *figure) const
     return guarded;
 }
 
+BITBOARD Rules::GetKinghtGuardedPositions2(Figure *figure) const
+{
+    POSITION p = figure->Position;
+
+    BITBOARD bitboard = BITBOARD_EMPTY;
+
+    bitboard = BitboardHelper::AddPositionWhenValid(bitboard, PositionHelper::Shift(p, +2, +1));
+    bitboard = BitboardHelper::AddPositionWhenValid(bitboard, PositionHelper::Shift(p, +1, +2));
+    bitboard = BitboardHelper::AddPositionWhenValid(bitboard, PositionHelper::Shift(p, -1, +2));
+    bitboard = BitboardHelper::AddPositionWhenValid(bitboard, PositionHelper::Shift(p, -2, +1));
+
+    bitboard = BitboardHelper::AddPositionWhenValid(bitboard, PositionHelper::Shift(p, -2, -1));
+    bitboard = BitboardHelper::AddPositionWhenValid(bitboard, PositionHelper::Shift(p, -1, -2));
+    bitboard = BitboardHelper::AddPositionWhenValid(bitboard, PositionHelper::Shift(p, +1, -2));
+    bitboard = BitboardHelper::AddPositionWhenValid(bitboard, PositionHelper::Shift(p, +2, -1));
+
+    return bitboard;
+}
+
 PositionList Rules::GetBishopGuardedPositions(Figure *figure) const
 {
     POSITION p = figure->Position;
@@ -78,12 +153,28 @@ PositionList Rules::GetBishopGuardedPositions(Figure *figure) const
 
     PositionList guarded;
 
-    Helpers::AppendIfValid(guarded, GetOnLinePositions(p, side, +1, +1, 7)); // forward-right
-    Helpers::AppendIfValid(guarded, GetOnLinePositions(p, side, +1, -1, 7)); // backward-right
-    Helpers::AppendIfValid(guarded, GetOnLinePositions(p, side, -1, +1, 7)); // forawrd-left
-    Helpers::AppendIfValid(guarded, GetOnLinePositions(p, side, -1, -1, 7)); // forward-right
+    guarded.append(GetOnLinePositions(p, side, +1, +1, 7)); // forward-right
+    guarded.append(GetOnLinePositions(p, side, +1, -1, 7)); // backward-right
+    guarded.append(GetOnLinePositions(p, side, -1, +1, 7)); // forawrd-left
+    guarded.append(GetOnLinePositions(p, side, -1, -1, 7)); // forward-right
 
     return guarded;
+}
+
+BITBOARD Rules::GetBishopGuardedPositions2(Figure *figure) const
+{
+    POSITION p = figure->Position;
+    FigureSide side = figure->Side;
+
+    BITBOARD bitboard = BITBOARD_EMPTY;
+
+    //bitboard = BitBoardHelper::AddPositionWhenValid(bitboard, )
+    bitboard = BitboardHelper::Union(bitboard, GetOnLinePositions2(p, side, +1, +1, 7));
+    bitboard = BitboardHelper::Union(bitboard, GetOnLinePositions2(p, side, +1, -1, 7));
+    bitboard = BitboardHelper::Union(bitboard, GetOnLinePositions2(p, side, -1, +1, 7));
+    bitboard = BitboardHelper::Union(bitboard, GetOnLinePositions2(p, side, -1, -1, 7));
+
+    return bitboard;
 }
 
 PositionList Rules::GetRockGuardedPositions(Figure *figure) const
@@ -93,12 +184,27 @@ PositionList Rules::GetRockGuardedPositions(Figure *figure) const
 
     PositionList guarded;
 
-    Helpers::AppendIfValid(guarded, GetOnLinePositions(p, side, +1, 0, 7)); // right
-    Helpers::AppendIfValid(guarded, GetOnLinePositions(p, side, -1, 0, 7)); // left
-    Helpers::AppendIfValid(guarded, GetOnLinePositions(p, side, 0, +1, 7)); // forward
-    Helpers::AppendIfValid(guarded, GetOnLinePositions(p, side, 0, -1, 7)); // backward
+    guarded.append(GetOnLinePositions(p, side, +1, 0, 7)); // right
+    guarded.append(GetOnLinePositions(p, side, -1, 0, 7)); // left
+    guarded.append(GetOnLinePositions(p, side, 0, +1, 7)); // forward
+    guarded.append(GetOnLinePositions(p, side, 0, -1, 7)); // backward
 
     return guarded;
+}
+
+BITBOARD Rules::GetRockGuardedPositions2(Figure *figure) const
+{
+    POSITION p = figure->Position;
+    FigureSide side = figure->Side;
+
+    BITBOARD bitboard = BITBOARD_EMPTY;
+
+    bitboard = BitboardHelper::Union(bitboard, GetOnLinePositions2(p, side, +1, 0, 7));
+    bitboard = BitboardHelper::Union(bitboard, GetOnLinePositions2(p, side, -1, 0, 7));
+    bitboard = BitboardHelper::Union(bitboard, GetOnLinePositions2(p, side, 0, +1, 7));
+    bitboard = BitboardHelper::Union(bitboard, GetOnLinePositions2(p, side, 0, -1, 7));
+
+    return bitboard;
 }
 
 PositionList Rules::GetQueenGuardedPositions(Figure *figure) const
@@ -108,16 +214,36 @@ PositionList Rules::GetQueenGuardedPositions(Figure *figure) const
 
     PositionList guarded;
 
-    Helpers::AppendIfValid(guarded, GetOnLinePositions(p, side, +1, +1, 7)); // forward-right
-    Helpers::AppendIfValid(guarded, GetOnLinePositions(p, side, +1, -1, 7)); // backward-right
-    Helpers::AppendIfValid(guarded, GetOnLinePositions(p, side, -1, +1, 7)); // forawrd-left
-    Helpers::AppendIfValid(guarded, GetOnLinePositions(p, side, -1, -1, 7)); // forward-right
-    Helpers::AppendIfValid(guarded, GetOnLinePositions(p, side, +1, 0, 7)); // right
-    Helpers::AppendIfValid(guarded, GetOnLinePositions(p, side, -1, 0, 7)); // left
-    Helpers::AppendIfValid(guarded, GetOnLinePositions(p, side, 0, +1, 7)); // forward
-    Helpers::AppendIfValid(guarded, GetOnLinePositions(p, side, 0, -1, 7)); // backward
+    guarded.append(GetOnLinePositions(p, side, +1, +1, 7)); // forward-right
+    guarded.append(GetOnLinePositions(p, side, +1, -1, 7)); // backward-right
+    guarded.append(GetOnLinePositions(p, side, -1, +1, 7)); // forawrd-left
+    guarded.append(GetOnLinePositions(p, side, -1, -1, 7)); // forward-right
+    guarded.append(GetOnLinePositions(p, side, +1, 0, 7)); // right
+    guarded.append(GetOnLinePositions(p, side, -1, 0, 7)); // left
+    guarded.append(GetOnLinePositions(p, side, 0, +1, 7)); // forward
+    guarded.append(GetOnLinePositions(p, side, 0, -1, 7)); // backward
 
     return guarded;
+}
+
+BITBOARD Rules::GetQueenGuardedPositions2(Figure *figure) const
+{
+    POSITION p = figure->Position;
+    FigureSide side = figure->Side;
+
+    BITBOARD bitboard = BITBOARD_EMPTY;
+
+    bitboard = BitboardHelper::Union(bitboard, GetOnLinePositions2(p, side, +1, 0, 7));
+    bitboard = BitboardHelper::Union(bitboard, GetOnLinePositions2(p, side, -1, 0, 7));
+    bitboard = BitboardHelper::Union(bitboard, GetOnLinePositions2(p, side, 0, +1, 7));
+    bitboard = BitboardHelper::Union(bitboard, GetOnLinePositions2(p, side, 0, -1, 7));
+
+    bitboard = BitboardHelper::Union(bitboard, GetOnLinePositions2(p, side, +1, +1, 7));
+    bitboard = BitboardHelper::Union(bitboard, GetOnLinePositions2(p, side, +1, -1, 7));
+    bitboard = BitboardHelper::Union(bitboard, GetOnLinePositions2(p, side, -1, +1, 7));
+    bitboard = BitboardHelper::Union(bitboard, GetOnLinePositions2(p, side, -1, -1, 7));
+
+    return bitboard;
 }
 
 PositionList Rules::GetKingGuardedPositions(Figure *figure) const
@@ -137,6 +263,24 @@ PositionList Rules::GetKingGuardedPositions(Figure *figure) const
     Helpers::AppendIfValid(guarded, ForwardFor(p, side, 0, -1)); // backward
 
     return guarded;
+}
+
+BITBOARD Rules::GetKingGuardedPositions2(Figure *figure) const
+{
+    POSITION p = figure->Position;
+    BITBOARD bitboard = BITBOARD_EMPTY;
+
+    bitboard = BitboardHelper::AddPosition(bitboard, PositionHelper::Shift(p, +1, +1));
+    bitboard = BitboardHelper::AddPosition(bitboard, PositionHelper::Shift(p, +1, -1));
+    bitboard = BitboardHelper::AddPosition(bitboard, PositionHelper::Shift(p, -1, +1));
+    bitboard = BitboardHelper::AddPosition(bitboard, PositionHelper::Shift(p, -1, -1));
+
+    bitboard = BitboardHelper::AddPosition(bitboard, PositionHelper::Shift(p, +1, 0));
+    bitboard = BitboardHelper::AddPosition(bitboard, PositionHelper::Shift(p, -1, 0));
+    bitboard = BitboardHelper::AddPosition(bitboard, PositionHelper::Shift(p, 0, +1));
+    bitboard = BitboardHelper::AddPosition(bitboard, PositionHelper::Shift(p, 0, -1));
+
+    return bitboard;
 }
 
 bool Rules::IsUnderCheck(FigureSide side) const
@@ -161,6 +305,21 @@ PositionList Rules::GetGuardedPositions(Figure *figure) const
         case FigureType::Rock:      return GetRockGuardedPositions(figure);
         case FigureType::Queen:     return GetQueenGuardedPositions(figure);
         case FigureType::King:      return GetKingGuardedPositions(figure);
+
+        default: throw Exception("Unknown figure type");
+    }
+}
+
+BITBOARD Rules::GetGuardedPositions2(Figure *figure) const
+{
+    switch (figure->Type)
+    {
+        case FigureType::Pawn:      return GetPawnGuardedPositions2(figure);
+        case FigureType::Knight:    return GetKinghtGuardedPositions2(figure);
+        case FigureType::Bishop:    return GetBishopGuardedPositions2(figure);
+        case FigureType::Rock:      return GetRockGuardedPositions2(figure);
+        case FigureType::Queen:     return GetQueenGuardedPositions2(figure);
+        case FigureType::King:      return GetKingGuardedPositions2(figure);
 
         default: throw Exception("Unknown figure type");
     }
@@ -601,6 +760,20 @@ PositionList Rules::GetGuardedPositions(FigureSide side) const
     }
 
     return guarded;
+}
+
+BITBOARD Rules::GetGuardedPositions2(FigureSide side) const
+{
+    FigureList figures = m_board->FiguresAt(side);
+
+    BITBOARD bitboard = BITBOARD_EMPTY;
+
+    foreach(Figure* figure, figures)
+    {
+        bitboard = BitboardHelper::Union(bitboard, GetGuardedPositions2(figure));
+    }
+
+    return bitboard;
 }
 
 MoveCollection Rules::GetPossibleMoves(FigureSide side)
