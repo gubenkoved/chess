@@ -3,6 +3,7 @@
 
 #include <QList>
 
+#include "typedefs.h"
 #include "board.h"
 #include "move.h"
 #include "lightfigureposition.h"
@@ -24,7 +25,7 @@ class Rules
     // DeleteMovesToCheck
     // -------------------
     // Function erases all moves which causes check to turning player
-    MoveList &DeleteMovesToCheck(MoveList &moves);
+    MoveCollection &DeleteMovesToCheck(MoveCollection &moves);
     // NOTE: ...PossibleDestinations function family returns NOT FULLY VALID destination yet!
     // because it SHOULD BE filtered by DeleteMovesToCheck and DeleteSelfCaptureDesination functions
     // to avoid moves, that causes check to turning side and self-capture turns
@@ -42,7 +43,7 @@ class Rules
 
     // GetOnLinePositions function
     // ---------------------------
-    // This is some code optimization written because many of figures can be described in general manner.
+    // This function was written because many of figures can be described in general manner.
     // e.g.
     //  - bishop can guard in 4 diagonal lines (forward-right, forward-left, backward-right, backward-left) to
     //     the end of board, and guard line interrupted by obstacle (figure)
@@ -60,22 +61,32 @@ class Rules
     // EXAMPLE: function runned with xMult = 0, yMult = 1 and lenLimit = 2 (...,0,1,2) returns
     // pawn first move possibilities;
     PositionList GetOnLinePositions(POSITION position, FigureSide side, int xMult, int yMult, int lenLimit) const;
-    PositionList GetGuardedPositions(Figure* figure) const;
-    PositionList GetPawnGuardedPositions(Figure* figure) const;
-    PositionList GetKinghtGuardedPositions(Figure* figure) const;
-    PositionList GetBishopGuardedPositions(Figure* figure) const;
-    PositionList GetRockGuardedPositions(Figure* figure) const;
-    PositionList GetQueenGuardedPositions(Figure* figure) const;
-    PositionList GetKingGuardedPositions(Figure* figure) const;    
+
+    // Returns positions that fuarded for specified figure.
+    // Position is guarded when figure can kill another figure on that position.
+    PositionList GetGuardedPositions        (Figure* figure) const;
+    PositionList GetPawnGuardedPositions    (Figure* figure) const;
+    PositionList GetKinghtGuardedPositions  (Figure* figure) const;
+    PositionList GetBishopGuardedPositions  (Figure* figure) const;
+    PositionList GetRockGuardedPositions    (Figure* figure) const;
+    PositionList GetQueenGuardedPositions   (Figure* figure) const;
+    PositionList GetKingGuardedPositions    (Figure* figure) const;
+
+    PositionList GetGuardedPositions(FigureSide side) const;
 public:
     Rules(Board* board);
 
     FigureSide OpponentSide(FigureSide side) const;
     int FirstHorizonatalYFor(FigureSide side) const;
 
-    PositionList GetGuardedPositions(FigureSide side) const;
-    MoveList GetPossibleMoves(FigureSide side);
-    MoveList GetPossibleMoves(Figure* figure);
+    MoveCollection GetPossibleMoves(FigureSide side);
+
+    // !! USE IN GUI ONLY !!
+    // Very slow: evaluates possible moves for all figures and then extrude it for specified figure
+    MoveCollection GetPossibleMoves(Figure* figure);
+
+    // !! USE IN GUI ONLY !!
+    // Very slow: evaluates possible destination for all figures and then extrude it for specified figure
     PositionList GetPossibleDestinations(Figure* figure);
 
     bool IsUnderCheck(FigureSide side) const;
@@ -84,6 +95,8 @@ public:
     void MakeMove(Move move);
     void MakeMove(POSITION from, POSITION to);
     void UnMakeMove(Move move);
+
+    friend class Tests;
 };
 
 #endif // RULES_H

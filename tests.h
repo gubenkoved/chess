@@ -59,6 +59,7 @@ public:
     bool ABFromStartD6();
     bool ABFromStartD7();
 
+    bool ABAfter6PlyD4();
     bool ABAfter6PlyD5();
     bool ABAfter6PlyD6();
 

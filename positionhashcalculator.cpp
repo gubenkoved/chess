@@ -10,7 +10,7 @@ PositionHash PositionHashCalculator::Calculate(Board* board)
 
     foreach (Figure* figure, board->GetAllAliveFigures())
     {
-        hash.replace(Serial(figure->Position) - 1, 1, FEN::GetFigureChar(*figure));
+        hash.replace(PositionHelper::Serial(figure->Position) - 1, 1, FEN::GetFigureChar(*figure));
     }
 
     return hash;
@@ -27,5 +27,5 @@ void PositionHashCalculator::Update(PositionHash &hash, Board *board, POSITION p
         newChar = FEN::GetFigureChar(*figureAtPosition);
     }
 
-    hash.replace(Serial(position) - 1, 1, newChar);
+    hash.replace(PositionHelper::Serial(position) - 1, 1, newChar);
 }

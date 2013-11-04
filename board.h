@@ -7,13 +7,11 @@
 #include <QPair>
 #include <QStack>
 
+#include "typedefs.h"
 #include "lightfigureposition.h"
 #include "figure.h"
 #include "move.h"
 #include "positionhashcalculator.h"
-
-typedef QList<Figure*> FigureList;
-
 
 // Board representation:
 //      _______________

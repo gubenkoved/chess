@@ -1,13 +1,9 @@
 #ifndef MOVE_H
 #define MOVE_H
 
-#include <vector>
+#include "typedefs.h"
 #include "figure.h"
 #include "lightfigureposition.h"
-
-struct Move;
-
-typedef QList<Move> MoveList;
 
 enum MoveType
 {
@@ -48,8 +44,8 @@ inline QDebug operator<<(QDebug debug, const Move& m)
     debug << "Move("
         << m.MovingFigure->GetName().toStdString().c_str()
         << m.GetTypeName() << "turn from"
-        << ToString(m.From) << "to"
-        << ToString(m.To) << ")";
+        << PositionHelper::ToString(m.From) << "to"
+        << PositionHelper::ToString(m.To) << ")";
 
     return debug;
 }

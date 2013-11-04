@@ -93,7 +93,7 @@ android-no-sdk {
         target = $$replace(target, /, \\)
         target ~= s,\\\\\\.?\\\\,\\,
         !isEqual(source,$$target) {
-            !isEmpty(copyCommand):copyCommand += &&
+            !isEmptPositionHelper::y(copyCommand):copyCommand += &&
             isEqual(QMAKE_DIR_SEP, \\) {
                 copyCommand += $(COPY_DIR) \"$$source\" \"$$target\"
             } else {
@@ -104,7 +104,7 @@ android-no-sdk {
             }
         }
     }
-    !isEmpty(copyCommand) {
+    !isEmptPositionHelper::y(copyCommand) {
         copyCommand = @echo Copying application data... && $$copyCommand
         copydeploymentfolders.commands = $$copyCommand
         first.depends = $(first) copydeploymentfolders
@@ -138,12 +138,12 @@ android-no-sdk {
             targetFullPath = $$target/$$last(sourcePathSegments)
             targetFullPath ~= s,/\\.?/,/,
             !isEqual(source,$$targetFullPath) {
-                !isEmpty(copyCommand):copyCommand += &&
+                !isEmptPositionHelper::y(copyCommand):copyCommand += &&
                 copyCommand += $(MKDIR) \"$$target\"
                 copyCommand += && $(COPY_DIR) \"$$source\" \"$$target\"
             }
         }
-        !isEmpty(copyCommand) {
+        !isEmptPositionHelper::y(copyCommand) {
             copyCommand = @echo Copying application data... && $$copyCommand
             copydeploymentfolders.commands = $$copyCommand
             first.depends = $(first) copydeploymentfolders

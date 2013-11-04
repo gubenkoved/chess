@@ -32,13 +32,14 @@ void AI::InitStaticFigurePositionEstimations()
     {
         for (int y = 1; y <= 8; ++y)
         {
-            POSITION position = CreateFigurePosition(x, y);
+            POSITION position = PositionHelper::Create(x, y);
             for (int figureTypeValue = 0; figureTypeValue < FIGURE_COUNT; ++figureTypeValue)
             {
-                FigureType figureType = (FigureType)figureTypeValue;
+                FigureType figureType = (FigureType)figureTypeValue;                
+                int serial = PositionHelper::Serial(position);
 
-                m_staticFigurePositionEstimation[(int)FigureSide::White][figureTypeValue][Serial(position)] = CalculateFigurePositionEstimation(figureType, position, FigureSide::White);
-                m_staticFigurePositionEstimation[(int)FigureSide::Black][figureTypeValue][Serial(position)] = CalculateFigurePositionEstimation(figureType, position, FigureSide::Black);
+                m_staticFigurePositionEstimation[(int)FigureSide::White][figureTypeValue][serial] = CalculateFigurePositionEstimation(figureType, position, FigureSide::White);
+                m_staticFigurePositionEstimation[(int)FigureSide::Black][figureTypeValue][serial] = CalculateFigurePositionEstimation(figureType, position, FigureSide::Black);
             }
         }
     }
@@ -46,7 +47,7 @@ void AI::InitStaticFigurePositionEstimations()
 
 int AI::GetFigurePositionEstimation(FigureType type, POSITION position, FigureSide side)
 {
-    return m_staticFigurePositionEstimation[(int)side][(int)type][Serial(position)];
+    return m_staticFigurePositionEstimation[(int)side][(int)type][PositionHelper::Serial(position)];
 }
 
 
@@ -57,9 +58,9 @@ int AI::GetFigureWeight(FigureType type)
         case FigureType::Pawn:
             return 100;
         case FigureType::Bishop:
-            return 300;
+            return 350;
         case FigureType::Knight:
-            return 300;
+            return 330;
         case FigureType::Rock:
             return 600;
         case FigureType::Queen:
@@ -75,8 +76,8 @@ int AI::CalculateFigurePositionEstimation(FigureType type, POSITION position, Fi
 {
     int homeHorizontal = (side == FigureSide::White ? 1 : 8);
 
-    int x = X(position);
-    int y = Y(position);
+    int x = PositionHelper::X(position);
+    int y = PositionHelper::Y(position);
 
     float center = 4.5f;
 
@@ -146,7 +147,7 @@ int AI::Negamax(FigureSide side, int depth, int& analyzed)
         return GetRelativeEstimationFor(side);
     }
 
-    MoveList possibleMoves = m_rules->GetPossibleMoves(side);
+    MoveCollection possibleMoves = m_rules->GetPossibleMoves(side);
 
     if (possibleMoves.count() == 0) // is terminal node
         return GetTerminalPositionEstimation(side, depth);
@@ -175,7 +176,7 @@ int AI::Negamax(FigureSide side, int depth, int& analyzed)
 // Negamax search initializer
 Move AI::NegamaxSearch(FigureSide side, int depth, int& bestEstimation, int& analyzed)
 {
-    MoveList possibleMoves = m_rules->GetPossibleMoves(side);
+    MoveCollection possibleMoves = m_rules->GetPossibleMoves(side);
 
     Move bestMove;
     bestEstimation = -INT_MAX;
@@ -278,7 +279,7 @@ int AI::AlphaBetaNegamax(FigureSide side, int depth, int alpha, int beta, int& a
         return GetRelativeEstimationFor(side);
     }
 
-    MoveList possibleMoves = m_rules->GetPossibleMoves(side);
+    MoveCollection possibleMoves = m_rules->GetPossibleMoves(side);
     int possibleMovesCount = possibleMoves.count();
 
     QVector<PrioritizedMove> prioritizedMoves(possibleMovesCount);

@@ -11,7 +11,7 @@ Figure::Figure(FigureSide side, FigureType type, POSITION position)
 
 Figure::Figure(FigureSide side, FigureType type, std::string position)
 {
-    Position = CreateFigurePosition(position);
+    Position = PositionHelper::FromString(position);
     Side = side;
     Type = type;
     MovesCount = 0;

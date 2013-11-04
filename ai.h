@@ -33,7 +33,7 @@ private:
 
     // Stores position estimations for each figure in each possible position.
     // Usage example:
-    // m_staticFigurePositionEstimation[FigureSide::White][FigureType::/1][Serial(CreateFigurePosition(1, 1))]
+    // m_staticFigurePositionEstimation[FigureSide::White][FigureType::/1][Serial(PositionHelper::CreateFigurePosition(1, 1))]
     static int m_staticFigurePositionEstimation[SIDE_COUNT][FIGURE_COUNT][8 * 8];
     static void InitStaticFigurePositionEstimations();
 

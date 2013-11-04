@@ -38,7 +38,7 @@ Figure FEN::FigureFromChar(QChar c)
 
     side = (lc == c) ? FigureSide::Black : FigureSide::White;
 
-    return Figure(side, type, CreateFigurePosition(0, 0));
+    return Figure(side, type, PositionHelper::Create(0, 0));
 }
 
 QString FEN::Evaluate(const Board& board)
@@ -51,7 +51,7 @@ QString FEN::Evaluate(const Board& board)
         int emptyCounter = 0;
         for (int x = 1; x <= 8; ++x)
         {
-            POSITION p = CreateFigurePosition(x, y);
+            POSITION p = PositionHelper::Create(x, y);
             Figure* figure = board.FigureAt(p);
 
             if (figure != NULL)
@@ -93,8 +93,8 @@ QString FEN::Evaluate(const Board& board)
 
     // white
     Figure* wKing = board.KingAt(FigureSide::White);
-    Figure* wRock = board.FigureAt(CreateFigurePosition(8, 1));
-    Figure* wlRock = board.FigureAt(CreateFigurePosition(1, 1));
+    Figure* wRock = board.FigureAt(PositionHelper::Create(8, 1));
+    Figure* wlRock = board.FigureAt(PositionHelper::Create(1, 1));
     // short white castling
     if (wKing->MovesCount == 0 && wRock != NULL && wRock->MovesCount == 0)
     {
@@ -110,8 +110,8 @@ QString FEN::Evaluate(const Board& board)
 
     // black
     Figure* bKing = board.KingAt(FigureSide::Black);
-    Figure* bRock = board.FigureAt(CreateFigurePosition(8, 8));
-    Figure* blRock = board.FigureAt(CreateFigurePosition(1, 8));
+    Figure* bRock = board.FigureAt(PositionHelper::Create(8, 8));
+    Figure* blRock = board.FigureAt(PositionHelper::Create(1, 8));
     // short black castling
     if (bKing->MovesCount == 0 && bRock != NULL && bRock->MovesCount == 0)
     {
@@ -138,7 +138,10 @@ QString FEN::Evaluate(const Board& board)
 
         if (lastMove.Type == MoveType::LongPawn)
         {
-            fen += ToString(CreateFigurePosition(X(lastMove.From), Y(lastMove.From) + (side == FigureSide::White ? 1 : -1)));
+            fen += PositionHelper::ToString(
+                        PositionHelper::Create(
+                            PositionHelper::X(lastMove.From),
+                            PositionHelper::Y(lastMove.From) + (side == FigureSide::White ? 1 : -1)));
         } else
         {
             fen += '-';
@@ -202,7 +205,7 @@ QString FEN::Evaluate(const Board& board)
 //            } else
 //            {
 //                Figure f = FigureFromChar(c);
-//                f.Position = CreateFigurePosition(x, y);
+//                f.Position = PositionHelper::CreateFigurePosition(x, y);
 
 //                ++x; // go to next cell
 

@@ -113,7 +113,7 @@ void ChessApp::Draw()
     {
         for (int y = 1; y <= 8; ++y)
         {            
-            POSITION p = CreateFigurePosition(x, y);
+            POSITION p = PositionHelper::Create(x, y);
 
             Figure* f = m_board->FigureAt(p);
             QString text = f != NULL ? QString(f->GetUnicodeChessChar()) : "";
@@ -129,14 +129,14 @@ void ChessApp::Draw()
         POSITION from = lastMove.From;
         POSITION to = lastMove.To;
 
-        QMetaObject::invokeMethod(m_boardControl, "setCellColor", Q_ARG(QVariant, X(from)), Q_ARG(QVariant, Y(from)), Q_ARG(QVariant, "Orange"));
-        QMetaObject::invokeMethod(m_boardControl, "setCellColor", Q_ARG(QVariant, X(to)), Q_ARG(QVariant, Y(to)), Q_ARG(QVariant, "Orange"));
+        QMetaObject::invokeMethod(m_boardControl, "setCellColor", Q_ARG(QVariant, PositionHelper::X(from)), Q_ARG(QVariant, PositionHelper::Y(from)), Q_ARG(QVariant, "Orange"));
+        QMetaObject::invokeMethod(m_boardControl, "setCellColor", Q_ARG(QVariant, PositionHelper::X(to)), Q_ARG(QVariant, PositionHelper::Y(to)), Q_ARG(QVariant, "Orange"));
     }
 }
 
 bool ChessApp::IsFigureCell(int x, int y)
 {
-    return m_board->FigureAt(CreateFigurePosition(x,y)) != NULL;
+    return m_board->FigureAt(PositionHelper::Create(x,y)) != NULL;
 }
 
 bool ChessApp::IsPossibleStep(int fromX, int fromY, int toX, int toY)
@@ -144,7 +144,7 @@ bool ChessApp::IsPossibleStep(int fromX, int fromY, int toX, int toY)
     //return true;
     //qDebug() << "ChessApp::IsPossibleStep";
 
-    Figure* f = m_board->FigureAt(CreateFigurePosition(fromX, fromY));
+    Figure* f = m_board->FigureAt(PositionHelper::Create(fromX, fromY));
 
     if (f != NULL)
     {
@@ -152,7 +152,7 @@ bool ChessApp::IsPossibleStep(int fromX, int fromY, int toX, int toY)
 
         //qDebug() << positions << positions.contains(LightFigurePosition(toX, toY));
 
-        return positions.contains(CreateFigurePosition(toX, toY));
+        return positions.contains(PositionHelper::Create(toX, toY));
     } else
     {
         return false;
@@ -168,7 +168,7 @@ void ChessApp::Step(int fromX, int fromY, int toX, int toY)
         m_boardChangedSinceAiStart = true;
     }
 
-    m_rules->MakeMove(CreateFigurePosition(fromX, fromY), CreateFigurePosition(toX, toY));
+    m_rules->MakeMove(PositionHelper::Create(fromX, fromY), PositionHelper::Create(toX, toY));
 
     FigureSide turningSide = m_board->GetTurningSide();
 
@@ -205,7 +205,7 @@ QVariantList ChessApp::GetPossible(int x, int y)
 
     QVariantList lst;
 
-    Figure* f = m_board->FigureAt(CreateFigurePosition(x, y));
+    Figure* f = m_board->FigureAt(PositionHelper::Create(x, y));
 
     if (f != NULL)
     {        
@@ -213,7 +213,7 @@ QVariantList ChessApp::GetPossible(int x, int y)
 
         foreach(POSITION p, positions)
         {                                    
-            lst << QVariant(X(p)) << QVariant(Y(p));
+            lst << QVariant(PositionHelper::X(p)) << QVariant(PositionHelper::Y(p));
         }
     }
 

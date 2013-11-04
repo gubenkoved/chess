@@ -21,7 +21,7 @@ PositionList Rules::GetOnLinePositions(POSITION position, FigureSide side, int x
     {
         POSITION p = ForwardFor(position, side, delta * xMult, delta * yMult);
 
-        if (!IsInvalid(p))
+        if (!PositionHelper::IsInvalid(p))
         {
             guarded.append(p);
 
@@ -45,8 +45,8 @@ PositionList Rules::GetPawnGuardedPositions(Figure *figure) const
 
     PositionList guarded;
 
-    guarded.append(GetOnLinePositions(p, side, +1, +1, 1));
-    guarded.append(GetOnLinePositions(p, side, -1, +1, 1));
+    Helpers::AppendIfValid(guarded, ForwardFor(p, side, +1, +1));
+    Helpers::AppendIfValid(guarded, ForwardFor(p, side, -1, +1));
 
     return guarded;
 }
@@ -127,14 +127,14 @@ PositionList Rules::GetKingGuardedPositions(Figure *figure) const
 
     PositionList guarded;
 
-    Helpers::AppendIfValid(guarded, GetOnLinePositions(p, side, +1, +1, 1)); // forward-right
-    Helpers::AppendIfValid(guarded, GetOnLinePositions(p, side, +1, -1, 1)); // backward-right
-    Helpers::AppendIfValid(guarded, GetOnLinePositions(p, side, -1, +1, 1)); // forawrd-left
-    Helpers::AppendIfValid(guarded, GetOnLinePositions(p, side, -1, -1, 1)); // forward-right
-    Helpers::AppendIfValid(guarded, GetOnLinePositions(p, side, +1, 0, 1)); // right
-    Helpers::AppendIfValid(guarded, GetOnLinePositions(p, side, -1, 0, 1)); // left
-    Helpers::AppendIfValid(guarded, GetOnLinePositions(p, side, 0, +1, 1)); // forward
-    Helpers::AppendIfValid(guarded, GetOnLinePositions(p, side, 0, -1, 1)); // backward
+    Helpers::AppendIfValid(guarded, ForwardFor(p, side, +1, +1)); // forward-right
+    Helpers::AppendIfValid(guarded, ForwardFor(p, side, +1, -1)); // backward-right
+    Helpers::AppendIfValid(guarded, ForwardFor(p, side, -1, +1)); // forawrd-left
+    Helpers::AppendIfValid(guarded, ForwardFor(p, side, -1, -1)); // forward-right
+    Helpers::AppendIfValid(guarded, ForwardFor(p, side, +1, 0)); // right
+    Helpers::AppendIfValid(guarded, ForwardFor(p, side, -1, 0)); // left
+    Helpers::AppendIfValid(guarded, ForwardFor(p, side, 0, +1)); // forward
+    Helpers::AppendIfValid(guarded, ForwardFor(p, side, 0, -1)); // backward
 
     return guarded;
 }
@@ -155,28 +155,22 @@ PositionList Rules::GetGuardedPositions(Figure *figure) const
 {
     switch (figure->Type)
     {
-        case FigureType::Pawn:
-            return GetPawnGuardedPositions(figure);
-        case FigureType::Knight:
-            return GetKinghtGuardedPositions(figure);
-        case FigureType::Bishop:
-            return GetBishopGuardedPositions(figure);
-        case FigureType::Rock:
-            return GetRockGuardedPositions(figure);
-        case FigureType::Queen:
-            return GetQueenGuardedPositions(figure);
-        case FigureType::King:
-            return GetKingGuardedPositions(figure);
-        default:
-            throw Exception("Unknown figure type");
+        case FigureType::Pawn:      return GetPawnGuardedPositions(figure);
+        case FigureType::Knight:    return GetKinghtGuardedPositions(figure);
+        case FigureType::Bishop:    return GetBishopGuardedPositions(figure);
+        case FigureType::Rock:      return GetRockGuardedPositions(figure);
+        case FigureType::Queen:     return GetQueenGuardedPositions(figure);
+        case FigureType::King:      return GetKingGuardedPositions(figure);
+
+        default: throw Exception("Unknown figure type");
     }
 }
 
 POSITION Rules::ForwardFor(POSITION position, FigureSide side, int dx, int dy) const
 {    
     return side == FigureSide::White ?
-                Shift(position, dx, dy)
-              : Shift(position, dx, -dy);
+                PositionHelper::Shift(position, dx, dy)
+              : PositionHelper::Shift(position, dx, -dy);
 }
 
 int Rules::FirstHorizonatalYFor(FigureSide side) const
@@ -214,7 +208,7 @@ Figure* Rules::GetObstacleInDirection(POSITION position, FigureSide side, int xM
     {
         POSITION p = ForwardFor(position, side, delta * xMult, delta * yMult);
 
-        if (!IsInvalid(p))
+        if (!PositionHelper::IsInvalid(p))
         {
             Figure* figure = m_board->FigureAt(p);
 
@@ -237,7 +231,6 @@ bool Rules::IsUnderCheckFastImpl(FigureSide side) const
 
     // checks for knight threat
     QVarLengthArray<POSITION> knightCheckPositions;
-    knightCheckPositions.reserve(8); // to speed up
 
     Helpers::AppendIfValid(knightCheckPositions, ForwardFor(p, side, +2, +1));
     Helpers::AppendIfValid(knightCheckPositions, ForwardFor(p, side, +1, +2));
@@ -278,8 +271,8 @@ bool Rules::IsUnderCheckFastImpl(FigureSide side) const
                 return true;
             } else if (figure->Type == FigureType::King)
             {
-                int dx = abs(X(p) - X(figure->Position));
-                int dy = abs(Y(p) - Y(figure->Position));
+                int dx = abs(PositionHelper::X(p) - PositionHelper::X(figure->Position));
+                int dy = abs(PositionHelper::Y(p) - PositionHelper::Y(figure->Position));
 
                 bool isNeighbor = std::max(dx, dy) == 1;
 
@@ -314,16 +307,16 @@ bool Rules::IsUnderCheckFastImpl(FigureSide side) const
             }
             else if (figure->Type == FigureType::Pawn)
             {
-                bool isPawnForwardByOne = (Y(figure->Position) - Y(p)) == (side == FigureSide::White ? 1 : -1);
+                bool isPawnForwardByOne = (PositionHelper::Y(figure->Position) - PositionHelper::Y(p)) == (side == FigureSide::White ? 1 : -1);
 
-                if (isPawnForwardByOne && abs(X(figure->Position) - X(p)) == 1)
+                if (isPawnForwardByOne && abs(PositionHelper::X(figure->Position) - PositionHelper::X(p)) == 1)
                 {
                     return true;
                 }
             } else if (figure->Type == FigureType::King)
             {
-                int dx = abs(X(p) - X(figure->Position));
-                int dy = abs(Y(p) - Y(figure->Position));
+                int dx = abs(PositionHelper::X(p) - PositionHelper::X(figure->Position));
+                int dy = abs(PositionHelper::Y(p) - PositionHelper::Y(figure->Position));
 
                 bool isNeighbor = std::max(dx, dy) == 1;
 
@@ -345,9 +338,9 @@ FigureSide Rules::OpponentSide(FigureSide side) const
               : FigureSide::White;
 }
 
-MoveList& Rules::DeleteMovesToCheck(MoveList& moves)
+MoveCollection& Rules::DeleteMovesToCheck(MoveCollection& moves)
 {
-    MoveList::iterator it = moves.begin();
+    MoveCollection::iterator it = moves.begin();
 
     while (it != moves.end())
     {
@@ -408,11 +401,16 @@ PositionList Rules::_GetPossibleDestinations(Figure *figure) const
 void Rules::DeleteSelfCaptureDesination(PositionList *destinations, FigureSide selfSide) const
 {
     PositionList::iterator it = destinations->begin();
-    while (it != destinations->end()) {        
+    while (it != destinations->end())
+    {
         if (m_board->HasFigureAt(*it, selfSide)) // if same side figure here
+        {
             it = destinations->erase(it); // erase it
+        }
         else
+        {
             ++it;
+        }
     }
 }
 
@@ -453,15 +451,15 @@ PositionList Rules::_GetPawnPossibleDestinations(Figure *figure) const
     // can be only on 5 horizontal for white, and only on 4 for black side
     // also en passant can be only immediately after opponent crossing pawn guarded cell
     int enPassantY = EnPassantPawnYFor(figure->Side);
-    int figureX = X(figure->Position);
-    if (Y(figure->Position) == enPassantY)
+    int figureX = PositionHelper::X(figure->Position);
+    if (PositionHelper::Y(figure->Position) == enPassantY)
     {
         Move opponentLastMove = m_board->GetLastMove();
 
         if (opponentLastMove.Type == MoveType::LongPawn)
         {
             POSITION opponentStartPawnPosition = opponentLastMove.From;
-            int opponentPawnX = X(opponentStartPawnPosition);
+            int opponentPawnX = PositionHelper::X(opponentStartPawnPosition);
             FigureSide opponentSide = OpponentSide(figure->Side);
 
             if (opponentPawnX == figureX + 1 || opponentPawnX == figureX - 1)
@@ -506,9 +504,9 @@ PositionList Rules::_GetKingPossibleDestinations(Figure *king) const
     POSITION currentKingPosition = king->Position;
 
     // check for short castling
-    POSITION r1 = Shift(king->Position, 1, 0);
-    POSITION r2 = Shift(king->Position, 2, 0);
-    Figure* rRock = m_board->FigureAt(CreateFigurePosition(8,FirstHorizonatalYFor(king->Side)));
+    POSITION r1 = PositionHelper::Shift(king->Position, 1, 0);
+    POSITION r2 = PositionHelper::Shift(king->Position, 2, 0);
+    Figure* rRock = m_board->FigureAt(PositionHelper::Create(8,FirstHorizonatalYFor(king->Side)));
 
     if (king->MovesCount == 0
             && rRock != NULL
@@ -523,10 +521,10 @@ PositionList Rules::_GetKingPossibleDestinations(Figure *king) const
     }
 
     // long castling checks
-    POSITION l1 = Shift(king->Position, -1, 0);
-    POSITION l2 = Shift(king->Position, -2, 0);
-    POSITION l3 = Shift(king->Position, -3, 0);
-    Figure* lRock = m_board->FigureAt(CreateFigurePosition(1, FirstHorizonatalYFor(king->Side)));
+    POSITION l1 = PositionHelper::Shift(king->Position, -1, 0);
+    POSITION l2 = PositionHelper::Shift(king->Position, -2, 0);
+    POSITION l3 = PositionHelper::Shift(king->Position, -3, 0);
+    Figure* lRock = m_board->FigureAt(PositionHelper::Create(1, FirstHorizonatalYFor(king->Side)));
 
     if (king->MovesCount == 0
             && lRock != NULL
@@ -553,26 +551,26 @@ Move Rules::CreateMove(POSITION from, POSITION to)
     FigureType figureType = figure->Type;
 
     // long king step -> castling
-    if (figureType == FigureType::King && abs(X(to) - X(from)) == 2)
+    if (figureType == FigureType::King && abs(PositionHelper::X(to) - PositionHelper::X(from)) == 2)
     {
-        if (X(to) > X(from))
+        if (PositionHelper::X(to) > PositionHelper::X(from))
             moveType = MoveType::ShortCastling;
         else
             moveType = MoveType::LongCastling;
     }
     // long pawn turn handling
-    else if (figureType == FigureType::Pawn && abs(Y(to) - Y(from)) == 2)
+    else if (figureType == FigureType::Pawn && abs(PositionHelper::Y(to) - PositionHelper::Y(from)) == 2)
     {
         moveType = MoveType::LongPawn;
     }
     // pawn's position x changing and target cell is empty -> en passant
-    else if (figureType == FigureType::Pawn && !m_board->HasFigureAt(to) && X(to) != X(from))
+    else if (figureType == FigureType::Pawn && !m_board->HasFigureAt(to) && PositionHelper::X(to) != PositionHelper::X(from))
     {
         moveType = MoveType::EnPassant;
         captured = m_board->FigureAt(ForwardFor(to, figure->Side, 0, -1));
     }
     // pawn promote
-    else if (figureType == FigureType::Pawn && Y(to) == PawnPromotionYFor(figure->Side))
+    else if (figureType == FigureType::Pawn && PositionHelper::Y(to) == PawnPromotionYFor(figure->Side))
     {
         moveType = MoveType::PawnPromotion;
     } else // only Normal and Capture turns
@@ -605,10 +603,10 @@ PositionList Rules::GetGuardedPositions(FigureSide side) const
     return guarded;
 }
 
-MoveList Rules::GetPossibleMoves(FigureSide side)
+MoveCollection Rules::GetPossibleMoves(FigureSide side)
 {
     FigureList figures = m_board->FiguresAt(side);
-    MoveList moves;
+    MoveCollection moves;
 
     if (m_board->GetTurningSide() != side)
     {
@@ -632,18 +630,22 @@ MoveList Rules::GetPossibleMoves(FigureSide side)
     return moves;
 }
 
-MoveList Rules::GetPossibleMoves(Figure *figure)
+MoveCollection Rules::GetPossibleMoves(Figure *figure)
 {
-    MoveList moves = GetPossibleMoves(figure->Side);
+    MoveCollection moves = GetPossibleMoves(figure->Side);
 
-    MoveList::iterator it = moves.begin();
+    MoveCollection::iterator it = moves.begin();
 
     while (it != moves.end())
     {
         if ((*it).MovingFigure != figure)
+        {
             it = moves.erase(it);
+        }
         else
+        {
             ++it;
+        }
     }
 
     return moves;
@@ -651,7 +653,7 @@ MoveList Rules::GetPossibleMoves(Figure *figure)
 
 PositionList Rules::GetPossibleDestinations(Figure *figure)
 {
-    MoveList moves = GetPossibleMoves(figure);
+    MoveCollection moves = GetPossibleMoves(figure);
     PositionList destinations;
 
     foreach(const Move& move, moves)
@@ -682,7 +684,7 @@ void Rules::MakeMove(Move move)
     // if castling move accordingly rock
     if (move.IsCastling())
     {
-        int y = Y(move.MovingFigure->Position);
+        int y = PositionHelper::Y(move.MovingFigure->Position);
         int rockBeforeCastlingX;
         int rockAfterCastringX;
 
@@ -696,10 +698,10 @@ void Rules::MakeMove(Move move)
             rockAfterCastringX = 4;
         }
 
-        Figure* rock = m_board->FigureAt(CreateFigurePosition(rockBeforeCastlingX, y));
+        Figure* rock = m_board->FigureAt(PositionHelper::Create(rockBeforeCastlingX, y));
 
         // move rock
-        m_board->MoveFigure(rock, CreateFigurePosition(rockAfterCastringX, y));
+        m_board->MoveFigure(rock, PositionHelper::Create(rockAfterCastringX, y));
     } else if (move.Type == MoveType::PawnPromotion)
     {
         m_board->PromotePawn(move.MovingFigure, FigureType::Queen);
@@ -718,7 +720,7 @@ void Rules::MakeMove(POSITION from, POSITION to)
 
     if (f != NULL)
     {
-        MoveList possible = GetPossibleMoves(f);
+        MoveCollection possible = GetPossibleMoves(f);
         bool isValidMove = false;
 
         foreach(const Move& move, possible)
@@ -734,7 +736,7 @@ void Rules::MakeMove(POSITION from, POSITION to)
         if (!isValidMove)
         {
             // if we get were then move not finded
-            throw Exception(QString("Move from %1 to %2 is incorrect.").arg(ToString(from), ToString(to)).toStdString());
+            throw Exception(QString("Move from %1 to %2 is incorrect.").arg(PositionHelper::ToString(from), PositionHelper::ToString(to)).toStdString());
         }
     } else
     {
@@ -765,10 +767,10 @@ void Rules::UnMakeMove(Move move)
         m_board->ResurrectFigure(move.CapturedFigure);
     }    
 
-    // if castling move accordingly rock
+    // if castling move rock back
     if (move.IsCastling())
     {
-        int y = Y(move.MovingFigure->Position);
+        int y = PositionHelper::Y(move.MovingFigure->Position);
         int rockBeforeCastlingX;
         int rockAfterCastringX;
 
@@ -782,10 +784,10 @@ void Rules::UnMakeMove(Move move)
             rockAfterCastringX = 4;
         }
 
-        Figure* rock = m_board->FigureAt(CreateFigurePosition(rockAfterCastringX, y));
+        Figure* rock = m_board->FigureAt(PositionHelper::Create(rockAfterCastringX, y));
 
         // move rock
-        m_board->MoveFigure(rock, CreateFigurePosition(rockBeforeCastlingX, y));
+        m_board->MoveFigure(rock, PositionHelper::Create(rockBeforeCastlingX, y));
     } else if (move.Type == MoveType::PawnPromotion)
     {
         m_board->UnpromotePawn(move.MovingFigure);

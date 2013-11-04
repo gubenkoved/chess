@@ -72,11 +72,13 @@ void Tests::TestAll()
     TEST_EXPAND(ABFromStartD1)
     TEST_EXPAND(ABFromStartD2)
     TEST_EXPAND(ABFromStartD3)
-    //TEST_EXPAND(ABFromStartD4)
+    TEST_EXPAND(ABFromStartD4)
     //TEST_EXPAND(ABFromStartD5)
     //TEST_EXPAND(ABFromStartD6)
 
-    //TEST_EXPAND(ABAfter6PlyD5)
+
+    TEST_EXPAND(ABAfter6PlyD4)
+    TEST_EXPAND(ABAfter6PlyD5)
     //TEST_EXPAND(ABAfter6PlyD6)
 
     TEST_EXPAND(AlphaBetaTest1)
@@ -162,33 +164,33 @@ bool Tests::TestIt(QString str, bool (Tests::*method)(void))
 
 bool Tests::TestFigurePosition1()
 {
-    POSITION p = CreateFigurePosition("a1");
+    POSITION p = PositionHelper::FromString("a1");
 
-    return X(p) == 1 && Y(p) == 1;
+    return PositionHelper::X(p) == 1 && PositionHelper::Y(p) == 1;
 }
 bool Tests::TestFigurePosition2()
 {
-    POSITION p = CreateFigurePosition("h8");
+    POSITION p = PositionHelper::FromString("h8");
 
-    return X(p) == 8 && Y(p) == 8;
+    return PositionHelper::X(p) == 8 && PositionHelper::Y(p) == 8;
 }
 bool Tests::TestFigurePosition3()
 {
-    POSITION p = CreateFigurePosition("e2");
+    POSITION p = PositionHelper::FromString("e2");
 
-    return X(p) == 5 && Y(p) == 2;
+    return PositionHelper::X(p) == 5 && PositionHelper::Y(p) == 2;
 }
 bool Tests::TestFigurePosition4()
 {
-    POSITION p = CreateFigurePosition("a0");
+    POSITION p = PositionHelper::FromString("a0");
 
-    return IsInvalid(p);
+    return PositionHelper::IsInvalid(p);
 }
 bool Tests::TestFigurePosition5()
 {
-    POSITION p = CreateFigurePosition("h9");
+    POSITION p = PositionHelper::FromString("h9");
 
-     return IsInvalid(p);
+     return PositionHelper::IsInvalid(p);
 }
 
 bool Tests::BoardStartPositionTest()
@@ -201,7 +203,7 @@ bool Tests::BoardStartPositionTest()
     {
         for(int y = 1; y <= 8; ++y)
         {
-            POSITION pos = CreateFigurePosition(x, y);
+            POSITION pos = PositionHelper::Create(x, y);
             Figure* figure = board.FigureAt(pos);
 
             if (figure != NULL)
@@ -255,7 +257,7 @@ bool Tests::GetGuardedPositionsTest3()
     Board board = Board();
     Rules rules = Rules(&board);
 
-    board.AddAliveFigure(new Figure(FigureSide::White, FigureType::Knight, CreateFigurePosition("e5")));
+    board.AddAliveFigure(new Figure(FigureSide::White, FigureType::Knight, PositionHelper::FromString("e5")));
 
     PositionList guarded = rules.GetGuardedPositions(FigureSide::White);
 
@@ -266,7 +268,7 @@ bool Tests::GetGuardedPositionsTest4()
     Board board = Board();
     Rules rules = Rules(&board);
 
-    board.AddAliveFigure(new Figure(FigureSide::White, FigureType::Rock, CreateFigurePosition("e4")));
+    board.AddAliveFigure(new Figure(FigureSide::White, FigureType::Rock, PositionHelper::FromString("e4")));
 
     PositionList guarded = rules.GetGuardedPositions(FigureSide::White);
 
@@ -277,7 +279,7 @@ bool Tests::GetGuardedPositionsTest5()
     Board board = Board();
     Rules rules = Rules(&board);
 
-    board.AddAliveFigure(new Figure(FigureSide::White, FigureType::Queen, CreateFigurePosition("b2")));
+    board.AddAliveFigure(new Figure(FigureSide::White, FigureType::Queen, PositionHelper::FromString("b2")));
 
     PositionList guarded = rules.GetGuardedPositions(FigureSide::White);
 
@@ -288,7 +290,7 @@ bool Tests::GetGuardedPositionsTest6()
     Board board = Board();
     Rules rules = Rules(&board);
 
-    board.AddAliveFigure(new Figure(FigureSide::White, FigureType::Pawn, CreateFigurePosition("h7")));
+    board.AddAliveFigure(new Figure(FigureSide::White, FigureType::Pawn, PositionHelper::FromString("h7")));
 
     PositionList guarded = rules.GetGuardedPositions(FigureSide::White);
 
@@ -301,10 +303,10 @@ bool Tests::MoveFigureTest()
 
     board.SetupStartPosition();
 
-    Figure* pawn = board.FigureAt(CreateFigurePosition("e2"));
-    board.MoveFigure(pawn, CreateFigurePosition("e4"));
+    Figure* pawn = board.FigureAt(PositionHelper::FromString("e2"));
+    board.MoveFigure(pawn, PositionHelper::FromString("e4"));
 
-    return board.FigureAt(CreateFigurePosition("e4")) == pawn;
+    return board.FigureAt(PositionHelper::FromString("e4")) == pawn;
 }
 
 bool Tests::MakeMoveTest1()
@@ -314,11 +316,11 @@ bool Tests::MakeMoveTest1()
 
     board.SetupStartPosition();
 
-    Figure* pawn = board.FigureAt(CreateFigurePosition("e2"));
+    Figure* pawn = board.FigureAt(PositionHelper::FromString("e2"));
 
-    rules.MakeMove(CreateFigurePosition("e2"), CreateFigurePosition("e4"));
+    rules.MakeMove(PositionHelper::FromString("e2"), PositionHelper::FromString("e4"));
 
-    return board.FigureAt(CreateFigurePosition("e4")) == pawn;
+    return board.FigureAt(PositionHelper::FromString("e4")) == pawn;
 }
 
 bool Tests::MakeMoveTest2()
@@ -334,7 +336,7 @@ bool Tests::MoveFindingTest1()
 
     board.SetupStartPosition();
 
-    MoveList moves = rules.GetPossibleMoves(FigureSide::White);
+    MoveCollection moves = rules.GetPossibleMoves(FigureSide::White);
 
     return moves.count() == 20;
 }
@@ -344,11 +346,11 @@ bool Tests::MoveFindingTest2()
     Board board = Board::StartPosition();
     Rules rules = Rules(&board);
 
-    MoveList moves = rules.GetPossibleMoves(board.FigureAt(CreateFigurePosition("e2")));
+    MoveCollection moves = rules.GetPossibleMoves(board.FigureAt(PositionHelper::FromString("e2")));
 
     return moves.count() == 2
-            && moves[0].To == CreateFigurePosition("e3")
-            && moves[1].To == CreateFigurePosition("e4");
+            && moves[0].To == PositionHelper::FromString("e3")
+            && moves[1].To == PositionHelper::FromString("e4");
 }
 
 bool Tests::MoveFindingTest3()
@@ -356,9 +358,9 @@ bool Tests::MoveFindingTest3()
     Board board;
     Rules rules = Rules(&board);
 
-    board.AddAliveFigure(new Figure(FigureSide::White, FigureType::King, CreateFigurePosition("d4")));
-    board.AddAliveFigure(new Figure(FigureSide::Black, FigureType::Pawn, CreateFigurePosition("e4")));
-    board.AddAliveFigure(new Figure(FigureSide::Black, FigureType::King, CreateFigurePosition("f4")));
+    board.AddAliveFigure(new Figure(FigureSide::White, FigureType::King, PositionHelper::FromString("d4")));
+    board.AddAliveFigure(new Figure(FigureSide::Black, FigureType::Pawn, PositionHelper::FromString("e4")));
+    board.AddAliveFigure(new Figure(FigureSide::Black, FigureType::King, PositionHelper::FromString("f4")));
 
     return rules.GetPossibleMoves(FigureSide::White).count() == 4;
 }
@@ -371,13 +373,13 @@ bool Tests::EnPassonTest1()
     board.SetupKings();
     board.TurnTransition(); // to black
 
-    board.AddAliveFigure(new Figure(FigureSide::White, FigureType::Pawn, CreateFigurePosition("e5")));
-    board.AddAliveFigure(new Figure(FigureSide::Black, FigureType::Pawn, CreateFigurePosition("d7")));
+    board.AddAliveFigure(new Figure(FigureSide::White, FigureType::Pawn, PositionHelper::FromString("e5")));
+    board.AddAliveFigure(new Figure(FigureSide::Black, FigureType::Pawn, PositionHelper::FromString("d7")));
 
-    rules.MakeMove(CreateFigurePosition("d7"), CreateFigurePosition("d5"));
+    rules.MakeMove(PositionHelper::FromString("d7"), PositionHelper::FromString("d5"));
 
     // check for enPasson availability
-    return rules.GetPossibleDestinations(board.FigureAt(CreateFigurePosition("e5"))).contains(CreateFigurePosition("d6"));
+    return rules.GetPossibleDestinations(board.FigureAt(PositionHelper::FromString("e5"))).contains(PositionHelper::FromString("d6"));
 }
 
 bool Tests::EnPassonTest2()
@@ -387,13 +389,13 @@ bool Tests::EnPassonTest2()
 
     board.SetupKings();
 
-    board.AddAliveFigure(new Figure(FigureSide::White, FigureType::Pawn, CreateFigurePosition("e2")));
-    board.AddAliveFigure(new Figure(FigureSide::Black, FigureType::Pawn, CreateFigurePosition("d4")));
+    board.AddAliveFigure(new Figure(FigureSide::White, FigureType::Pawn, PositionHelper::FromString("e2")));
+    board.AddAliveFigure(new Figure(FigureSide::Black, FigureType::Pawn, PositionHelper::FromString("d4")));
 
-    rules.MakeMove(CreateFigurePosition("e2"), CreateFigurePosition("e4"));
+    rules.MakeMove(PositionHelper::FromString("e2"), PositionHelper::FromString("e4"));
 
     // check for enPasson availability
-    return rules.GetPossibleDestinations(board.FigureAt(CreateFigurePosition("d4"))).contains(CreateFigurePosition("e3"));
+    return rules.GetPossibleDestinations(board.FigureAt(PositionHelper::FromString("d4"))).contains(PositionHelper::FromString("e3"));
 }
 
 bool Tests::BoardDeepCopyTest()
@@ -401,12 +403,12 @@ bool Tests::BoardDeepCopyTest()
     Board board = Board::StartPosition();
     Rules rules = Rules(&board);
 
-    rules.MakeMove(CreateFigurePosition("e2"), CreateFigurePosition("e4")); // w
-    rules.MakeMove(CreateFigurePosition("d7"), CreateFigurePosition("d5")); // b
-    rules.MakeMove(CreateFigurePosition("e4"), CreateFigurePosition("d5")); // w pawn captures b pawn
-    rules.MakeMove(CreateFigurePosition("c8"), CreateFigurePosition("e6")); // b bishop
-    rules.MakeMove(CreateFigurePosition("d2"), CreateFigurePosition("d4")); // w pawn long
-    rules.MakeMove(CreateFigurePosition("e6"), CreateFigurePosition("d5")); // b bishop captures w pawn
+    rules.MakeMove(PositionHelper::FromString("e2"), PositionHelper::FromString("e4")); // w
+    rules.MakeMove(PositionHelper::FromString("d7"), PositionHelper::FromString("d5")); // b
+    rules.MakeMove(PositionHelper::FromString("e4"), PositionHelper::FromString("d5")); // w pawn captures b pawn
+    rules.MakeMove(PositionHelper::FromString("c8"), PositionHelper::FromString("e6")); // b bishop
+    rules.MakeMove(PositionHelper::FromString("d2"), PositionHelper::FromString("d4")); // w pawn long
+    rules.MakeMove(PositionHelper::FromString("e6"), PositionHelper::FromString("d5")); // b bishop captures w pawn
     // white's turn
 
     Board copy = Board(board);
@@ -482,7 +484,7 @@ bool Tests::ToFENTest2()
     Board board = Board::StartPosition();
     Rules rules = Rules(&board);
 
-    rules.MakeMove(CreateFigurePosition("e2"), CreateFigurePosition("e4"));
+    rules.MakeMove(PositionHelper::FromString("e2"), PositionHelper::FromString("e4"));
 
     QString fen = FEN::Evaluate(board);
     QString rightFen = "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1";
@@ -503,8 +505,8 @@ bool Tests::ToFENTest3()
     Board board = Board::StartPosition();
     Rules rules = Rules(&board);
 
-    rules.MakeMove(CreateFigurePosition("e2"), CreateFigurePosition("e4"));
-    rules.MakeMove(CreateFigurePosition("c7"), CreateFigurePosition("c5"));
+    rules.MakeMove(PositionHelper::FromString("e2"), PositionHelper::FromString("e4"));
+    rules.MakeMove(PositionHelper::FromString("c7"), PositionHelper::FromString("c5"));
 
     QString fen = FEN::Evaluate(board);
     QString rightFen = "rnbqkbnr/pp1ppppp/8/2p5/4P3/8/PPPP1PPP/RNBQKBNR w KQkq c6 0 2";
@@ -525,9 +527,9 @@ bool Tests::ToFENTest4()
     Board board = Board::StartPosition();
     Rules rules = Rules(&board);
 
-    rules.MakeMove(CreateFigurePosition("e2"), CreateFigurePosition("e4"));
-    rules.MakeMove(CreateFigurePosition("c7"), CreateFigurePosition("c5"));
-    rules.MakeMove(CreateFigurePosition("g1"), CreateFigurePosition("f3"));
+    rules.MakeMove(PositionHelper::FromString("e2"), PositionHelper::FromString("e4"));
+    rules.MakeMove(PositionHelper::FromString("c7"), PositionHelper::FromString("c5"));
+    rules.MakeMove(PositionHelper::FromString("g1"), PositionHelper::FromString("f3"));
 
     QString fen = FEN::Evaluate(board);
     QString rightFen = "rnbqkbnr/pp1ppppp/8/2p5/4P3/5N2/PPPP1PPP/RNBQKB1R b KQkq - 1 2";
@@ -772,18 +774,40 @@ bool Tests::ABFromStartD7()
     return true;
 }
 
+bool Tests::ABAfter6PlyD4()
+{
+    Board board = Board::StartPosition();
+    Rules rules = Rules(&board);
+    AI ai = AI(&board, &rules);
+
+    rules.MakeMove(PositionHelper::FromString("e2"), PositionHelper::FromString("e4")); // w
+    rules.MakeMove(PositionHelper::FromString("d7"), PositionHelper::FromString("d5")); // b
+    rules.MakeMove(PositionHelper::FromString("e4"), PositionHelper::FromString("d5")); // w pawn captures b pawn
+    rules.MakeMove(PositionHelper::FromString("c8"), PositionHelper::FromString("e6")); // b bishop
+    rules.MakeMove(PositionHelper::FromString("d2"), PositionHelper::FromString("d4")); // w pawn long
+    rules.MakeMove(PositionHelper::FromString("e6"), PositionHelper::FromString("d5")); // b bishop captures w pawn
+
+    int analyzed;
+    int bestEstimation;
+    ai.BestMoveByAlphaBeta(FigureSide::White, 4, bestEstimation, analyzed);
+
+    qDebug() << "   Analyzed:" << analyzed << ", best estimation:" << bestEstimation;
+
+    return true;
+}
+
 bool Tests::ABAfter6PlyD5()
 {
     Board board = Board::StartPosition();
     Rules rules = Rules(&board);
     AI ai = AI(&board, &rules);
 
-    rules.MakeMove(CreateFigurePosition("e2"), CreateFigurePosition("e4")); // w
-    rules.MakeMove(CreateFigurePosition("d7"), CreateFigurePosition("d5")); // b
-    rules.MakeMove(CreateFigurePosition("e4"), CreateFigurePosition("d5")); // w pawn captures b pawn
-    rules.MakeMove(CreateFigurePosition("c8"), CreateFigurePosition("e6")); // b bishop
-    rules.MakeMove(CreateFigurePosition("d2"), CreateFigurePosition("d4")); // w pawn long
-    rules.MakeMove(CreateFigurePosition("e6"), CreateFigurePosition("d5")); // b bishop captures w pawn
+    rules.MakeMove(PositionHelper::FromString("e2"), PositionHelper::FromString("e4")); // w
+    rules.MakeMove(PositionHelper::FromString("d7"), PositionHelper::FromString("d5")); // b
+    rules.MakeMove(PositionHelper::FromString("e4"), PositionHelper::FromString("d5")); // w pawn captures b pawn
+    rules.MakeMove(PositionHelper::FromString("c8"), PositionHelper::FromString("e6")); // b bishop
+    rules.MakeMove(PositionHelper::FromString("d2"), PositionHelper::FromString("d4")); // w pawn long
+    rules.MakeMove(PositionHelper::FromString("e6"), PositionHelper::FromString("d5")); // b bishop captures w pawn
 
     int analyzed;
     int bestEstimation;
@@ -800,12 +824,12 @@ bool Tests::ABAfter6PlyD6()
     Rules rules = Rules(&board);
     AI ai = AI(&board, &rules);
 
-    rules.MakeMove(CreateFigurePosition("e2"), CreateFigurePosition("e4")); // w
-    rules.MakeMove(CreateFigurePosition("d7"), CreateFigurePosition("d5")); // b
-    rules.MakeMove(CreateFigurePosition("e4"), CreateFigurePosition("d5")); // w pawn captures b pawn
-    rules.MakeMove(CreateFigurePosition("c8"), CreateFigurePosition("e6")); // b bishop
-    rules.MakeMove(CreateFigurePosition("d2"), CreateFigurePosition("d4")); // w pawn long
-    rules.MakeMove(CreateFigurePosition("e6"), CreateFigurePosition("d5")); // b bishop captures w pawn
+    rules.MakeMove(PositionHelper::FromString("e2"), PositionHelper::FromString("e4")); // w
+    rules.MakeMove(PositionHelper::FromString("d7"), PositionHelper::FromString("d5")); // b
+    rules.MakeMove(PositionHelper::FromString("e4"), PositionHelper::FromString("d5")); // w pawn captures b pawn
+    rules.MakeMove(PositionHelper::FromString("c8"), PositionHelper::FromString("e6")); // b bishop
+    rules.MakeMove(PositionHelper::FromString("d2"), PositionHelper::FromString("d4")); // w pawn long
+    rules.MakeMove(PositionHelper::FromString("e6"), PositionHelper::FromString("d5")); // b bishop captures w pawn
 
     int analyzed;
     int bestEstimation;
@@ -824,9 +848,9 @@ bool Tests::AlphaBetaTest1()
     AI ai = AI(&board, &rules);
     ai.ExtendSearchDepthOnCaptures = false;
 
-    rules.MakeMove(CreateFigurePosition("e2"), CreateFigurePosition("e4"));
-    rules.MakeMove(CreateFigurePosition("e7"), CreateFigurePosition("e6"));
-    rules.MakeMove(CreateFigurePosition("d2"), CreateFigurePosition("d3"));
+    rules.MakeMove(PositionHelper::FromString("e2"), PositionHelper::FromString("e4"));
+    rules.MakeMove(PositionHelper::FromString("e7"), PositionHelper::FromString("e6"));
+    rules.MakeMove(PositionHelper::FromString("d2"), PositionHelper::FromString("d3"));
     // black's turn
 
     int alphaBetaAnalyzed;
@@ -854,9 +878,9 @@ bool Tests::AlphaBetaTest2()
     AI ai = AI(&board, &rules);
     ai.ExtendSearchDepthOnCaptures = false;
 
-    rules.MakeMove(CreateFigurePosition("e2"), CreateFigurePosition("e4"));
-    rules.MakeMove(CreateFigurePosition("e7"), CreateFigurePosition("e6"));
-    rules.MakeMove(CreateFigurePosition("d2"), CreateFigurePosition("d3"));
+    rules.MakeMove(PositionHelper::FromString("e2"), PositionHelper::FromString("e4"));
+    rules.MakeMove(PositionHelper::FromString("e7"), PositionHelper::FromString("e6"));
+    rules.MakeMove(PositionHelper::FromString("d2"), PositionHelper::FromString("d3"));
     // black's turn
 
     int alphaBetaAnalyzed;
@@ -883,9 +907,9 @@ bool Tests::AlphaBetaTest3()
     AI ai = AI(&board, &rules);
     ai.ExtendSearchDepthOnCaptures = false;
 
-    rules.MakeMove(CreateFigurePosition("e2"), CreateFigurePosition("e4"));
-    rules.MakeMove(CreateFigurePosition("e7"), CreateFigurePosition("e6"));
-    rules.MakeMove(CreateFigurePosition("d2"), CreateFigurePosition("d3"));
+    rules.MakeMove(PositionHelper::FromString("e2"), PositionHelper::FromString("e4"));
+    rules.MakeMove(PositionHelper::FromString("e7"), PositionHelper::FromString("e6"));
+    rules.MakeMove(PositionHelper::FromString("d2"), PositionHelper::FromString("d3"));
     // black's turn
 
     int alphaBetaAnalyzed;
@@ -913,9 +937,9 @@ bool Tests::AlphaBetaTest4()
     AI ai = AI(&board, &rules);
     ai.ExtendSearchDepthOnCaptures = false;
 
-    rules.MakeMove(CreateFigurePosition("e2"), CreateFigurePosition("e4"));
-    rules.MakeMove(CreateFigurePosition("e7"), CreateFigurePosition("e6"));
-    rules.MakeMove(CreateFigurePosition("d2"), CreateFigurePosition("d3"));
+    rules.MakeMove(PositionHelper::FromString("e2"), PositionHelper::FromString("e4"));
+    rules.MakeMove(PositionHelper::FromString("e7"), PositionHelper::FromString("e6"));
+    rules.MakeMove(PositionHelper::FromString("d2"), PositionHelper::FromString("d3"));
     // black's turn
 
     int alphaBetaAnalyzed;
@@ -943,12 +967,12 @@ bool Tests::AlphaBetaTest_2_1()
     AI ai = AI(&board, &rules);
     ai.ExtendSearchDepthOnCaptures = false;
 
-    rules.MakeMove(CreateFigurePosition("e2"), CreateFigurePosition("e4"));
-    rules.MakeMove(CreateFigurePosition("e7"), CreateFigurePosition("e5"));
-    rules.MakeMove(CreateFigurePosition("d2"), CreateFigurePosition("d3"));
-    rules.MakeMove(CreateFigurePosition("g8"), CreateFigurePosition("f6"));
-    rules.MakeMove(CreateFigurePosition("d1"), CreateFigurePosition("f3"));
-    rules.MakeMove(CreateFigurePosition("b8"), CreateFigurePosition("c6"));
+    rules.MakeMove(PositionHelper::FromString("e2"), PositionHelper::FromString("e4"));
+    rules.MakeMove(PositionHelper::FromString("e7"), PositionHelper::FromString("e5"));
+    rules.MakeMove(PositionHelper::FromString("d2"), PositionHelper::FromString("d3"));
+    rules.MakeMove(PositionHelper::FromString("g8"), PositionHelper::FromString("f6"));
+    rules.MakeMove(PositionHelper::FromString("d1"), PositionHelper::FromString("f3"));
+    rules.MakeMove(PositionHelper::FromString("b8"), PositionHelper::FromString("c6"));
     // white's turn
 
     int alphaBetaAnalyzed;
@@ -976,12 +1000,12 @@ bool Tests::AlphaBetaTest_2_2()
     AI ai = AI(&board, &rules);
     ai.ExtendSearchDepthOnCaptures = false;
 
-    rules.MakeMove(CreateFigurePosition("e2"), CreateFigurePosition("e4"));
-    rules.MakeMove(CreateFigurePosition("e7"), CreateFigurePosition("e5"));
-    rules.MakeMove(CreateFigurePosition("d2"), CreateFigurePosition("d3"));
-    rules.MakeMove(CreateFigurePosition("g8"), CreateFigurePosition("f6"));
-    rules.MakeMove(CreateFigurePosition("d1"), CreateFigurePosition("f3"));
-    rules.MakeMove(CreateFigurePosition("b8"), CreateFigurePosition("c6"));
+    rules.MakeMove(PositionHelper::FromString("e2"), PositionHelper::FromString("e4"));
+    rules.MakeMove(PositionHelper::FromString("e7"), PositionHelper::FromString("e5"));
+    rules.MakeMove(PositionHelper::FromString("d2"), PositionHelper::FromString("d3"));
+    rules.MakeMove(PositionHelper::FromString("g8"), PositionHelper::FromString("f6"));
+    rules.MakeMove(PositionHelper::FromString("d1"), PositionHelper::FromString("f3"));
+    rules.MakeMove(PositionHelper::FromString("b8"), PositionHelper::FromString("c6"));
     // white's turn
 
     int alphaBetaAnalyzed;
@@ -1009,12 +1033,12 @@ bool Tests::AlphaBetaTest_2_3()
     AI ai = AI(&board, &rules);
     ai.ExtendSearchDepthOnCaptures = false;
 
-    rules.MakeMove(CreateFigurePosition("e2"), CreateFigurePosition("e4"));
-    rules.MakeMove(CreateFigurePosition("e7"), CreateFigurePosition("e5"));
-    rules.MakeMove(CreateFigurePosition("d2"), CreateFigurePosition("d3"));
-    rules.MakeMove(CreateFigurePosition("g8"), CreateFigurePosition("f6"));
-    rules.MakeMove(CreateFigurePosition("d1"), CreateFigurePosition("f3"));
-    rules.MakeMove(CreateFigurePosition("b8"), CreateFigurePosition("c6"));
+    rules.MakeMove(PositionHelper::FromString("e2"), PositionHelper::FromString("e4"));
+    rules.MakeMove(PositionHelper::FromString("e7"), PositionHelper::FromString("e5"));
+    rules.MakeMove(PositionHelper::FromString("d2"), PositionHelper::FromString("d3"));
+    rules.MakeMove(PositionHelper::FromString("g8"), PositionHelper::FromString("f6"));
+    rules.MakeMove(PositionHelper::FromString("d1"), PositionHelper::FromString("f3"));
+    rules.MakeMove(PositionHelper::FromString("b8"), PositionHelper::FromString("c6"));
     // white's turn
 
     int alphaBetaAnalyzed;
@@ -1042,12 +1066,12 @@ bool Tests::AlphaBetaTest_2_4()
     AI ai = AI(&board, &rules);
     ai.ExtendSearchDepthOnCaptures = false;
 
-    rules.MakeMove(CreateFigurePosition("e2"), CreateFigurePosition("e4"));
-    rules.MakeMove(CreateFigurePosition("e7"), CreateFigurePosition("e5"));
-    rules.MakeMove(CreateFigurePosition("d2"), CreateFigurePosition("d3"));
-    rules.MakeMove(CreateFigurePosition("g8"), CreateFigurePosition("f6"));
-    rules.MakeMove(CreateFigurePosition("d1"), CreateFigurePosition("f3"));
-    rules.MakeMove(CreateFigurePosition("b8"), CreateFigurePosition("c6"));
+    rules.MakeMove(PositionHelper::FromString("e2"), PositionHelper::FromString("e4"));
+    rules.MakeMove(PositionHelper::FromString("e7"), PositionHelper::FromString("e5"));
+    rules.MakeMove(PositionHelper::FromString("d2"), PositionHelper::FromString("d3"));
+    rules.MakeMove(PositionHelper::FromString("g8"), PositionHelper::FromString("f6"));
+    rules.MakeMove(PositionHelper::FromString("d1"), PositionHelper::FromString("f3"));
+    rules.MakeMove(PositionHelper::FromString("b8"), PositionHelper::FromString("c6"));
     // white's turn
 
     int alphaBetaAnalyzed;
@@ -1073,11 +1097,11 @@ bool Tests::PositionCountingTest1()
     Board board = Board::StartPosition();
     Rules rules = Rules(&board);
 
-    rules.MakeMove(CreateFigurePosition("g1"), CreateFigurePosition("f3"));
-    rules.MakeMove(CreateFigurePosition("g8"), CreateFigurePosition("f6"));
-    rules.MakeMove(CreateFigurePosition("f3"), CreateFigurePosition("g1"));
-    rules.MakeMove(CreateFigurePosition("f6"), CreateFigurePosition("g8"));
-    rules.MakeMove(CreateFigurePosition("g1"), CreateFigurePosition("f3"));
+    rules.MakeMove(PositionHelper::FromString("g1"), PositionHelper::FromString("f3"));
+    rules.MakeMove(PositionHelper::FromString("g8"), PositionHelper::FromString("f6"));
+    rules.MakeMove(PositionHelper::FromString("f3"), PositionHelper::FromString("g1"));
+    rules.MakeMove(PositionHelper::FromString("f6"), PositionHelper::FromString("g8"));
+    rules.MakeMove(PositionHelper::FromString("g1"), PositionHelper::FromString("f3"));
 
     return board.GetCurrentPositionCount() == 2;
 }
@@ -1087,15 +1111,15 @@ bool Tests::PositionCountingTest2()
     Board board = Board::StartPosition();
     Rules rules = Rules(&board);
 
-    rules.MakeMove(CreateFigurePosition("g1"), CreateFigurePosition("f3"));
-    rules.MakeMove(CreateFigurePosition("g8"), CreateFigurePosition("f6"));
-    rules.MakeMove(CreateFigurePosition("f3"), CreateFigurePosition("g1"));
-    rules.MakeMove(CreateFigurePosition("f6"), CreateFigurePosition("g8"));
-    rules.MakeMove(CreateFigurePosition("g1"), CreateFigurePosition("f3"));
-    rules.MakeMove(CreateFigurePosition("g8"), CreateFigurePosition("f6"));
-    rules.MakeMove(CreateFigurePosition("f3"), CreateFigurePosition("g1"));
-    rules.MakeMove(CreateFigurePosition("f6"), CreateFigurePosition("g8"));
-    rules.MakeMove(CreateFigurePosition("g1"), CreateFigurePosition("f3"));
+    rules.MakeMove(PositionHelper::FromString("g1"), PositionHelper::FromString("f3"));
+    rules.MakeMove(PositionHelper::FromString("g8"), PositionHelper::FromString("f6"));
+    rules.MakeMove(PositionHelper::FromString("f3"), PositionHelper::FromString("g1"));
+    rules.MakeMove(PositionHelper::FromString("f6"), PositionHelper::FromString("g8"));
+    rules.MakeMove(PositionHelper::FromString("g1"), PositionHelper::FromString("f3"));
+    rules.MakeMove(PositionHelper::FromString("g8"), PositionHelper::FromString("f6"));
+    rules.MakeMove(PositionHelper::FromString("f3"), PositionHelper::FromString("g1"));
+    rules.MakeMove(PositionHelper::FromString("f6"), PositionHelper::FromString("g8"));
+    rules.MakeMove(PositionHelper::FromString("g1"), PositionHelper::FromString("f3"));
 
     return board.GetCurrentPositionCount() == 3;
 }
@@ -1105,10 +1129,10 @@ bool Tests::BoardSerializationTest()
     Board board = Board::StartPosition();
     Rules rules = Rules(&board);
 
-    rules.MakeMove(CreateFigurePosition("e2"), CreateFigurePosition("e4"));
-    rules.MakeMove(CreateFigurePosition("d7"), CreateFigurePosition("d5"));
-    rules.MakeMove(CreateFigurePosition("e4"), CreateFigurePosition("d5"));
-    rules.MakeMove(CreateFigurePosition("d8"), CreateFigurePosition("d5"));
+    rules.MakeMove(PositionHelper::FromString("e2"), PositionHelper::FromString("e4"));
+    rules.MakeMove(PositionHelper::FromString("d7"), PositionHelper::FromString("d5"));
+    rules.MakeMove(PositionHelper::FromString("e4"), PositionHelper::FromString("d5"));
+    rules.MakeMove(PositionHelper::FromString("d8"), PositionHelper::FromString("d5"));
 
     QString boardSerializedString = BoardSerializer::Save(board);
 

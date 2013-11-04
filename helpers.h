@@ -57,7 +57,7 @@ template<typename T, template<typename T> class Container>
 template<typename Container>
     void Helpers::AppendIfValid(Container& container, const POSITION& position)
 {
-    if (!IsInvalid(position))
+    if (!PositionHelper::IsInvalid(position))
     {
         container.append(position);
     }

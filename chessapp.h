@@ -23,7 +23,7 @@ class ChessApp : public QObject
 
     static const int DEPTH = 5;
 
-    PositionList ToDestinations(MoveList list);
+    PositionList ToDestinations(MoveCollection list);
     void CheckForGameOver();
 public:
     explicit ChessApp(QObject *parent = 0);

@@ -48,7 +48,8 @@ SOURCES += main.cpp \
     boardserializer.cpp \
     fen.cpp \
     lightfigureposition.cpp \
-    helpers.cpp
+    helpers.cpp \
+    bitboardhelper.cpp
 
 # Please do not modify the following two lines. Required for deployment.
 include(qmlapplicationviewer/qmlapplicationviewer.pri)
@@ -70,7 +71,8 @@ HEADERS += \
     fen.h \
     lightfigureposition.h \
     typedefs.h \
-    helpers.h
+    helpers.h \
+    bitboardhelper.h
 
 OTHER_FILES += \
     ToDo.txt \

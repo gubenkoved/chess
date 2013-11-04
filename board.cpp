@@ -59,7 +59,9 @@ Board::~Board()
 bool Board::IsDead(Figure *figure) const
 {
     if (!m_allFigures.contains(figure))
+    {
         throw Exception("It not this board figure");
+    }
 
     return !m_aliveFigures[figure->Side].contains(figure);
 }
@@ -111,7 +113,7 @@ void Board::AddAliveFigure(Figure *figure)
         m_kings[side] = figure;
     }
 
-    int key = Serial(figure->Position);
+    int key = PositionHelper::Serial(figure->Position);
     m_aliveFiguresVector[key] = figure;
 
     m_positionHash = PositionHashCalculator::Calculate(this);
@@ -119,8 +121,8 @@ void Board::AddAliveFigure(Figure *figure)
 
 void Board::MoveFigure(Figure *figure, POSITION newPosition)
 {
-    int oldKey = Serial(figure->Position);
-    int newKey = Serial(newPosition);
+    int oldKey = PositionHelper::Serial(figure->Position);
+    int newKey = PositionHelper::Serial(newPosition);
 
     if (m_aliveFiguresVector[newKey] != NULL)
     {
@@ -140,7 +142,7 @@ void Board::KillFigure(Figure *figure)
 {
     m_aliveFigures[figure->Side].removeOne(figure);    
 
-    int key = Serial(figure->Position);
+    int key = PositionHelper::Serial(figure->Position);
 
     m_aliveFiguresVector[key] = NULL;
 
@@ -149,7 +151,7 @@ void Board::KillFigure(Figure *figure)
 
 void Board::ResurrectFigure(Figure *figure)
 {
-    int key = Serial(figure->Position);
+    int key = PositionHelper::Serial(figure->Position);
 
     if (m_aliveFiguresVector[key] != NULL)
     {
@@ -183,7 +185,7 @@ void Board::UnpromotePawn(Figure *pawn)
 
 Figure* Board::FigureAt(POSITION position) const
 {
-    int key = Serial(position);
+    int key = PositionHelper::Serial(position);
 
     return m_aliveFiguresVector[key];
 }

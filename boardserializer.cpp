@@ -14,9 +14,9 @@ QString BoardSerializer::Save(const Board& board)
     {
         Move move = *it;
 
-        result.append(ToString(move.From));
+        result.append(PositionHelper::ToString(move.From));
         result.append("-");
-        result.append(ToString(move.To));
+        result.append(PositionHelper::ToString(move.To));
 
         if (it != history.constEnd() - 1)
         {
@@ -42,8 +42,8 @@ Board BoardSerializer::Load(QString boardString)
     {
         QStringList m = moveStirng.split('-');
 
-        POSITION from = CreateFigurePosition(m[0].toStdString());
-        POSITION to = CreateFigurePosition(m[1].toStdString());
+        POSITION from = PositionHelper::FromString(m[0].toStdString());
+        POSITION to = PositionHelper::FromString(m[1].toStdString());
 
         rules.MakeMove(from, to);
     }

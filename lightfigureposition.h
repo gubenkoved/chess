@@ -6,9 +6,6 @@
 
 #include "typedefs.h"
 
-//typedef QVector<POSITION> PositionCollection;
-typedef QList<POSITION> PositionList;
-
 // POSITION BYTE LAYOUT
 // -----------------------------------------
 // uses 8-byte figure position representation
@@ -20,41 +17,54 @@ typedef QList<POSITION> PositionList;
 // | |__unused bit
 // invalid indicator bit
 
+#define POS_INVALID 0x80 /* 1000 0000 */
+#define POS_X       0x38 /* 0011 1000 */
+#define POS_Y       0x07 /* 0000 0111 */
 
-// returns x-coordinate from position
-// value in [1; 8]; 1 means a, ..., 8 means h
-//#define X(p) (((p & 0x38) >> 3) + 1)
-INT32 X(POSITION pos);
+struct PositionHelper
+{
 
-// returns y-coordinate position
-// value in [1; 8];
-INT32 Y(POSITION pos);
+    // returns x-coordinate from position
+    // value in [1; 8]; 1 means a, ..., 8 means h
+    //#define PositionHelper::X(p) (((p & 0x38) >> 3) + 1)
+    static INT32 X(POSITION pos);
 
-// returns position's serial number
-// value in [0; 63]
-// 0 for a1
-// 1 for b1,
-// ...,
-// 63 for h8
-INT32 Serial(POSITION pos);
+    // returns y-coordinate position
+    // value in [1; 8];
+    static INT32 Y(POSITION pos);
 
-// checks bit that is invalid position indicator
-// returns not 0 when position is invalid
-BOOL IsInvalid(POSITION pos);
+    // returns position's serial number
+    // value in [0; 63]
+    // 0 for a1
+    // 1 for b1,
+    // ...,
+    // 63 for h8
+    static INT32 Serial(POSITION pos);
 
-// returns true when x in [1; 8] and y in [1; 8]
-BOOL IsValidPosition(int x, int y);
+    static POSITION FromSerial(INT32 serial);
 
-POSITION CreateFigurePosition(int x, int y);
+    // checks bit that is invalid position indicator
+    // returns not 0 when position is invalid
+    static BOOL IsInvalid(POSITION pos);
 
-POSITION Shift(POSITION position, int dx, int dy);
+    // returns true when x in [1; 8] and y in [1; 8]
+    static BOOL IsValidPosition(int x, int y);
 
-POSITION CreateFigurePosition(std::string str);
-QString ToString(POSITION p);
+    static POSITION Create(int x, int y);
+
+    static POSITION Shift(POSITION position, int dx, int dy);
+
+    // Returns position from it's string representation
+    static POSITION FromString(std::string str);
+
+    // Returns string position representation
+    // e.g.: a1, h8
+    static QString ToString(POSITION p);
+};
 
 static inline QDebug operator<<(QDebug debug, POSITION pos)
 {
-    debug.nospace() << ToString(pos);
+    debug.nospace() << PositionHelper::ToString(pos);
 
     return debug.space();
 }
