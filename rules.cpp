@@ -372,7 +372,9 @@ Figure* Rules::GetObstacleInDirection(POSITION position, FigureSide side, int xM
             Figure* figure = m_board->FigureAt(p);
 
             if (figure != NULL) // obstacle finded
+            {
                 return figure;
+            }
         } else
         {
             break;
@@ -389,16 +391,16 @@ bool Rules::IsUnderCheckFastImpl(FigureSide side) const
     FigureSide opponentSide = OpponentSide(side);
 
     // checks for knight threat
-    QVarLengthArray<POSITION> knightCheckPositions;
+    QVarLengthArray<POSITION, 8> knightCheckPositions;
 
-    Helpers::AppendIfValid(knightCheckPositions, ForwardFor(p, side, +2, +1));
-    Helpers::AppendIfValid(knightCheckPositions, ForwardFor(p, side, +1, +2));
-    Helpers::AppendIfValid(knightCheckPositions, ForwardFor(p, side, -1, +2));
-    Helpers::AppendIfValid(knightCheckPositions, ForwardFor(p, side, -2, +1));
-    Helpers::AppendIfValid(knightCheckPositions, ForwardFor(p, side, -2, -1));
-    Helpers::AppendIfValid(knightCheckPositions, ForwardFor(p, side, -1, -2));
-    Helpers::AppendIfValid(knightCheckPositions, ForwardFor(p, side, +1, -2));
-    Helpers::AppendIfValid(knightCheckPositions, ForwardFor(p, side, +2, -1));
+    Helpers::AppendIfValid(knightCheckPositions, PositionHelper::Shift(p, +2, +1));
+    Helpers::AppendIfValid(knightCheckPositions, PositionHelper::Shift(p, +1, +2));
+    Helpers::AppendIfValid(knightCheckPositions, PositionHelper::Shift(p, -1, +2));
+    Helpers::AppendIfValid(knightCheckPositions, PositionHelper::Shift(p, -2, +1));
+    Helpers::AppendIfValid(knightCheckPositions, PositionHelper::Shift(p, -2, -1));
+    Helpers::AppendIfValid(knightCheckPositions, PositionHelper::Shift(p, -1, -2));
+    Helpers::AppendIfValid(knightCheckPositions, PositionHelper::Shift(p, +1, -2));
+    Helpers::AppendIfValid(knightCheckPositions, PositionHelper::Shift(p, +2, -1));
 
     foreach(POSITION position, knightCheckPositions)
     {
@@ -413,8 +415,7 @@ bool Rules::IsUnderCheckFastImpl(FigureSide side) const
     // checks for long-range figures and pawns
 
     // check for enemy rocks and queen in non tilted directions
-    QVarLengthArray<Figure*> nonTiltedDirectionObstacles;
-    nonTiltedDirectionObstacles.reserve(4); // to speed up
+    QVarLengthArray<Figure*, 4> nonTiltedDirectionObstacles;
 
     Helpers::AppendIfNotNull(nonTiltedDirectionObstacles, GetObstacleInDirection(p, side, 0, +1)); // forward direction
     Helpers::AppendIfNotNull(nonTiltedDirectionObstacles, GetObstacleInDirection(p, side, 0, -1)); // backward direction
@@ -444,8 +445,7 @@ bool Rules::IsUnderCheckFastImpl(FigureSide side) const
     }
 
     // check for enemy bishops, queen and pawns in tilted direction
-    QVarLengthArray<Figure*> tiltedDirectionObstacles;
-    tiltedDirectionObstacles.reserve(4); // to speed up
+    QVarLengthArray<Figure*, 4> tiltedDirectionObstacles;
 
     Helpers::AppendIfNotNull(tiltedDirectionObstacles, GetObstacleInDirection(p, side, +1, +1)); // forward+ direction
     Helpers::AppendIfNotNull(tiltedDirectionObstacles, GetObstacleInDirection(p, side, +1, -1)); // backward+ direction
@@ -497,7 +497,7 @@ FigureSide Rules::OpponentSide(FigureSide side) const
               : FigureSide::White;
 }
 
-MoveCollection& Rules::DeleteMovesToCheck(MoveCollection& moves)
+void Rules::DeleteMovesToCheck(MoveCollection& moves)
 {
     MoveCollection::iterator it = moves.begin();
 
@@ -520,8 +520,6 @@ MoveCollection& Rules::DeleteMovesToCheck(MoveCollection& moves)
         // unmake temporary move
         UnMakeMove(move);
     }
-
-    return moves;
 }
 
 PositionList Rules::_GetPossibleDestinations(Figure *figure) const
@@ -530,26 +528,14 @@ PositionList Rules::_GetPossibleDestinations(Figure *figure) const
 
     switch (figure->Type)
     {
-        case FigureType::Pawn:
-            list = _GetPawnPossibleDestinations(figure);
-            break;
-        case FigureType::Knight:
-            list = _GetKnightPossibleDestinations(figure);
-            break;
-        case FigureType::Bishop:
-            list = _GetBishopPossibleDestinations(figure);
-            break;
-        case FigureType::Rock:
-            list = _GetRockPossibleDestinations(figure);
-            break;
-        case FigureType::Queen:
-            list = _GetQueenPossibleDestinations(figure);
-            break;
-        case FigureType::King:
-            list = _GetKingPossibleDestinations(figure);
-            break;
-        default:
-            throw Exception("Unknown figure type");
+        case FigureType::Pawn:      list = _GetPawnPossibleDestinations(figure);    break;
+        case FigureType::Knight:    list = _GetKnightPossibleDestinations(figure);  break;
+        case FigureType::Bishop:    list = _GetBishopPossibleDestinations(figure);  break;
+        case FigureType::Rock:      list = _GetRockPossibleDestinations(figure);    break;
+        case FigureType::Queen:     list = _GetQueenPossibleDestinations(figure);   break;
+        case FigureType::King:      list = _GetKingPossibleDestinations2(figure);    break;
+
+        default: throw Exception("Unknown figure type");
     }
 
     DeleteSelfCaptureDesination(&list, figure->Side);
@@ -693,6 +679,54 @@ PositionList Rules::_GetKingPossibleDestinations(Figure *king) const
             && !opponentGuarded.contains(l1)   // castling through guarded cells is forbidden
             && !opponentGuarded.contains(l2)   // also
             && !opponentGuarded.contains(l3))  // also
+
+    {
+            destinations.append(l2);
+    }
+
+    return destinations;
+}
+
+PositionList Rules::_GetKingPossibleDestinations2(Figure *king) const
+{
+    PositionList destinations = GetKingGuardedPositions(king);
+
+    POSITION kPosition = king->Position;
+    FigureSide kSide = king->Side;
+
+    BITBOARD opponentGuarded = GetGuardedPositions2(OpponentSide(kSide));
+
+    // check for short castling
+    POSITION r1 = PositionHelper::Shift(king->Position, 1, 0);
+    POSITION r2 = PositionHelper::Shift(king->Position, 2, 0);
+    Figure* rRock = m_board->FigureAt(PositionHelper::Create(8, FirstHorizonatalYFor(kSide)));
+
+    if (king->MovesCount == 0
+            && rRock != NULL
+            && rRock->MovesCount == 0
+            && !m_board->HasFigureAt(r1) && !m_board->HasFigureAt(r2)
+            && !BitboardHelper::Contains(opponentGuarded, kPosition) // castling from check is forbidden
+            && !BitboardHelper::Contains(opponentGuarded, r1)   // castling through guarded cells is forbidden
+            && !BitboardHelper::Contains(opponentGuarded, r2))  // also
+
+    {
+            destinations.append(r2);
+    }
+
+    // long castling checks
+    POSITION l1 = PositionHelper::Shift(king->Position, -1, 0);
+    POSITION l2 = PositionHelper::Shift(king->Position, -2, 0);
+    POSITION l3 = PositionHelper::Shift(king->Position, -3, 0);
+    Figure* lRock = m_board->FigureAt(PositionHelper::Create(1, FirstHorizonatalYFor(king->Side)));
+
+    if (king->MovesCount == 0
+            && lRock != NULL
+            && lRock->MovesCount == 0
+            && !m_board->HasFigureAt(l1) && !m_board->HasFigureAt(l2) && !m_board->HasFigureAt(l3)
+            && !BitboardHelper::Contains(opponentGuarded, kPosition) // castling from check is forbidden
+            && !BitboardHelper::Contains(opponentGuarded, l1)   // castling through guarded cells is forbidden
+            && !BitboardHelper::Contains(opponentGuarded, l2)   // also
+            && !BitboardHelper::Contains(opponentGuarded, l3))  // also
 
     {
             destinations.append(l2);

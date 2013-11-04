@@ -19,13 +19,14 @@ class Rules
     int EnPassantPawnYFor(FigureSide side) const;
 
     bool IsUnderCheckImpl(FigureSide side) const;
-    Figure* GetObstacleInDirection(POSITION position, FigureSide side, int xMult, int yMult) const;
     bool IsUnderCheckFastImpl(FigureSide side) const;
+
+    Figure* GetObstacleInDirection(POSITION position, FigureSide side, int xMult, int yMult) const;
 
     // DeleteMovesToCheck
     // -------------------
     // Function erases all moves which causes check to turning player
-    MoveCollection &DeleteMovesToCheck(MoveCollection &moves);
+    void DeleteMovesToCheck(MoveCollection& moves);
     // NOTE: ...PossibleDestinations function family returns NOT FULLY VALID destination yet!
     // because it SHOULD BE filtered by DeleteMovesToCheck and DeleteSelfCaptureDesination functions
     // to avoid moves, that causes check to turning side and self-capture turns
@@ -38,6 +39,7 @@ class Rules
     PositionList _GetRockPossibleDestinations(Figure* figure) const;
     PositionList _GetQueenPossibleDestinations(Figure* figure) const;
     PositionList _GetKingPossibleDestinations(Figure* figure) const;
+    PositionList _GetKingPossibleDestinations2(Figure* figure) const;
 
     Move CreateMove(POSITION from, POSITION to);
 
