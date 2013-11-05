@@ -9,15 +9,30 @@
 class BitboardHelper
 {
 public:
-    static PositionCollection GetPositions(BITBOARD bitboard);
+    static inline PositionCollection GetPositions(BITBOARD bitboard);
 
-    static BITBOARD AddPosition(BITBOARD bitboard, POSITION p);
-    static BITBOARD AddPositionWhenValid(BITBOARD bitboard, POSITION p);
+    static inline BITBOARD AddPosition(BITBOARD bitboard, POSITION p);
+    static inline BITBOARD AddPositionWhenValid(BITBOARD bitboard, POSITION p);
 
-    static BITBOARD Union(BITBOARD bitboard1, BITBOARD bitboard2);
+    static inline BITBOARD Union(BITBOARD bitboard1, BITBOARD bitboard2);
 
-    static bool Contains(BITBOARD bitboard, POSITION position);
+    static inline bool Contains(BITBOARD bitboard, POSITION position);
 };
+
+PositionCollection BitboardHelper::GetPositions(BITBOARD bitboard)
+{
+    PositionCollection positions;
+
+    for(int idx = 0; idx < 64; ++idx)
+    {
+        if (bitboard & (1ULL << idx))
+        {
+            positions.append(PositionHelper::FromSerial(idx));
+        }
+    }
+
+    return positions;
+}
 
 BITBOARD BitboardHelper::AddPosition(BITBOARD bitboard, POSITION p)
 {

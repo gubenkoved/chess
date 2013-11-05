@@ -13,6 +13,7 @@
 #include "ai.h"
 #include "boardserializer.h"
 #include "fen.h"
+#include "bitboardhelper.h"
 
 Tests::Tests()
 {
@@ -237,7 +238,7 @@ bool Tests::GetGuardedPositionsTest1()
     Board board = Board::StartPosition();
     Rules rules = Rules(&board);
 
-    PositionList guarded = rules.GetGuardedPositions(FigureSide::White);
+    PositionCollection guarded = BitboardHelper::GetPositions(rules.GetGuardedPositions2(FigureSide::White));
 
     return guarded.count() == 22;
 }
@@ -247,7 +248,7 @@ bool Tests::GetGuardedPositionsTest2()
     Board board = Board::StartPosition();
     Rules rules = Rules(&board);
 
-    PositionList guarded = rules.GetGuardedPositions(FigureSide::Black);
+    PositionCollection guarded = BitboardHelper::GetPositions(rules.GetGuardedPositions2(FigureSide::Black));
 
     return guarded.count() == 22;
 }
@@ -259,7 +260,7 @@ bool Tests::GetGuardedPositionsTest3()
 
     board.AddAliveFigure(new Figure(FigureSide::White, FigureType::Knight, PositionHelper::FromString("e5")));
 
-    PositionList guarded = rules.GetGuardedPositions(FigureSide::White);
+    PositionCollection guarded = BitboardHelper::GetPositions(rules.GetGuardedPositions2(FigureSide::White));
 
     return guarded.count() == 8;
 }
@@ -270,7 +271,7 @@ bool Tests::GetGuardedPositionsTest4()
 
     board.AddAliveFigure(new Figure(FigureSide::White, FigureType::Rock, PositionHelper::FromString("e4")));
 
-    PositionList guarded = rules.GetGuardedPositions(FigureSide::White);
+    PositionCollection guarded = BitboardHelper::GetPositions(rules.GetGuardedPositions2(FigureSide::White));
 
     return guarded.count() == 14;
 }
@@ -281,7 +282,7 @@ bool Tests::GetGuardedPositionsTest5()
 
     board.AddAliveFigure(new Figure(FigureSide::White, FigureType::Queen, PositionHelper::FromString("b2")));
 
-    PositionList guarded = rules.GetGuardedPositions(FigureSide::White);
+    PositionCollection guarded = BitboardHelper::GetPositions(rules.GetGuardedPositions2(FigureSide::White));
 
     return guarded.count() == 23;
 }
@@ -292,7 +293,7 @@ bool Tests::GetGuardedPositionsTest6()
 
     board.AddAliveFigure(new Figure(FigureSide::White, FigureType::Pawn, PositionHelper::FromString("h7")));
 
-    PositionList guarded = rules.GetGuardedPositions(FigureSide::White);
+    PositionCollection guarded = BitboardHelper::GetPositions(rules.GetGuardedPositions2(FigureSide::White));
 
     return guarded.count() == 1;
 }

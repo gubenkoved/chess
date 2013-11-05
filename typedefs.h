@@ -25,7 +25,6 @@ struct Figure;
 //typedef QVarLengthArray<Figure*> FigureList;
 
 typedef QVarLengthArray<POSITION, 64> PositionCollection;
-
 typedef QVarLengthArray<Move, 32> MoveCollection;
 typedef QList<Figure*> FigureList;
 typedef QList<POSITION> PositionList;

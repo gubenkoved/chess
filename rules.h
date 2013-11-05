@@ -31,15 +31,14 @@ class Rules
     // because it SHOULD BE filtered by DeleteMovesToCheck and DeleteSelfCaptureDesination functions
     // to avoid moves, that causes check to turning side and self-capture turns
     // ONLY FOR PRIVATE USAGE!
-    void DeleteSelfCaptureDesination(PositionList* destinations, FigureSide selfSide) const;
-    PositionList _GetPossibleDestinations(Figure* figure) const;    
-    PositionList _GetPawnPossibleDestinations(Figure* figure) const;
-    PositionList _GetKnightPossibleDestinations(Figure* figure) const;
-    PositionList _GetBishopPossibleDestinations(Figure* figure) const;
-    PositionList _GetRockPossibleDestinations(Figure* figure) const;
-    PositionList _GetQueenPossibleDestinations(Figure* figure) const;
-    PositionList _GetKingPossibleDestinations(Figure* figure) const;
-    PositionList _GetKingPossibleDestinations2(Figure* figure) const;
+    void DeleteSelfCaptureDesination(PositionCollection& destinations, FigureSide selfSide) const;
+    BITBOARD _GetPossibleDestinations(Figure* figure) const;
+    BITBOARD _GetPawnPossibleDestinations(Figure* figure) const;
+    BITBOARD _GetKnightPossibleDestinations(Figure* figure) const;
+    BITBOARD _GetBishopPossibleDestinations(Figure* figure) const;
+    BITBOARD _GetRockPossibleDestinations(Figure* figure) const;
+    BITBOARD _GetQueenPossibleDestinations(Figure* figure) const;
+    BITBOARD _GetKingPossibleDestinations2(Figure* figure) const;
 
     Move CreateMove(POSITION from, POSITION to);
 
@@ -65,20 +64,9 @@ class Rules
     PositionList GetOnLinePositions(POSITION position, FigureSide side, int xMult, int yMult, int lenLimit) const;
     BITBOARD GetOnLinePositions2(POSITION position, FigureSide side, int xMult, int yMult, int lenLimit) const;
 
-    // Returns positions that fuarded for specified figure.
+    // Returns positions that guarded for specified figure.
     // Position is guarded when figure can kill another figure on that position.
-    PositionList GetGuardedPositions        (Figure* figure) const;
-    PositionList GetPawnGuardedPositions    (Figure* figure) const;
-    PositionList GetKinghtGuardedPositions  (Figure* figure) const;
-    PositionList GetBishopGuardedPositions  (Figure* figure) const;
-    PositionList GetRockGuardedPositions    (Figure* figure) const;
-    PositionList GetQueenGuardedPositions   (Figure* figure) const;
-    PositionList GetKingGuardedPositions    (Figure* figure) const;
-
-    PositionList GetGuardedPositions(FigureSide side) const;
-
-    // Bitboard implementation
-
+    // Bitboard implementation.
     BITBOARD GetGuardedPositions2        (Figure* figure) const;
     BITBOARD GetPawnGuardedPositions2    (Figure* figure) const;
     BITBOARD GetKinghtGuardedPositions2  (Figure* figure) const;
