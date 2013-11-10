@@ -11,36 +11,6 @@ Rules::Rules(Board *board)
 {
 }
 
-PositionList Rules::GetOnLinePositions(POSITION position, FigureSide side, int xMult, int yMult, int lenLimit = 7) const
-{
-    if (xMult != -1 && xMult != 0 && xMult != 1 || yMult != -1 && yMult != 0 && yMult != 1)
-    {
-        throw Exception("Only {-1, 0, 1} values are valid for x and y mult");
-    }
-
-    PositionList guarded;    
-
-    for (int delta = 1; delta <= lenLimit; ++delta)
-    {
-        POSITION p = ForwardFor(position, side, delta * xMult, delta * yMult);
-
-        if (!PositionHelper::IsInvalid(p))
-        {
-            guarded.append(p);
-
-            if (m_board->FigureAt(p) != NULL) // obstacle
-            {
-                break;
-            }
-        } else
-        {
-            break;
-        }
-    }
-
-    return guarded;
-}
-
 BITBOARD Rules::GetOnLinePositions2(POSITION position, FigureSide side, int xMult, int yMult, int lenLimit = 7) const
 {
 #ifdef QT_DEBUG
@@ -52,19 +22,23 @@ BITBOARD Rules::GetOnLinePositions2(POSITION position, FigureSide side, int xMul
 
     BITBOARD bitboard = BITBOARD_EMPTY;
 
+    if (side == FigureSide::Black)
+    {
+        yMult *= -1;
+    }
+
     for (int delta = 1; delta <= lenLimit; ++delta)
     {
-        POSITION p = ForwardFor(position, side, delta * xMult, delta * yMult);
+        POSITION p = PositionHelper::Shift(position, delta * xMult, delta * yMult);
 
-        if (!PositionHelper::IsInvalid(p))
+        if (PositionHelper::IsInvalid(p))
         {
-            bitboard = BitboardHelper::AddPosition(bitboard, p);
+            break;
+        }
 
-            if (m_board->FigureAt(p) != NULL) // obstacle
-            {
-                break;
-            }
-        } else
+        bitboard = BitboardHelper::AddPosition(bitboard, p);
+
+        if (m_board->FigureAt(p) != NULL) // obstacle -> stop searching
         {
             break;
         }
@@ -73,11 +47,44 @@ BITBOARD Rules::GetOnLinePositions2(POSITION position, FigureSide side, int xMul
     return bitboard;
 }
 
+Figure* Rules::GetObstacleInDirection(POSITION position, FigureSide side, int xMult, int yMult) const
+{
+#ifdef QT_DEBUG
+    if (xMult != -1 && xMult != 0 && xMult != 1 || yMult != -1 && yMult != 0 && yMult != 1)
+    {
+        throw Exception("Only {-1, 0, 1} values are valid for x and y mult");
+    }
+#endif
+
+    if (side == FigureSide::Black)
+    {
+        yMult *= -1;
+    }
+
+    for (int delta = 1; delta <= 7; ++delta)
+    {
+        POSITION p = PositionHelper::Shift(position, delta * xMult, delta * yMult);
+
+        if (PositionHelper::IsInvalid(p))
+        {
+            break;
+        }
+
+        Figure* figure = m_board->FigureAt(p);
+
+        if (figure != NULL) // obstacle -> return it
+        {
+            return figure;
+        }
+    }
+
+    return NULL; // no obstacles finded in specified direction
+}
+
 BITBOARD Rules::GetPawnGuardedPositions2(Figure *figure) const
 {
     POSITION p = figure->Position;
     FigureSide side = figure->Side;
-    INT32 x = PositionHelper::X(p);
 
     BITBOARD bitboard = BITBOARD_EMPTY;
 
@@ -233,34 +240,6 @@ bool Rules::IsUnderCheckImpl(FigureSide side) const
     return BitboardHelper::Contains(opponentGuarded, king->Position);
 }
 
-Figure* Rules::GetObstacleInDirection(POSITION position, FigureSide side, int xMult, int yMult) const
-{
-    if (xMult != -1 && xMult != 0 && xMult != 1 || yMult != -1 && yMult != 0 && yMult != 1)
-    {
-        throw Exception("Only {-1, 0, 1} values are valid for x and y mult");
-    }
-
-    for (int delta = 1; delta <= 7; ++delta)
-    {
-        POSITION p = ForwardFor(position, side, delta * xMult, delta * yMult);
-
-        if (!PositionHelper::IsInvalid(p))
-        {
-            Figure* figure = m_board->FigureAt(p);
-
-            if (figure != NULL) // obstacle finded
-            {
-                return figure;
-            }
-        } else
-        {
-            break;
-        }
-    }
-
-    return NULL;
-}
-
 bool Rules::IsUnderCheckFastImpl(FigureSide side) const
 {
     Figure* king = m_board->KingAt(side);
@@ -410,16 +389,12 @@ BITBOARD Rules::_GetPossibleDestinations(Figure *figure) const
         case FigureType::Bishop:    dests = _GetBishopPossibleDestinations(figure);  break;
         case FigureType::Rock:      dests = _GetRockPossibleDestinations(figure);    break;
         case FigureType::Queen:     dests = _GetQueenPossibleDestinations(figure);   break;
-        case FigureType::King:      dests = _GetKingPossibleDestinations2(figure);    break;
+        case FigureType::King:      dests = _GetKingPossibleDestinations2(figure);   break;
 
         default: throw Exception("Unknown figure type");
     }
 
-    // TODO: add support for side's bitboards in Board
-
-    //DeleteSelfCaptureDesination(list, figure->Side);
-
-    return dests;
+    return BitboardHelper::Substract(dests, m_board->GetBitboardFor(figure->Side));
 }
 
 void Rules::DeleteSelfCaptureDesination(PositionCollection& destinations, FigureSide selfSide) const
@@ -645,7 +620,7 @@ MoveCollection Rules::GetPossibleMoves(FigureSide side)
     {
         PositionCollection currentFigurePossibleDestinations = BitboardHelper::GetPositions(_GetPossibleDestinations(figure));
 
-        DeleteSelfCaptureDesination(currentFigurePossibleDestinations, figure->Side);
+        //DeleteSelfCaptureDesination(currentFigurePossibleDestinations, figure->Side);
 
         foreach(POSITION curFigurePossiblePosition, currentFigurePossibleDestinations)
         {

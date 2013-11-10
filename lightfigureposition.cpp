@@ -1,35 +1,5 @@
 #include "lightfigureposition.h"
 
-INT32 PositionHelper::X(POSITION pos)
-{
-    return ((pos & POS_X) >> 3) + 1;
-}
-
-INT32 PositionHelper::Y(POSITION pos)
-{
-    return (pos & POS_Y) + 1;
-}
-
-INT32 PositionHelper::Serial(POSITION pos)
-{
-    return pos;
-}
-
-POSITION PositionHelper::FromSerial(INT32 serial)
-{
-    return serial;
-}
-
-BOOL PositionHelper::IsInvalid(POSITION pos)
-{
-    return pos & POS_INVALID;
-}
-
-BOOL PositionHelper::IsValidPosition(int x, int y)
-{
-    return x >= 1 && x <= 8 && y >= 1 && y <= 8;
-}
-
 POSITION PositionHelper::Create(int x, int y)
 {
     if (IsValidPosition(x, y))
@@ -51,8 +21,8 @@ POSITION PositionHelper::FromString(std::string str)
     char xChar = str[0];
     char yChar = str[1];
 
-    int x = ((int)xChar - (int)'a') + 1;
-    int y = ((int)yChar - (int)'1') + 1;
+    int x = (xChar - 'a') + 1;
+    int y = (yChar - '1') + 1;
 
     return PositionHelper::Create(x, y);
 }

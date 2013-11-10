@@ -2,6 +2,7 @@
 #include "board.h"
 #include "exception.h"
 #include "lightfigureposition.h"
+#include "bitboardhelper.h"
 
 Board::Board()
 {
@@ -108,6 +109,8 @@ void Board::AddAliveFigure(Figure *figure)
     m_allFigures.append(figure);
     m_aliveFigures[side].append(figure);
 
+    m_aliveBitboard[side] = BitboardHelper::AddPosition(m_aliveBitboard[side], figure->Position);
+
     if (figure->Type == FigureType::King)
     {
         m_kings[side] = figure;
@@ -121,8 +124,13 @@ void Board::AddAliveFigure(Figure *figure)
 
 void Board::MoveFigure(Figure *figure, POSITION newPosition)
 {
+    FigureSide side = figure->Side;
+
     int oldKey = PositionHelper::Serial(figure->Position);
     int newKey = PositionHelper::Serial(newPosition);
+
+    m_aliveBitboard[side] = BitboardHelper::RemovePosition(m_aliveBitboard[side], figure->Position);
+    m_aliveBitboard[side] = BitboardHelper::AddPosition(m_aliveBitboard[side], newPosition);
 
     if (m_aliveFiguresVector[newKey] != NULL)
     {
@@ -140,6 +148,8 @@ void Board::MoveFigure(Figure *figure, POSITION newPosition)
 
 void Board::KillFigure(Figure *figure)
 {
+    m_aliveBitboard[figure->Side] = BitboardHelper::RemovePosition(m_aliveBitboard[figure->Side], figure->Position);
+
     m_aliveFigures[figure->Side].removeOne(figure);    
 
     int key = PositionHelper::Serial(figure->Position);
@@ -151,6 +161,8 @@ void Board::KillFigure(Figure *figure)
 
 void Board::ResurrectFigure(Figure *figure)
 {
+    m_aliveBitboard[figure->Side] = BitboardHelper::AddPosition(m_aliveBitboard[figure->Side], figure->Position);
+
     int key = PositionHelper::Serial(figure->Position);
 
     if (m_aliveFiguresVector[key] != NULL)
@@ -203,6 +215,11 @@ FigureList Board::GetAllAliveFigures() const
     return alive;
 }
 
+BITBOARD Board::GetBitboardFor(FigureSide side) const
+{
+    return m_aliveBitboard[side];
+}
+
 bool Board::HasFigureAt(POSITION position) const
 {
     return FigureAt(position) != NULL;
@@ -227,16 +244,15 @@ void Board::PopHistory()
 
 void Board::TurnTransition()
 {
-    m_turningSide = m_turningSide == FigureSide::White ? FigureSide::Black : FigureSide::White;
+    m_turningSide =
+            m_turningSide == FigureSide::White ?
+                FigureSide::Black
+              : FigureSide::White;
 }
 
 void Board::IncreaseCurrentPositionCount()
 {
-    m_positionHashHistory.push_back(m_positionHash);
-//    if (m_positionCounter.contains(m_positionHash))
-//        m_positionCounter[m_positionHash] += 1;
-//    else
-//        m_positionCounter[m_positionHash] = 1;
+    m_positionHashHistory.append(m_positionHash);
 }
 
 void Board::DecreaseCurrentPositionCount()
@@ -246,14 +262,7 @@ void Board::DecreaseCurrentPositionCount()
         throw Exception("Invalid operation. Position history is empty");
     }
 
-    m_positionHashHistory.pop_back();
-//    int count = --m_positionCounter[m_positionHash];
-
-//    if (count < 0)
-//        throw Exception("Invalid operation. Position count can not be negative");
-
-//    if (count == 0)
-//        m_positionCounter.remove(m_positionHash);
+    m_positionHashHistory.removeLast();
 }
 
 int Board::GetCurrentPositionCount()
@@ -269,7 +278,6 @@ int Board::GetCurrentPositionCount()
     }
 
     return count;
-    //return m_positionCounter[m_positionHash];
 }
 
 Move Board::GetLastMove() const

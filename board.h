@@ -41,6 +41,7 @@ class Board
     QVector<Figure*> m_aliveFiguresVector; // contains only alive figures, where key is LightFigurePosition generated unique key
     QMap<FigureSide, FigureList> m_aliveFigures; // fast access to alive figures on side
     QMap<FigureSide, Figure*> m_kings; // fast access to kings
+    QMap<FigureSide, BITBOARD> m_aliveBitboard;
 
     bool IsDead(Figure* figure) const;
     void AddDeadFigure(Figure* figure); // for deep copy
@@ -48,13 +49,15 @@ public:
     Board();
 
     Board(const Board& another); // returns fully independent deep copy
-    ~Board();
+    ~Board();    
 
     void SetupStartPosition();
     void SetupKings();
 
     void AddAliveFigure(Figure* figure);
     FigureList GetAllAliveFigures() const;
+
+    BITBOARD GetBitboardFor(FigureSide side) const;
 
     void MoveFigure(Figure* figure, POSITION newPosition);
     void KillFigure(Figure* figure);

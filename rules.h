@@ -19,9 +19,7 @@ class Rules
     int EnPassantPawnYFor(FigureSide side) const;
 
     bool IsUnderCheckImpl(FigureSide side) const;
-    bool IsUnderCheckFastImpl(FigureSide side) const;
-
-    Figure* GetObstacleInDirection(POSITION position, FigureSide side, int xMult, int yMult) const;
+    bool IsUnderCheckFastImpl(FigureSide side) const;    
 
     // DeleteMovesToCheck
     // -------------------
@@ -61,8 +59,8 @@ class Rules
     //
     // EXAMPLE: function runned with xMult = 0, yMult = 1 and lenLimit = 2 (...,0,1,2) returns
     // pawn first move possibilities;
-    PositionList GetOnLinePositions(POSITION position, FigureSide side, int xMult, int yMult, int lenLimit) const;
     BITBOARD GetOnLinePositions2(POSITION position, FigureSide side, int xMult, int yMult, int lenLimit) const;
+    Figure* GetObstacleInDirection(POSITION position, FigureSide side, int xMult, int yMult) const;
 
     // Returns positions that guarded for specified figure.
     // Position is guarded when figure can kill another figure on that position.

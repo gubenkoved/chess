@@ -62,6 +62,36 @@ struct PositionHelper
     static QString ToString(POSITION p);
 };
 
+inline INT32 PositionHelper::X(POSITION pos)
+{
+    return ((pos & POS_X) >> 3) + 1;
+}
+
+inline INT32 PositionHelper::Y(POSITION pos)
+{
+    return (pos & POS_Y) + 1;
+}
+
+inline INT32 PositionHelper::Serial(POSITION pos)
+{
+    return pos;
+}
+
+inline POSITION PositionHelper::FromSerial(INT32 serial)
+{
+    return (POSITION)serial;
+}
+
+inline BOOL PositionHelper::IsInvalid(POSITION pos)
+{
+    return pos & POS_INVALID;
+}
+
+inline BOOL PositionHelper::IsValidPosition(int x, int y)
+{
+    return x >= 1 && x <= 8 && y >= 1 && y <= 8;
+}
+
 static inline QDebug operator<<(QDebug debug, POSITION pos)
 {
     debug.nospace() << PositionHelper::ToString(pos);

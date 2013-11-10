@@ -9,17 +9,20 @@
 class BitboardHelper
 {
 public:
-    static inline PositionCollection GetPositions(BITBOARD bitboard);
+    static PositionCollection GetPositions(BITBOARD bitboard);
 
-    static inline BITBOARD AddPosition(BITBOARD bitboard, POSITION p);
-    static inline BITBOARD AddPositionWhenValid(BITBOARD bitboard, POSITION p);
+    static BITBOARD AddPosition(BITBOARD bitboard, POSITION p);
+    static BITBOARD AddPositionWhenValid(BITBOARD bitboard, POSITION p);
 
-    static inline BITBOARD Union(BITBOARD bitboard1, BITBOARD bitboard2);
+    static BITBOARD RemovePosition(BITBOARD bitboard, POSITION p);
 
-    static inline bool Contains(BITBOARD bitboard, POSITION position);
+    static BITBOARD Union(BITBOARD bitboard1, BITBOARD bitboard2);
+    static BITBOARD Substract(BITBOARD bitboard1, BITBOARD bitboard2);
+
+    static bool Contains(BITBOARD bitboard, POSITION position);
 };
 
-PositionCollection BitboardHelper::GetPositions(BITBOARD bitboard)
+inline PositionCollection BitboardHelper::GetPositions(BITBOARD bitboard)
 {
     PositionCollection positions;
 
@@ -34,12 +37,17 @@ PositionCollection BitboardHelper::GetPositions(BITBOARD bitboard)
     return positions;
 }
 
-BITBOARD BitboardHelper::AddPosition(BITBOARD bitboard, POSITION p)
+inline BITBOARD BitboardHelper::AddPosition(BITBOARD bitboard, POSITION p)
 {
     return bitboard | (1ULL << PositionHelper::Serial(p));
 }
 
-BITBOARD BitboardHelper::AddPositionWhenValid(BITBOARD bitboard, POSITION p)
+inline BITBOARD BitboardHelper::RemovePosition(BITBOARD bitboard, POSITION p)
+{
+    return bitboard & (~ (1ULL << PositionHelper::Serial(p)));
+}
+
+inline BITBOARD BitboardHelper::AddPositionWhenValid(BITBOARD bitboard, POSITION p)
 {
     if (!PositionHelper::IsInvalid(p))
     {
@@ -50,12 +58,17 @@ BITBOARD BitboardHelper::AddPositionWhenValid(BITBOARD bitboard, POSITION p)
     }
 }
 
-BITBOARD BitboardHelper::Union(BITBOARD bitboard1, BITBOARD bitboard2)
+inline BITBOARD BitboardHelper::Union(BITBOARD bitboard1, BITBOARD bitboard2)
 {
     return bitboard1 | bitboard2;
 }
 
-bool BitboardHelper::Contains(BITBOARD bitboard, POSITION p)
+inline BITBOARD BitboardHelper::Substract(BITBOARD bitboard1, BITBOARD bitboard2)
+{
+    return bitboard1 & (~bitboard2);
+}
+
+inline bool BitboardHelper::Contains(BITBOARD bitboard, POSITION p)
 {
     return bitboard & (1ULL << PositionHelper::Serial(p));
 }
