@@ -1,9 +1,9 @@
 #ifndef TRANSPOSITIONTABLE_H
 #define TRANSPOSITIONTABLE_H
 
-#include <QMap>
+#include <QHash>
 
-#include "positionhashcalculator.h"
+#include "positionhash.h"
 
 class TranspositionTableEntry
 {

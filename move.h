@@ -3,7 +3,7 @@
 
 #include "typedefs.h"
 #include "figure.h"
-#include "lightfigureposition.h"
+#include "figureposition.h"
 
 enum MoveType
 {

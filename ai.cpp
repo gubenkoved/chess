@@ -3,7 +3,7 @@
 #include "ai.h"
 #include "exception.h"
 
-int AI::m_staticFigurePositionEstimation[SIDE_COUNT][FIGURE_COUNT][8 * 8];
+int AI::m_staticFigurePositionEstimation[SIDE_COUNT][FIGURE_TYPE_COUNT][8 * 8];
 
 AI::AI(Board* board, Rules *rules)
 {
@@ -33,7 +33,7 @@ void AI::InitStaticFigurePositionEstimations()
         for (int y = 1; y <= 8; ++y)
         {
             POSITION position = PositionHelper::Create(x, y);
-            for (int figureTypeValue = 0; figureTypeValue < FIGURE_COUNT; ++figureTypeValue)
+            for (int figureTypeValue = 0; figureTypeValue < FIGURE_TYPE_COUNT; ++figureTypeValue)
             {
                 FigureType figureType = (FigureType)figureTypeValue;                
                 int serial = PositionHelper::Serial(position);
@@ -378,6 +378,11 @@ Move AI::BestMoveByAlphaBeta(FigureSide side, int depth, int& bestEstimation, in
     analyzed = 0;
 
     bestEstimation = AlphaBetaNegamax(side, depth, -INT_MAX, +INT_MAX, analyzed, bestMove, true);
+
+    if (bestMove == NULL)
+    {
+        throw Exception("There is no possible moves to the turning side");
+    }
 
     Move result = *bestMove;
     delete bestMove;

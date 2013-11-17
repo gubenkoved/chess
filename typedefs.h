@@ -11,6 +11,7 @@ typedef unsigned char UCHAR;
 typedef signed char BYTE;
 typedef signed short SHORT;
 typedef int INT32;
+typedef uint UINT32;
 typedef bool BOOL;
 
 //typedef unsigned long long BITBOARD;

@@ -43,13 +43,13 @@ SOURCES += main.cpp \
     chessapp.cpp \
     ai.cpp \
     asyncai.cpp \
-    positionhashcalculator.cpp \
     transpositiontable.cpp \
     boardserializer.cpp \
     fen.cpp \
-    lightfigureposition.cpp \
     helpers.cpp \
-    bitboardhelper.cpp
+    bitboardhelper.cpp \
+    positionhash.cpp \
+    figureposition.cpp
 
 # Please do not modify the following two lines. Required for deployment.
 include(qmlapplicationviewer/qmlapplicationviewer.pri)
@@ -65,14 +65,14 @@ HEADERS += \
     chessapp.h \
     ai.h \
     asyncai.h \
-    positionhashcalculator.h \
     transpositiontable.h \
     boardserializer.h \
     fen.h \
-    lightfigureposition.h \
     typedefs.h \
     helpers.h \
-    bitboardhelper.h
+    bitboardhelper.h \
+    positionhash.h \
+    figureposition.h
 
 OTHER_FILES += \
     ToDo.txt \

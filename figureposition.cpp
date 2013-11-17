@@ -1,4 +1,4 @@
-#include "lightfigureposition.h"
+#include "figureposition.h"
 
 POSITION PositionHelper::Create(int x, int y)
 {

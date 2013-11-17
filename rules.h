@@ -6,7 +6,7 @@
 #include "typedefs.h"
 #include "board.h"
 #include "move.h"
-#include "lightfigureposition.h"
+#include "figureposition.h"
 #include "figure.h"
 
 class Rules

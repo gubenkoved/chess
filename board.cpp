@@ -1,7 +1,7 @@
 #include <string>
 #include "board.h"
 #include "exception.h"
-#include "lightfigureposition.h"
+#include "figureposition.h"
 #include "bitboardhelper.h"
 
 Board::Board()
@@ -33,9 +33,13 @@ Board::Board(const Board &another)
         oldToNewFiguresMapping[f] = copy;
 
         if (!another.IsDead(f))
+        {
             AddAliveFigure(copy);
+        }
         else
+        {
             AddDeadFigure(copy);
+        }
     }
 
     foreach(Move move, another.m_history)
@@ -119,7 +123,7 @@ void Board::AddAliveFigure(Figure *figure)
     int key = PositionHelper::Serial(figure->Position);
     m_aliveFiguresVector[key] = figure;
 
-    m_positionHash = PositionHashCalculator::Calculate(this);
+    m_positionHash = PositionHash::Calculate(this);
 }
 
 void Board::MoveFigure(Figure *figure, POSITION newPosition)
@@ -140,8 +144,8 @@ void Board::MoveFigure(Figure *figure, POSITION newPosition)
     m_aliveFiguresVector[oldKey] = NULL;
     m_aliveFiguresVector[newKey] = figure;
 
-    PositionHashCalculator::Update(m_positionHash, this, figure->Position);
-    PositionHashCalculator::Update(m_positionHash, this, newPosition);
+    m_positionHash.Update(this, figure->Position);
+    m_positionHash.Update(this, newPosition);
 
     figure->Position = newPosition;
 }
@@ -156,7 +160,7 @@ void Board::KillFigure(Figure *figure)
 
     m_aliveFiguresVector[key] = NULL;
 
-    PositionHashCalculator::Update(m_positionHash, this, figure->Position);
+    m_positionHash.Update(this, figure->Position);
 }
 
 void Board::ResurrectFigure(Figure *figure)
@@ -173,7 +177,7 @@ void Board::ResurrectFigure(Figure *figure)
     m_aliveFigures[figure->Side].append(figure);    
     m_aliveFiguresVector[key] = figure;
 
-    PositionHashCalculator::Update(m_positionHash, this, figure->Position);
+    m_positionHash.Update(this, figure->Position);
 }
 
 void Board::PromotePawn(Figure *pawn, FigureType type)
@@ -185,14 +189,14 @@ void Board::PromotePawn(Figure *pawn, FigureType type)
 
     pawn->Type = type;
 
-    PositionHashCalculator::Update(m_positionHash, this, pawn->Position);
+    m_positionHash.Update(this, pawn->Position);
 }
 
 void Board::UnpromotePawn(Figure *pawn)
 {
     pawn->Type = FigureType::Pawn;
 
-    PositionHashCalculator::Update(m_positionHash, this, pawn->Position);
+    m_positionHash.Update(this, pawn->Position);
 }
 
 Figure* Board::FigureAt(POSITION position) const
@@ -269,9 +273,9 @@ int Board::GetCurrentPositionCount()
 {
     int count = 0;
 
-    foreach (const QString& s, m_positionHashHistory)
+    foreach (const PositionHash& h, m_positionHashHistory)
     {
-        if (s == m_positionHash)
+        if (h == m_positionHash)
         {
             ++count;
         }

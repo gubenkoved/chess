@@ -3,7 +3,7 @@
 
 #include <QList>
 
-#include "lightfigureposition.h"
+#include "figureposition.h"
 
 class Helpers
 {

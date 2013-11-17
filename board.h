@@ -8,10 +8,10 @@
 #include <QStack>
 
 #include "typedefs.h"
-#include "lightfigureposition.h"
+#include "figureposition.h"
 #include "figure.h"
 #include "move.h"
-#include "positionhashcalculator.h"
+#include "positionhash.h"
 
 // Board representation:
 //      _______________
@@ -44,17 +44,20 @@ class Board
     QMap<FigureSide, BITBOARD> m_aliveBitboard;
 
     bool IsDead(Figure* figure) const;
-    void AddDeadFigure(Figure* figure); // for deep copy
+
+    void AddDeadFigure(Figure* figure);     // for deep copy
+    void AddAliveFigure(Figure* figure);    // for deep copy
 public:
     Board();
 
     Board(const Board& another); // returns fully independent deep copy
     ~Board();    
 
+    static Board StartPosition();
+
     void SetupStartPosition();
     void SetupKings();
 
-    void AddAliveFigure(Figure* figure);
     FigureList GetAllAliveFigures() const;
 
     BITBOARD GetBitboardFor(FigureSide side) const;
@@ -89,7 +92,7 @@ public:
 
     PositionHash GetCurrentPositionHash() const;
 
-    static Board StartPosition();
+    friend class Tests;
 };
 
 #endif // BOARD_H

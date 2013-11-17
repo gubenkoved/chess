@@ -1104,7 +1104,15 @@ bool Tests::PositionCountingTest1()
     rules.MakeMove(PositionHelper::FromString("f6"), PositionHelper::FromString("g8"));
     rules.MakeMove(PositionHelper::FromString("g1"), PositionHelper::FromString("f3"));
 
-    return board.GetCurrentPositionCount() == 2;
+    int expectedCurrentPositionCount = 2;
+
+    if (board.GetCurrentPositionCount() != expectedCurrentPositionCount)
+    {
+        qDebug() << "Expected current position count:" << expectedCurrentPositionCount;
+        qDebug() << "Actual current position count:" << board.GetCurrentPositionCount();
+    }
+
+    return board.GetCurrentPositionCount() == expectedCurrentPositionCount;
 }
 
 bool Tests::PositionCountingTest2()
@@ -1122,7 +1130,15 @@ bool Tests::PositionCountingTest2()
     rules.MakeMove(PositionHelper::FromString("f6"), PositionHelper::FromString("g8"));
     rules.MakeMove(PositionHelper::FromString("g1"), PositionHelper::FromString("f3"));
 
-    return board.GetCurrentPositionCount() == 3;
+    int expectedCurrentPositionCount = 3;
+
+    if (board.GetCurrentPositionCount() != expectedCurrentPositionCount)
+    {
+        qDebug() << "Expected current position count:" << expectedCurrentPositionCount;
+        qDebug() << "Actual current position count:" << board.GetCurrentPositionCount();
+    }
+
+    return board.GetCurrentPositionCount() == expectedCurrentPositionCount;
 }
 
 bool Tests::BoardSerializationTest()

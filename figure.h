@@ -5,25 +5,25 @@
 #include <QChar>
 #include <string.h>
 
-#include "lightfigureposition.h"
+#include "figureposition.h"
 
-#define FIGURE_COUNT 6
+#define FIGURE_TYPE_COUNT 6
 #define SIDE_COUNT 2
 
 enum FigureType
 {
-    Pawn,
-    Knight,
-    Bishop,
-    Rock,
-    King,
-    Queen
+    Pawn    = 0,
+    Knight  = 1,
+    Bishop  = 2,
+    Rock    = 3,
+    King    = 4,
+    Queen   = 5
 };
 
 enum FigureSide
 {
-    White,
-    Black
+    White = 0,
+    Black = 1
 };
 
 struct Figure

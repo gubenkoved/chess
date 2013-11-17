@@ -2,7 +2,7 @@
 #define BITBOARDHELPER_H
 
 #include "typedefs.h"
-#include "lightfigureposition.h"
+#include "figureposition.h"
 
 #define BITBOARD_EMPTY 0ULL
 

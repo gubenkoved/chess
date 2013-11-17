@@ -9,7 +9,7 @@
 #include <QMessageBox>
 
 #include "qmlapplicationviewer.h"
-#include "lightfigureposition.h"
+#include "figureposition.h"
 #include "tests.h"
 #include "board.h"
 #include "chessapp.h"

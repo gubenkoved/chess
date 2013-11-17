@@ -4,7 +4,7 @@
 
 #include "fen.h"
 #include "figure.h"
-#include "lightfigureposition.h"
+#include "figureposition.h"
 #include "boardserializer.h"
 #include "exception.h"
 
