@@ -5,8 +5,9 @@
 #include <QMap>
 #include <QTime>
 
-#include "exception.h"
 #include "tests.h"
+
+#include "exception.h"
 #include "board.h"
 #include "figure.h"
 #include "rules.h"
@@ -14,6 +15,7 @@
 #include "boardserializer.h"
 #include "fen.h"
 #include "bitboardhelper.h"
+#include "puzzle.h"
 
 Tests::Tests()
 {
@@ -98,6 +100,9 @@ void Tests::TestAll()
     TEST_EXPAND(BoardSerializationTest)
 
     TEST_EXPAND(WM1)
+
+    TEST_EXPAND(ParsePuzzlesTest)
+    TEST_EXPAND(ReconstructBoardFromPuzzlesTest)
 
     qDebug() << "Passed:" << passed << "test(s)";
     qDebug() << "Failed:" << failed << "test(s)";
@@ -1166,6 +1171,29 @@ bool Tests::BoardSerializationTest()
 
 bool Tests::WM1()
 {
+    return true;
+}
 
+bool Tests::ParsePuzzlesTest()
+{
+    QList<Puzzle> puzzles = Puzzle::Parse("C:/Users/nrj/Documents/QT Creator Workspace/ChessApp/trunk/mate-in-two.csv");
+
+//    foreach (const Puzzle& p, puzzles) {
+//        qDebug() << p;
+//    }
+
+    return puzzles.count() == 922;
+}
+
+bool Tests::ReconstructBoardFromPuzzlesTest()
+{
+    QList<Puzzle> puzzles = Puzzle::Parse("C:/Users/nrj/Documents/QT Creator Workspace/ChessApp/trunk/mate-in-two.csv");
+
+    foreach (const Puzzle& p, puzzles)
+    {
+        FEN::PositionFromFEN(p.PositionFEN);
+    }
+
+    // if we got here no errors occured while reconstuction
     return true;
 }

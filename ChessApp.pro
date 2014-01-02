@@ -49,7 +49,8 @@ SOURCES += main.cpp \
     helpers.cpp \
     bitboardhelper.cpp \
     positionhash.cpp \
-    figureposition.cpp
+    figureposition.cpp \
+    puzzle.cpp
 
 # Please do not modify the following two lines. Required for deployment.
 include(qmlapplicationviewer/qmlapplicationviewer.pri)
@@ -72,8 +73,10 @@ HEADERS += \
     helpers.h \
     bitboardhelper.h \
     positionhash.h \
-    figureposition.h
+    figureposition.h \
+    puzzle.h
 
 OTHER_FILES += \
     ToDo.txt \
-    wrong-moves.txt
+    wrong-moves.txt \
+    mate-in-two.csv

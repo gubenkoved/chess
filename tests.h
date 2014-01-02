@@ -80,6 +80,9 @@ public:
 
     // countertest for detected wrong moves
     bool WM1();
+
+    bool ParsePuzzlesTest();
+    bool ReconstructBoardFromPuzzlesTest();
 };
 
 #endif // TESTS_H

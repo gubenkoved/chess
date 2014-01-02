@@ -93,6 +93,7 @@ public:
     PositionHash GetCurrentPositionHash() const;
 
     friend class Tests;
+    friend class FEN; // to allow it to setup position from FEN
 };
 
 #endif // BOARD_H

@@ -166,60 +166,66 @@ QString FEN::Evaluate(const Board& board)
     return fen;
 }
 
-//Board FEN::BoardFromFEN(QString fen)
-//{
-//    try
-//    {
-//        Board board;
-//        int cIdx = -1;
+Board FEN::PositionFromFEN(QString fen)
+{
+    try
+    {
+        Board board;
+        int cIdx = -1;
 
-//        // step 1. Set fugures on it's positions
-//        int y = 8;
-//        int x = 1;
+        int y = 8;
+        int x = 1;
 
-//        while(++cIdx < fen.length())
-//        {
-//            if (y == 1 && x == 9) // filfilled
-//            {
-//                break;
-//            }
+        while(++cIdx < fen.length())
+        {
+            if (y == 1 && x == 9) // filfilled
+            {
+                break;
+            }
 
-//            QChar c = fen.at(cIdx);
+            QChar c = fen.at(cIdx);
 
-//            if (c == '/') // new line separator
-//            {
-//                --y;
+            if (c == '/') // new line separator
+            {
+                --y;
 
-//                if (x != 9)
-//                {
-//                    throw Exception(QString("Fen separator was not expected in position: %1").arg(QString::number(cIdx)).toStdString());
-//                }
+                if (x != 9)
+                {
+                    throw Exception(QString("Fen separator was not expected in position: %1 (%2)").arg(QString::number(cIdx)).arg(fen).toStdString());
+                }
 
-//                x = 1;
-//                continue;
-//            }
+                x = 1;
+                continue;
+            }
 
-//            if (c.isDigit())
-//            {
-//                x += c.digitValue(); // skip specified number of cells
-//            } else
-//            {
-//                Figure f = FigureFromChar(c);
-//                f.Position = PositionHelper::CreateFigurePosition(x, y);
+            if (c.isDigit())
+            {
+                x += c.digitValue(); // skip specified number of cells
+            } else
+            {
+                Figure f = FigureFromChar(c);
+                f.Position = PositionHelper::Create(x, y);
 
-//                ++x; // go to next cell
+                ++x; // go to next cell
 
-//                board.AddAliveFigure(new Figure(f));
-//            }
-//        }
+                board.AddAliveFigure(new Figure(f));
+            }
+        }
 
-//        return board;
-//    } catch (Exception)
-//    {
-//        throw;
-//    }
-//    catch (...)
-//    {
-//        throw Exception("Loading failed. FEN string is invalid.");
-//    }
-//}
+        // string is over, do the last check
+        if (x != 9 || y != 1)
+        {
+            throw Exception("Invalid final state. Board in not filled completely or overfilled: " + fen.toStdString());
+        }
+
+        return board;
+    } catch (Exception e)
+    {
+        // rethrow our Exception with FEN
+        throw Exception(e.GetMessage() + "(" + fen.toStdString() + ")");
+    }
+    catch (...) // compose our Exception from any other type
+    {
+        throw Exception("Loading failed. FEN string is invalid: " + fen.toStdString());
+    }
+}

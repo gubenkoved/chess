@@ -346,10 +346,10 @@ int AI::AlphaBetaNegamax(FigureSide side, int depth, int alpha, int beta, int& a
         }
 
         // for debug  purposes
-        if (isTopLevel)
-        {
-            //qDebug() << "  " << move << "estimation: " << estimation << "alpha: " << alpha;
-        }
+//        if (isTopLevel)
+//        {
+//            qDebug() << "  " << move << "estimation: " << estimation << "alpha: " << alpha;
+//        }
 
         if (alpha >= beta)
         {
