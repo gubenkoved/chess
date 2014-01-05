@@ -558,49 +558,115 @@ BITBOARD Rules::_GetKingPossibleDestinations2(Figure *king) const
     return destinations;
 }
 
-Move Rules::CreateMove(POSITION from, POSITION to)
+//Move Rules::CreateMove(POSITION from, POSITION to)
+//{
+//    MoveType moveType;
+
+//    Figure* captured = m_board->FigureAt(to);
+//    Figure* figure = m_board->FigureAt(from);
+//    FigureType figureType = figure->Type;
+
+//    // long king step -> castling
+//    if (figureType == FigureType::King && abs(PositionHelper::X(to) - PositionHelper::X(from)) == 2)
+//    {
+//        if (PositionHelper::X(to) > PositionHelper::X(from))
+//            moveType = MoveType::ShortCastling;
+//        else
+//            moveType = MoveType::LongCastling;
+//    }
+//    // long pawn turn handling
+//    else if (figureType == FigureType::Pawn && abs(PositionHelper::Y(to) - PositionHelper::Y(from)) == 2)
+//    {
+//        moveType = MoveType::LongPawn;
+//    }
+//    // pawn's position x changing and target cell is empty -> en passant
+//    else if (figureType == FigureType::Pawn && !m_board->HasFigureAt(to) && PositionHelper::X(to) != PositionHelper::X(from))
+//    {
+//        moveType = MoveType::EnPassant;
+//        captured = m_board->FigureAt(ForwardFor(to, figure->Side, 0, -1));
+//    }
+//    // pawn promote
+//    else if (figureType == FigureType::Pawn && PositionHelper::Y(to) == PawnPromotionYFor(figure->Side))
+//    {
+//        moveType = MoveType::PawnPromotion;
+//    } else // only Normal and Capture turns
+//    {
+//        if (captured != NULL)
+//        {
+//            moveType = MoveType::Capture;
+//        } else
+//        {
+//            moveType = MoveType::Normal;
+//        }
+//    }
+
+//    return Move(moveType, from, to, figure, captured);
+//}
+
+MoveCollection Rules::CreateMoves(POSITION from, POSITION to)
 {
+    // collection instead of single instance
+    // is used for only reason: when pawn promoted
+    // there are several moves with same source and destination cells
+    MoveCollection moves;
+    //QVarLengthArray<Move, 6> moves;
     MoveType moveType;
 
     Figure* captured = m_board->FigureAt(to);
     Figure* figure = m_board->FigureAt(from);
     FigureType figureType = figure->Type;
 
-    // long king step -> castling
-    if (figureType == FigureType::King && abs(PositionHelper::X(to) - PositionHelper::X(from)) == 2)
-    {
-        if (PositionHelper::X(to) > PositionHelper::X(from))
-            moveType = MoveType::ShortCastling;
-        else
-            moveType = MoveType::LongCastling;
-    }
-    // long pawn turn handling
-    else if (figureType == FigureType::Pawn && abs(PositionHelper::Y(to) - PositionHelper::Y(from)) == 2)
-    {
-        moveType = MoveType::LongPawn;
-    }
-    // pawn's position x changing and target cell is empty -> en passant
-    else if (figureType == FigureType::Pawn && !m_board->HasFigureAt(to) && PositionHelper::X(to) != PositionHelper::X(from))
-    {
-        moveType = MoveType::EnPassant;
-        captured = m_board->FigureAt(ForwardFor(to, figure->Side, 0, -1));
-    }
-    // pawn promote
-    else if (figureType == FigureType::Pawn && PositionHelper::Y(to) == PawnPromotionYFor(figure->Side))
+    // pawn promotion is special case - here there are several moves possbile
+    if (figureType == FigureType::Pawn && PositionHelper::Y(to) == PawnPromotionYFor(figure->Side))
     {
         moveType = MoveType::PawnPromotion;
-    } else // only Normal and Capture turns
+
+        Move pawnPromotionToQueen(moveType, from, to, figure, captured);
+        pawnPromotionToQueen.PromotedTo = FigureType::Queen;
+
+        Move pawnPromotionToKnight(moveType, from, to, figure, captured);
+        pawnPromotionToKnight.PromotedTo = FigureType::Knight;
+
+        Move pawnPromotionToRock(moveType, from, to, figure, captured);
+        pawnPromotionToRock.PromotedTo = FigureType::Rock;
+
+        Move pawnPromotionToBishop(moveType, from, to, figure, captured);
+        pawnPromotionToBishop.PromotedTo = FigureType::Bishop;
+
+        moves << pawnPromotionToQueen << pawnPromotionToKnight << pawnPromotionToRock << pawnPromotionToBishop;
+    } else // single move
     {
-        if (captured != NULL)
+        // long king step -> castling
+        if (figureType == FigureType::King && abs(PositionHelper::X(to) - PositionHelper::X(from)) == 2)
         {
-            moveType = MoveType::Capture;
-        } else
-        {
-            moveType = MoveType::Normal;
+            if (PositionHelper::X(to) > PositionHelper::X(from))
+                moveType = MoveType::ShortCastling;
+            else
+                moveType = MoveType::LongCastling;
         }
+        // long pawn turn handling
+        else if (figureType == FigureType::Pawn && abs(PositionHelper::Y(to) - PositionHelper::Y(from)) == 2)
+        {
+            moveType = MoveType::LongPawn;
+        }
+        // pawn's position x changing and target cell is empty -> en passant
+        else if (figureType == FigureType::Pawn && !m_board->HasFigureAt(to) && PositionHelper::X(to) != PositionHelper::X(from))
+        {
+            moveType = MoveType::EnPassant;
+            captured = m_board->FigureAt(ForwardFor(to, figure->Side, 0, -1));
+        }
+        else // only Normal and Capture turns
+        {
+            if (captured != NULL)
+                moveType = MoveType::Capture;
+            else
+                moveType = MoveType::Normal;
+        }
+
+        moves << Move(moveType, from, to, figure, captured);
     }
 
-    return Move(moveType, from, to, figure, captured);
+    return moves;
 }
 
 BITBOARD Rules::GetGuardedPositions2(FigureSide side) const
@@ -635,9 +701,13 @@ MoveCollection Rules::GetPossibleMoves(FigureSide side)
 
         foreach(POSITION curFigurePossiblePosition, currentFigurePossibleDestinations)
         {
-            Move currentMove = CreateMove(figure->Position, curFigurePossiblePosition);
+            //Move currentMove = CreateMove(figure->Position, curFigurePossiblePosition);
+            MoveCollection currentMoves = CreateMoves(figure->Position, curFigurePossiblePosition);
 
-            moves.append(currentMove);
+            foreach(const Move& currentMove, currentMoves)
+            {
+                moves.append(currentMove);
+            }
         }
     }
 
@@ -719,7 +789,8 @@ void Rules::MakeMove(Move move)
         m_board->MoveFigure(rock, PositionHelper::Create(rockAfterCastringX, y));
     } else if (move.Type == MoveType::PawnPromotion)
     {
-        m_board->PromotePawn(move.MovingFigure, FigureType::Queen);
+        //m_board->PromotePawn(move.MovingFigure, FigureType::Queen);
+        m_board->PromotePawn(move.MovingFigure, move.PromotedTo);
     }
 
     // add to history
@@ -729,7 +800,7 @@ void Rules::MakeMove(Move move)
     m_board->IncreaseCurrentPositionCount();
 }
 
-void Rules::MakeMove(POSITION from, POSITION to)
+void Rules::MakeMove(POSITION from, POSITION to, FigureType promotedTo)
 {
     Figure* f = m_board->FigureAt(from);
 
@@ -740,7 +811,8 @@ void Rules::MakeMove(POSITION from, POSITION to)
 
         foreach(const Move& move, possible)
         {
-            if (move.From == from && move.To == to)
+            if (move.From == from && move.To == to
+                    && (move.PromotedTo == promotedTo || move.Type != MoveType::PawnPromotion))
             {
                 MakeMove(move);
                 isValidMove = true;

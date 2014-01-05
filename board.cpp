@@ -188,6 +188,7 @@ void Board::PromotePawn(Figure *pawn, FigureType type)
     }
 
     pawn->Type = type;
+    //pawn->Type = FigureType::Queen;
 
     m_positionHash.Update(this, pawn->Position);
 }

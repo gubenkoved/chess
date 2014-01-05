@@ -8,10 +8,7 @@ Move::Move()
     Type = Invalid;
     MovingFigure = NULL;
     CapturedFigure = NULL;
-
-#ifdef QT_DEBUG
-    //m_stringRep = ToString(m_from) + " to " + ToString(m_to);
-#endif
+    PromotedTo = FigureType::Unspecified;
 }
 
 Move::Move(MoveType type, POSITION from, POSITION to, Figure* figure, Figure* captured)
@@ -21,10 +18,7 @@ Move::Move(MoveType type, POSITION from, POSITION to, Figure* figure, Figure* ca
     Type = type;
     MovingFigure = figure;
     CapturedFigure = captured;
-
-#ifdef QT_DEBUG
-    //m_stringRep = ToString(m_from) //+ " to " + ToString(m_to);
-#endif
+    PromotedTo = FigureType::Unspecified;
 }
 
 Move::Move(const Move &another)
@@ -34,10 +28,7 @@ Move::Move(const Move &another)
     Type = another.Type;
     MovingFigure = another.MovingFigure;
     CapturedFigure = another.CapturedFigure;
-
-#ifdef QT_DEBUG
-    //m_stringRep = ToString(m_from) + " to " + ToString(m_to);
-#endif
+    PromotedTo = another.PromotedTo;
 }
 
 bool Move::IsCastling() const
@@ -52,10 +43,7 @@ Move& Move::operator =(const Move& another)
     Type = another.Type;
     MovingFigure = another.MovingFigure;
     CapturedFigure = another.CapturedFigure;
-
-#ifdef QT_DEBUG
-    //m_stringRep = another.m_stringRep;
-#endif
+    PromotedTo = another.PromotedTo;
 
     return *this;
 }

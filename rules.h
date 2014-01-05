@@ -41,6 +41,7 @@ class Rules
     BITBOARD _GetKingPossibleDestinations2(Figure* figure) const;
 
     Move CreateMove(POSITION from, POSITION to);
+    MoveCollection CreateMoves(POSITION from, POSITION to);
 
     // GetOnLinePositions function
     // ---------------------------
@@ -94,8 +95,14 @@ public:
     bool IsUnderCheck(FigureSide side) const;
     bool IsPassiveEndGame() const;
 
-    void MakeMove(Move move);
-    void MakeMove(POSITION from, POSITION to);
+    void MakeMove(Move move);    
+
+    // This function created to be called by GUI
+    // It performs search for possible moves and find the move
+    // that was intended to made.
+    // Triple of arguments uniquly identifies turn.
+    // PromotedTo argument resolves ambiguity with pawn promotions moves...
+    void MakeMove(POSITION from, POSITION to, FigureType promotedTo = FigureType::Unspecified);
     void UnMakeMove(Move move);
 
     friend class Tests;

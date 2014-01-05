@@ -20,23 +20,15 @@ enum MoveType
 
 struct Move
 {
-#ifdef QT_DEBUG
-    //QString m_stringRep;
-#endif
-
     POSITION From;
     POSITION To;
     MoveType Type;
     Figure* MovingFigure;
-
-    // for Capture and EnPassant not NULL, and NULL otherwise
-    Figure* CapturedFigure;
-
-    // for PawnPromotion only
-    FigureType PromotedTo;
+    Figure* CapturedFigure; // for Capture and EnPassant not NULL, and NULL otherwise
+    FigureType PromotedTo; // for PawnPromotion only
 
     Move();
-    Move(MoveType type, POSITION from, POSITION to, Figure* figure, Figure* captured);
+    Move(MoveType type, POSITION from, POSITION to, Figure* figure, Figure* captured);    
     Move(const Move& another);
 
     bool IsCastling() const;
@@ -58,11 +50,13 @@ inline QDebug operator<<(QDebug debug, const Move& m)
         case LongPawn:      moveTypeCode = "LongPawn";      break;
         case Invalid:       moveTypeCode = "Invalid";       break;
         default: throw Exception("Unknown move type");
-    }
+    }    
 
     debug << "Move("
         << m.MovingFigure->GetName()
-        << moveTypeCode << "turn from"
+        << moveTypeCode
+        << m.PromotedTo
+        << "turn from"
         << PositionHelper::ToString(m.From) << "to"
         << PositionHelper::ToString(m.To) << ")";
 

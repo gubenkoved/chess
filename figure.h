@@ -17,7 +17,9 @@ enum FigureType
     Bishop  = 2,
     Rock    = 3,
     King    = 4,
-    Queen   = 5
+    Queen   = 5,
+
+    Unspecified = -1
 };
 
 enum FigureSide

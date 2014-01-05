@@ -14,9 +14,9 @@
 ChessApp::ChessApp(QObject *parent)
     : QObject(parent)
 {
-    //m_board = new Board();
-    //m_board->SetupStartPosition();
-    m_board = new Board(FEN::PositionFromFEN("4B3/5P1k/4KP1b/6R1/8/8/8/8"));
+    m_board = new Board();
+    m_board->SetupStartPosition();
+    //m_board = new Board(FEN::PositionFromFEN("4B3/5P1k/4KP1b/6R1/8/8/8/8"));
 
     m_rules = new Rules(m_board);
     m_asyncAI = new AsyncAI(m_board);
@@ -91,7 +91,7 @@ void ChessApp::HandleFindedBestMove(Move bestMove)
 
     if (!m_boardChangedSinceAiStart)
     {
-        m_rules->MakeMove(bestMove.From, bestMove.To);
+        m_rules->MakeMove(bestMove.From, bestMove.To, bestMove.PromotedTo);
 
         CheckForGameOver();
     } else

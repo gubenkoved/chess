@@ -353,11 +353,12 @@ int AI::AlphaBetaNegamax(FigureSide side, int depth, int alpha, int beta, int& a
             bestMove = new Move(move);
         }
 
-        // for debug  purposes
-//        if (isTopLevel)
-//        {
-//            qDebug() << "  " << move << "estimation: " << estimation << "alpha: " << alpha;
-//        }
+#ifdef QT_DEBUG
+        if (isTopLevel)
+        {
+            qDebug() << "  " << move << "estimation: " << estimation << "alpha: " << alpha;
+        }
+#endif
 
         if (alpha >= beta)
         {

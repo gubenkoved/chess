@@ -80,7 +80,7 @@ void Tests::TestAll()
 //    //TEST_EXPAND(ABFromStartD6)
 
 
-//    TEST_EXPAND(ABAfter6PlyD4)
+    TEST_EXPAND(ABAfter6PlyD4)
 //    TEST_EXPAND(ABAfter6PlyD5)
 //    //TEST_EXPAND(ABAfter6PlyD6)
 
@@ -104,7 +104,7 @@ void Tests::TestAll()
 //    TEST_EXPAND(ParsePuzzlesTest)
 //    TEST_EXPAND(ReconstructBoardFromPuzzlesTest)
 //    TEST_EXPAND(PuzzlesBoardFromFenThenToFenTest)
-    TEST_EXPAND(SolveMateInTwoPuzzles)
+//    TEST_EXPAND(SolveMateInTwoPuzzles)
 
     qDebug() << "Passed:" << passed << "test(s)";
     qDebug() << "Failed:" << failed << "test(s)";
