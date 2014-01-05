@@ -11,10 +11,36 @@ Rules::Rules(Board *board)
 {
 }
 
+FigureSide Rules::OpponentSide(FigureSide side) const
+{
+    return side == FigureSide::White ? FigureSide::Black : FigureSide::White;
+}
+
+int Rules::PawnPromotionYFor(FigureSide side) const
+{
+    return side == FigureSide::White ? 8 : 1;
+}
+
+int Rules::PawnHomeYFor(FigureSide side) const
+{
+    return side == FigureSide::White ? 2 : 7;
+}
+
+int Rules::EnPassantPawnYFor(FigureSide side) const
+{
+    return side == FigureSide::White ? 5 : 4;
+}
+
+int Rules::FirstHorizonatalYFor(FigureSide side) const
+{
+    return side == FigureSide::White ? 1 : 8;
+}
+
 BITBOARD Rules::GetOnLinePositions2(POSITION position, FigureSide side, int xMult, int yMult, int lenLimit = 7) const
 {
 #ifdef QT_DEBUG
-    if (xMult != -1 && xMult != 0 && xMult != 1 || yMult != -1 && yMult != 0 && yMult != 1)
+    if ((xMult != -1 && xMult != 0 && xMult != 1)
+            || (yMult != -1 && yMult != 0 && yMult != 1))
     {
         throw Exception("Only {-1, 0, 1} values are valid for x and y mult");
     }
@@ -50,7 +76,8 @@ BITBOARD Rules::GetOnLinePositions2(POSITION position, FigureSide side, int xMul
 Figure* Rules::GetObstacleInDirection(POSITION position, FigureSide side, int xMult, int yMult) const
 {
 #ifdef QT_DEBUG
-    if (xMult != -1 && xMult != 0 && xMult != 1 || yMult != -1 && yMult != 0 && yMult != 1)
+    if ((xMult != -1 && xMult != 0 && xMult != 1)
+            || (yMult != -1 && yMult != 0 && yMult != 1))
     {
         throw Exception("Only {-1, 0, 1} values are valid for x and y mult");
     }
@@ -216,21 +243,6 @@ POSITION Rules::ForwardFor(POSITION position, FigureSide side, int dx, int dy) c
               : PositionHelper::Shift(position, dx, -dy);
 }
 
-int Rules::FirstHorizonatalYFor(FigureSide side) const
-{
-    return side == FigureSide::White ? 1 : 8;
-}
-
-int Rules::PawnPromotionYFor(FigureSide side) const
-{
-    return side == FigureSide::White ? 8 : 1;
-}
-
-int Rules::EnPassantPawnYFor(FigureSide side) const
-{
-    return side == FigureSide::White ? 5 : 4;
-}
-
 bool Rules::IsUnderCheckImpl(FigureSide side) const
 {
     BITBOARD opponentGuarded = GetGuardedPositions2(OpponentSide(side));
@@ -346,13 +358,6 @@ bool Rules::IsUnderCheckFastImpl(FigureSide side) const
     return false;
 }
 
-FigureSide Rules::OpponentSide(FigureSide side) const
-{
-    return side == FigureSide::White ?
-                FigureSide::Black
-              : FigureSide::White;
-}
-
 void Rules::DeleteMovesToCheck(MoveCollection& moves)
 {
     MoveCollection::iterator it = moves.begin();
@@ -438,7 +443,8 @@ BITBOARD Rules::_GetPawnPossibleDestinations(Figure *figure) const
     {
         destinations = BitboardHelper::AddPosition(destinations, pShort);
 
-        if (figure->MovesCount == 0) // long first pawn turn handling
+        //if (figure->MovesCount == 0) // long first pawn turn handling
+        if (PositionHelper::Y(figure->Position) == PawnHomeYFor(figure->Side))
         {
             POSITION pLong = ForwardFor(figure->Position, figure->Side, 0, 2);
 
@@ -456,18 +462,23 @@ BITBOARD Rules::_GetPawnPossibleDestinations(Figure *figure) const
     int figureX = PositionHelper::X(figure->Position);
     if (PositionHelper::Y(figure->Position) == enPassantY)
     {
-        Move opponentLastMove = m_board->GetLastMove();
-
-        if (opponentLastMove.Type == MoveType::LongPawn)
+        // this situation is possible when board setted from FEN explicitly
+        // hence we should get last move when history is empty
+        if (!m_board->IsHistoryEmpty())
         {
-            POSITION opponentStartPawnPosition = opponentLastMove.From;
-            int opponentPawnX = PositionHelper::X(opponentStartPawnPosition);
-            FigureSide opponentSide = OpponentSide(figure->Side);
+            Move opponentLastMove = m_board->GetLastMove();
 
-            if (opponentPawnX == figureX + 1 || opponentPawnX == figureX - 1)
+            if (opponentLastMove.Type == MoveType::LongPawn)
             {
-                POSITION enPassantDestination = ForwardFor(opponentStartPawnPosition, opponentSide, 0, 1);
-                destinations = BitboardHelper::AddPosition(destinations, enPassantDestination);
+                POSITION opponentStartPawnPosition = opponentLastMove.From;
+                int opponentPawnX = PositionHelper::X(opponentStartPawnPosition);
+                FigureSide opponentSide = OpponentSide(figure->Side);
+
+                if (opponentPawnX == figureX + 1 || opponentPawnX == figureX - 1)
+                {
+                    POSITION enPassantDestination = ForwardFor(opponentStartPawnPosition, opponentSide, 0, 1);
+                    destinations = BitboardHelper::AddPosition(destinations, enPassantDestination);
+                }
             }
         }
     }

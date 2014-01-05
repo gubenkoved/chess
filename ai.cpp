@@ -276,6 +276,8 @@ int AI::AlphaBetaNegamax(FigureSide side, int depth, int alpha, int beta, int& a
     if (depth == 0)
     {
         analyzed++;
+
+        // non-terminal position estimation
         return GetRelativeEstimationFor(side);
     }
 
@@ -372,6 +374,10 @@ int AI::AlphaBetaNegamax(FigureSide side, int depth, int alpha, int beta, int& a
 // alpha beta serach initializer
 Move AI::BestMoveByAlphaBeta(FigureSide side, int depth, int& bestEstimation, int& analyzed)
 {
+#ifdef QT_DEBUG
+    //qDebug() << "AI::BestMoveByAlphaBeta started";
+#endif
+
     m_transpositionTable->Clear();
 
     Move* bestMove = NULL;
@@ -388,7 +394,7 @@ Move AI::BestMoveByAlphaBeta(FigureSide side, int depth, int& bestEstimation, in
     delete bestMove;
 
 #ifdef QT_DEBUG
-    qDebug() << "Amount of records in transposition table: " << m_transpositionTable->Count();
+    //qDebug() << "Amount of records in transposition table: " << m_transpositionTable->Count();
 #endif
 
     return result;

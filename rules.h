@@ -13,10 +13,12 @@ class Rules
 {
     Board* m_board;    
 
-    POSITION ForwardFor(POSITION position, FigureSide side, int dx, int dy) const;
-
     int PawnPromotionYFor(FigureSide side) const;
+    int PawnHomeYFor(FigureSide side) const;
     int EnPassantPawnYFor(FigureSide side) const;
+    int FirstHorizonatalYFor(FigureSide side) const;
+
+    POSITION ForwardFor(POSITION position, FigureSide side, int dx, int dy) const;    
 
     bool IsUnderCheckImpl(FigureSide side) const;
     bool IsUnderCheckFastImpl(FigureSide side) const;    
@@ -77,8 +79,7 @@ class Rules
 public:
     Rules(Board* board);
 
-    FigureSide OpponentSide(FigureSide side) const;
-    int FirstHorizonatalYFor(FigureSide side) const;
+    FigureSide OpponentSide(FigureSide side) const;    
 
     MoveCollection GetPossibleMoves(FigureSide side);
 

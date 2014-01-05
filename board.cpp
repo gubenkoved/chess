@@ -261,11 +261,6 @@ void Board::IncreaseCurrentPositionCount()
 
 void Board::DecreaseCurrentPositionCount()
 {
-    if (m_positionHashHistory.isEmpty())
-    {
-        throw Exception("Invalid operation. Position history is empty");
-    }
-
     m_positionHashHistory.removeLast();
 }
 
@@ -285,12 +280,7 @@ int Board::GetCurrentPositionCount()
 }
 
 Move Board::GetLastMove() const
-{
-    if (IsHistoryEmpty())
-    {
-        throw Exception("History is empty");
-    }
-
+{   
     return m_history.last();
 }
 
@@ -325,8 +315,6 @@ Board Board::StartPosition()
 
 void Board::SetupStartPosition()
 {
-    m_turningSide = FigureSide::White;
-
     AddAliveFigure(new Figure(FigureSide::White, FigureType::Queen, "d1"));
     AddAliveFigure(new Figure(FigureSide::White, FigureType::Rock, "a1"));
     AddAliveFigure(new Figure(FigureSide::White, FigureType::Rock, "h1"));

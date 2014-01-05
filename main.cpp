@@ -15,14 +15,18 @@
 #include "chessapp.h"
 #include "exception.h"
 
+//#define TESTS
 
 Q_DECL_EXPORT int main(int argc, char *argv[])
 {
     try {
+
+#if TESTS
         Tests tests;
         tests.TestAll();
 
         return 0;
+#endif
 
         QScopedPointer<QApplication> application(createApplication(argc, argv));
 

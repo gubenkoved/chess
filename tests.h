@@ -83,6 +83,8 @@ public:
 
     bool ParsePuzzlesTest();
     bool ReconstructBoardFromPuzzlesTest();
+    bool PuzzlesBoardFromFenThenToFenTest();
+    bool SolveMateInTwoPuzzles();
 };
 
 #endif // TESTS_H

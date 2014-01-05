@@ -12,10 +12,11 @@
 // This class contains algorithms to find best move
 class AI
 {
-private:    
+public:
     static const int WIN_ESTIMATION     = +1000000;
     static const int LOOSE_ESTIMATION   = -WIN_ESTIMATION;
 
+private:
     Board* m_board;
     Rules* m_rules;
 
@@ -60,6 +61,7 @@ private:
     int AlphaBetaNegamax(FigureSide side, int depth, int alpha, int beta, int& analyzed, Move*& bestMove, bool isTopLevel);
 
 public:
+
     AI(Board* board, Rules* rules);
     ~AI();
 

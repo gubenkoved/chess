@@ -30,6 +30,9 @@ symbian:TARGET.CAPABILITY += NetworkServices
 # CONFIG += qt-components
 CONFIG += console
 
+# I've added this to use Scoped::Enums
+CONFIG += c++11
+
 QT += gui declarative
 
 # The .cpp file which was generated for your project. Feel free to hack it.

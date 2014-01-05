@@ -27,82 +27,84 @@ void Tests::TestAll()
 
     int passed = 0, failed = 0;
 
-    TEST_EXPAND(TestFigurePosition1)
-    TEST_EXPAND(TestFigurePosition2)
-    TEST_EXPAND(TestFigurePosition3)
-    TEST_EXPAND(TestFigurePosition4)
-    TEST_EXPAND(TestFigurePosition5)
+//    TEST_EXPAND(TestFigurePosition1)
+//    TEST_EXPAND(TestFigurePosition2)
+//    TEST_EXPAND(TestFigurePosition3)
+//    TEST_EXPAND(TestFigurePosition4)
+//    TEST_EXPAND(TestFigurePosition5)
 
-    TEST_EXPAND(BoardStartPositionTest)
-    TEST_EXPAND(BoardGetSideFiguresTest)
+//    TEST_EXPAND(BoardStartPositionTest)
+//    TEST_EXPAND(BoardGetSideFiguresTest)
 
-    TEST_EXPAND(GetGuardedPositionsTest1)
-    TEST_EXPAND(GetGuardedPositionsTest2)
-    TEST_EXPAND(GetGuardedPositionsTest3)
-    TEST_EXPAND(GetGuardedPositionsTest4)
-    TEST_EXPAND(GetGuardedPositionsTest5)
-    TEST_EXPAND(GetGuardedPositionsTest6)
+//    TEST_EXPAND(GetGuardedPositionsTest1)
+//    TEST_EXPAND(GetGuardedPositionsTest2)
+//    TEST_EXPAND(GetGuardedPositionsTest3)
+//    TEST_EXPAND(GetGuardedPositionsTest4)
+//    TEST_EXPAND(GetGuardedPositionsTest5)
+//    TEST_EXPAND(GetGuardedPositionsTest6)
 
-    TEST_EXPAND(MoveFigureTest)
+//    TEST_EXPAND(MoveFigureTest)
 
-    TEST_EXPAND(MakeMoveTest1)
-    TEST_EXPAND(MakeMoveTest2)
+//    TEST_EXPAND(MakeMoveTest1)
+//    TEST_EXPAND(MakeMoveTest2)
 
-    TEST_EXPAND(MoveFindingTest1)
-    TEST_EXPAND(MoveFindingTest2)
-    TEST_EXPAND(MoveFindingTest3)
+//    TEST_EXPAND(MoveFindingTest1)
+//    TEST_EXPAND(MoveFindingTest2)
+//    TEST_EXPAND(MoveFindingTest3)
 
-    TEST_EXPAND(EnPassonTest1)
-    TEST_EXPAND(EnPassonTest2)
+//    TEST_EXPAND(EnPassonTest1)
+//    TEST_EXPAND(EnPassonTest2)
 
-    TEST_EXPAND(BoardDeepCopyTest);
+//    TEST_EXPAND(BoardDeepCopyTest);
 
-    TEST_EXPAND(ToFENTest1);
-    TEST_EXPAND(ToFENTest2);
-    TEST_EXPAND(ToFENTest3);
-    TEST_EXPAND(ToFENTest4);
+//    TEST_EXPAND(ToFENTest1);
+//    TEST_EXPAND(ToFENTest2);
+//    TEST_EXPAND(ToFENTest3);
+//    TEST_EXPAND(ToFENTest4);
 
-//    TEST_EXPAND(FromFENTest1);
-//    TEST_EXPAND(FromFENTest2);
-//    TEST_EXPAND(FromFENTest3);
-//    TEST_EXPAND(FromFENTest4);
+////    TEST_EXPAND(FromFENTest1);
+////    TEST_EXPAND(FromFENTest2);
+////    TEST_EXPAND(FromFENTest3);
+////    TEST_EXPAND(FromFENTest4);
 
-    TEST_EXPAND(PerftTest1)
-    TEST_EXPAND(PerftTest2)
-    TEST_EXPAND(PerftTest3)
-    //TEST_EXPAND(PerftTest4)
+//    TEST_EXPAND(PerftTest1)
+//    TEST_EXPAND(PerftTest2)
+//    TEST_EXPAND(PerftTest3)
+//    //TEST_EXPAND(PerftTest4)
 
-    TEST_EXPAND(ABFromStartD1)
-    TEST_EXPAND(ABFromStartD2)
-    TEST_EXPAND(ABFromStartD3)
-    TEST_EXPAND(ABFromStartD4)
-    //TEST_EXPAND(ABFromStartD5)
-    //TEST_EXPAND(ABFromStartD6)
+//    TEST_EXPAND(ABFromStartD1)
+//    TEST_EXPAND(ABFromStartD2)
+//    TEST_EXPAND(ABFromStartD3)
+//    TEST_EXPAND(ABFromStartD4)
+//    //TEST_EXPAND(ABFromStartD5)
+//    //TEST_EXPAND(ABFromStartD6)
 
 
-    TEST_EXPAND(ABAfter6PlyD4)
-    TEST_EXPAND(ABAfter6PlyD5)
-    //TEST_EXPAND(ABAfter6PlyD6)
+//    TEST_EXPAND(ABAfter6PlyD4)
+//    TEST_EXPAND(ABAfter6PlyD5)
+//    //TEST_EXPAND(ABAfter6PlyD6)
 
-    TEST_EXPAND(AlphaBetaTest1)
-    TEST_EXPAND(AlphaBetaTest2)
-    TEST_EXPAND(AlphaBetaTest3)
-    //TEST_EXPAND(AlphaBetaTest4)
+//    TEST_EXPAND(AlphaBetaTest1)
+//    TEST_EXPAND(AlphaBetaTest2)
+//    TEST_EXPAND(AlphaBetaTest3)
+//    //TEST_EXPAND(AlphaBetaTest4)
 
-    TEST_EXPAND(AlphaBetaTest_2_1)
-    TEST_EXPAND(AlphaBetaTest_2_2)
-    TEST_EXPAND(AlphaBetaTest_2_3)
-    //TEST_EXPAND(AlphaBetaTest_2_4)
+//    TEST_EXPAND(AlphaBetaTest_2_1)
+//    TEST_EXPAND(AlphaBetaTest_2_2)
+//    TEST_EXPAND(AlphaBetaTest_2_3)
+//    //TEST_EXPAND(AlphaBetaTest_2_4)
 
-    TEST_EXPAND(PositionCountingTest1)
-    TEST_EXPAND(PositionCountingTest2)
+//    TEST_EXPAND(PositionCountingTest1)
+//    TEST_EXPAND(PositionCountingTest2)
 
-    TEST_EXPAND(BoardSerializationTest)
+//    TEST_EXPAND(BoardSerializationTest)
 
-    TEST_EXPAND(WM1)
+//    TEST_EXPAND(WM1)
 
-    TEST_EXPAND(ParsePuzzlesTest)
-    TEST_EXPAND(ReconstructBoardFromPuzzlesTest)
+//    TEST_EXPAND(ParsePuzzlesTest)
+//    TEST_EXPAND(ReconstructBoardFromPuzzlesTest)
+//    TEST_EXPAND(PuzzlesBoardFromFenThenToFenTest)
+    TEST_EXPAND(SolveMateInTwoPuzzles)
 
     qDebug() << "Passed:" << passed << "test(s)";
     qDebug() << "Failed:" << failed << "test(s)";
@@ -1196,4 +1198,60 @@ bool Tests::ReconstructBoardFromPuzzlesTest()
 
     // if we got here no errors occured while reconstuction
     return true;
+}
+
+bool Tests::PuzzlesBoardFromFenThenToFenTest()
+{
+    QList<Puzzle> puzzles = Puzzle::Parse("C:/Users/nrj/Documents/QT Creator Workspace/ChessApp/trunk/mate-in-two.csv");
+    foreach (const Puzzle& p, puzzles)
+    {
+        Board puzzleBoard = FEN::PositionFromFEN(p.PositionFEN);
+        // puzzle contains only position, then short it
+        QString shortedFen = FEN::Evaluate(puzzleBoard).mid(0, p.PositionFEN.length());
+
+        if (shortedFen != p.PositionFEN)
+        {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+bool Tests::SolveMateInTwoPuzzles()
+{
+    int solved = 0;
+
+    QList<Puzzle> puzzles = Puzzle::Parse("C:/Users/nrj/Documents/QT Creator Workspace/ChessApp/trunk/mate-in-two.csv");
+    foreach (const Puzzle& p, puzzles)
+    {
+        // try to find mate in two
+        Board puzzleBoard = FEN::PositionFromFEN(p.PositionFEN);
+        Rules rules(&puzzleBoard);
+        // setup AI to fastest solve mate in two puzzles
+        AI ai(&puzzleBoard, &rules);
+        ai.ExtendSearchDepthOnCaptures = false;
+
+        int bestEstimation;
+        int analyzed;
+
+        // mate in two means three ply only
+        ai.BestMoveByAlphaBeta(FigureSide::White, 4, bestEstimation, analyzed);
+
+        // if mate finded
+        if (bestEstimation >= AI::WIN_ESTIMATION)
+        {
+            solved += 1;
+            qDebug() << "     SOLVED #" << p.Id << p.PositionFEN << ". Estimation:" << bestEstimation;
+        } else
+        {
+            qDebug() << "     NOT SOLVED #" << p.Id << p.PositionFEN << ". Estimation:" << bestEstimation;
+        }
+    }
+
+    qDebug() << "   --";
+    qDebug() << "   SOLVED " << solved;
+    qDebug() << "   TOTAL " << puzzles.count();
+
+    return solved == puzzles.count();
 }
