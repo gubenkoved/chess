@@ -28,18 +28,25 @@ AI::~AI()
 
 void AI::InitStaticFigurePositionEstimations()
 {
+    QList<FigureType> allFigureTypes;
+    allFigureTypes << FigureType::Pawn;
+    allFigureTypes << FigureType::Bishop;
+    allFigureTypes << FigureType::Knight;
+    allFigureTypes << FigureType::Rock;
+    allFigureTypes << FigureType::Queen;
+    allFigureTypes << FigureType::King;
+
     for (int x = 1; x <= 8; ++x)
     {
         for (int y = 1; y <= 8; ++y)
         {
             POSITION position = PositionHelper::Create(x, y);
-            for (int figureTypeValue = 0; figureTypeValue < FIGURE_TYPE_COUNT; ++figureTypeValue)
-            {
-                FigureType figureType = (FigureType)figureTypeValue;                
-                int serial = PositionHelper::Serial(position);
+            int serial = PositionHelper::Serial(position);
 
-                m_staticFigurePositionEstimation[(int)FigureSide::White][figureTypeValue][serial] = CalculateFigurePositionEstimation(figureType, position, FigureSide::White);
-                m_staticFigurePositionEstimation[(int)FigureSide::Black][figureTypeValue][serial] = CalculateFigurePositionEstimation(figureType, position, FigureSide::Black);
+            foreach(FigureType figureType, allFigureTypes)
+            {
+                m_staticFigurePositionEstimation[(int)FigureSide::White][(int)figureType][serial] = CalculateFigurePositionEstimation(figureType, position, FigureSide::White);
+                m_staticFigurePositionEstimation[(int)FigureSide::Black][(int)figureType][serial] = CalculateFigurePositionEstimation(figureType, position, FigureSide::Black);
             }
         }
     }
@@ -49,7 +56,6 @@ int AI::GetFigurePositionEstimation(FigureType type, POSITION position, FigureSi
 {
     return m_staticFigurePositionEstimation[(int)side][(int)type][PositionHelper::Serial(position)];
 }
-
 
 int AI::GetFigureWeight(FigureType type)
 {

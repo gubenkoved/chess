@@ -4,6 +4,7 @@
 #include "typedefs.h"
 #include "figure.h"
 #include "figureposition.h"
+#include "exception.h"
 
 enum MoveType
 {
@@ -27,13 +28,17 @@ struct Move
     POSITION To;
     MoveType Type;
     Figure* MovingFigure;
-    Figure* CapturedFigure; // actual only when is capture move, otherwise NULL
+
+    // for Capture and EnPassant not NULL, and NULL otherwise
+    Figure* CapturedFigure;
+
+    // for PawnPromotion only
+    FigureType PromotedTo;
 
     Move();
     Move(MoveType type, POSITION from, POSITION to, Figure* figure, Figure* captured);
     Move(const Move& another);
 
-    QString GetTypeName() const;
     bool IsCastling() const;
 
     Move& operator=(const Move& another);
@@ -41,9 +46,23 @@ struct Move
 
 inline QDebug operator<<(QDebug debug, const Move& m)
 {
+    QString moveTypeCode;
+    switch (m.Type)
+    {
+        case Normal:        moveTypeCode = "Normal";        break;
+        case Capture:       moveTypeCode = "Capture";       break;
+        case EnPassant:     moveTypeCode = "EnPassant";     break;
+        case LongCastling:  moveTypeCode = "LongCastling";  break;
+        case ShortCastling: moveTypeCode = "ShortCastling"; break;
+        case PawnPromotion: moveTypeCode = "PawnPromotion"; break;
+        case LongPawn:      moveTypeCode = "LongPawn";      break;
+        case Invalid:       moveTypeCode = "Invalid";       break;
+        default: throw Exception("Unknown move type");
+    }
+
     debug << "Move("
-        << m.MovingFigure->GetName().toStdString().c_str()
-        << m.GetTypeName() << "turn from"
+        << m.MovingFigure->GetName()
+        << moveTypeCode << "turn from"
         << PositionHelper::ToString(m.From) << "to"
         << PositionHelper::ToString(m.To) << ")";
 

@@ -1,3 +1,0 @@
-+ parallel alpha beta implementation?
-+ alter move generator to get ability generate only captures
-+ replace QString based hash (with light-weighted bit arrays?)

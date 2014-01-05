@@ -40,22 +40,6 @@ Move::Move(const Move &another)
 #endif
 }
 
-QString Move::GetTypeName() const
-{
-    switch (Type)
-    {
-        case Normal:        return "Normal";
-        case Capture:       return "Capture";
-        case EnPassant:     return "EnPassant";
-        case LongCastling:  return "LongCastling";
-        case ShortCastling: return "ShortCastling";
-        case PawnPromotion: return "PawnPromotion";
-        case LongPawn:      return "LongPawn";
-
-        default: throw Exception("Invalid type");
-    }
-}
-
 bool Move::IsCastling() const
 {
     return Type == MoveType::LongCastling || Type == MoveType::ShortCastling;
