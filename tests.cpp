@@ -27,84 +27,84 @@ void Tests::TestAll()
 
     int passed = 0, failed = 0;
 
-//    TEST_EXPAND(TestFigurePosition1)
-//    TEST_EXPAND(TestFigurePosition2)
-//    TEST_EXPAND(TestFigurePosition3)
-//    TEST_EXPAND(TestFigurePosition4)
-//    TEST_EXPAND(TestFigurePosition5)
+    TEST_EXPAND(TestFigurePosition1)
+    TEST_EXPAND(TestFigurePosition2)
+    TEST_EXPAND(TestFigurePosition3)
+    TEST_EXPAND(TestFigurePosition4)
+    TEST_EXPAND(TestFigurePosition5)
 
-//    TEST_EXPAND(BoardStartPositionTest)
-//    TEST_EXPAND(BoardGetSideFiguresTest)
+    TEST_EXPAND(BoardStartPositionTest)
+    TEST_EXPAND(BoardGetSideFiguresTest)
 
-//    TEST_EXPAND(GetGuardedPositionsTest1)
-//    TEST_EXPAND(GetGuardedPositionsTest2)
-//    TEST_EXPAND(GetGuardedPositionsTest3)
-//    TEST_EXPAND(GetGuardedPositionsTest4)
-//    TEST_EXPAND(GetGuardedPositionsTest5)
-//    TEST_EXPAND(GetGuardedPositionsTest6)
+    TEST_EXPAND(GetGuardedPositionsTest1)
+    TEST_EXPAND(GetGuardedPositionsTest2)
+    TEST_EXPAND(GetGuardedPositionsTest3)
+    TEST_EXPAND(GetGuardedPositionsTest4)
+    TEST_EXPAND(GetGuardedPositionsTest5)
+    TEST_EXPAND(GetGuardedPositionsTest6)
 
-//    TEST_EXPAND(MoveFigureTest)
+    TEST_EXPAND(MoveFigureTest)
 
-//    TEST_EXPAND(MakeMoveTest1)
-//    TEST_EXPAND(MakeMoveTest2)
+    TEST_EXPAND(MakeMoveTest1)
+    TEST_EXPAND(MakeMoveTest2)
 
-//    TEST_EXPAND(MoveFindingTest1)
-//    TEST_EXPAND(MoveFindingTest2)
-//    TEST_EXPAND(MoveFindingTest3)
+    TEST_EXPAND(MoveFindingTest1)
+    TEST_EXPAND(MoveFindingTest2)
+    TEST_EXPAND(MoveFindingTest3)
 
-//    TEST_EXPAND(EnPassonTest1)
-//    TEST_EXPAND(EnPassonTest2)
+    TEST_EXPAND(EnPassonTest1)
+    TEST_EXPAND(EnPassonTest2)
 
-//    TEST_EXPAND(BoardDeepCopyTest);
+    TEST_EXPAND(BoardDeepCopyTest);
 
-//    TEST_EXPAND(ToFENTest1);
-//    TEST_EXPAND(ToFENTest2);
-//    TEST_EXPAND(ToFENTest3);
-//    TEST_EXPAND(ToFENTest4);
+    TEST_EXPAND(ToFENTest1);
+    TEST_EXPAND(ToFENTest2);
+    TEST_EXPAND(ToFENTest3);
+    TEST_EXPAND(ToFENTest4);
 
-////    TEST_EXPAND(FromFENTest1);
-////    TEST_EXPAND(FromFENTest2);
-////    TEST_EXPAND(FromFENTest3);
-////    TEST_EXPAND(FromFENTest4);
+//    TEST_EXPAND(FromFENTest1);
+//    TEST_EXPAND(FromFENTest2);
+//    TEST_EXPAND(FromFENTest3);
+//    TEST_EXPAND(FromFENTest4);
 
-//    TEST_EXPAND(PerftTest1)
-//    TEST_EXPAND(PerftTest2)
-//    TEST_EXPAND(PerftTest3)
-//    //TEST_EXPAND(PerftTest4)
+    TEST_EXPAND(PerftTest1)
+    TEST_EXPAND(PerftTest2)
+    TEST_EXPAND(PerftTest3)
+    //TEST_EXPAND(PerftTest4)
 
-//    TEST_EXPAND(ABFromStartD1)
-//    TEST_EXPAND(ABFromStartD2)
-//    TEST_EXPAND(ABFromStartD3)
-//    TEST_EXPAND(ABFromStartD4)
-//    //TEST_EXPAND(ABFromStartD5)
-//    //TEST_EXPAND(ABFromStartD6)
+    TEST_EXPAND(ABFromStartD1)
+    TEST_EXPAND(ABFromStartD2)
+    TEST_EXPAND(ABFromStartD3)
+    TEST_EXPAND(ABFromStartD4)
+    //TEST_EXPAND(ABFromStartD5)
+    //TEST_EXPAND(ABFromStartD6)
 
 
     TEST_EXPAND(ABAfter6PlyD4)
-//    TEST_EXPAND(ABAfter6PlyD5)
-//    //TEST_EXPAND(ABAfter6PlyD6)
+    TEST_EXPAND(ABAfter6PlyD5)
+    //TEST_EXPAND(ABAfter6PlyD6)
 
-//    TEST_EXPAND(AlphaBetaTest1)
-//    TEST_EXPAND(AlphaBetaTest2)
-//    TEST_EXPAND(AlphaBetaTest3)
-//    //TEST_EXPAND(AlphaBetaTest4)
+    TEST_EXPAND(AlphaBetaTest1)
+    TEST_EXPAND(AlphaBetaTest2)
+    TEST_EXPAND(AlphaBetaTest3)
+    //TEST_EXPAND(AlphaBetaTest4)
 
-//    TEST_EXPAND(AlphaBetaTest_2_1)
-//    TEST_EXPAND(AlphaBetaTest_2_2)
-//    TEST_EXPAND(AlphaBetaTest_2_3)
-//    //TEST_EXPAND(AlphaBetaTest_2_4)
+    TEST_EXPAND(AlphaBetaTest_2_1)
+    TEST_EXPAND(AlphaBetaTest_2_2)
+    TEST_EXPAND(AlphaBetaTest_2_3)
+    //TEST_EXPAND(AlphaBetaTest_2_4)
 
-//    TEST_EXPAND(PositionCountingTest1)
-//    TEST_EXPAND(PositionCountingTest2)
+    TEST_EXPAND(PositionCountingTest1)
+    TEST_EXPAND(PositionCountingTest2)
 
-//    TEST_EXPAND(BoardSerializationTest)
+    TEST_EXPAND(BoardSerializationTest)
 
-//    TEST_EXPAND(WM1)
+    TEST_EXPAND(WM1)
 
-//    TEST_EXPAND(ParsePuzzlesTest)
-//    TEST_EXPAND(ReconstructBoardFromPuzzlesTest)
-//    TEST_EXPAND(PuzzlesBoardFromFenThenToFenTest)
-//    TEST_EXPAND(SolveMateInTwoPuzzles)
+    TEST_EXPAND(ParsePuzzlesTest)
+    TEST_EXPAND(ReconstructBoardFromPuzzlesTest)
+    TEST_EXPAND(PuzzlesBoardFromFenThenToFenTest)
+    TEST_EXPAND(SolveMateInTwoPuzzles)
 
     qDebug() << "Passed:" << passed << "test(s)";
     qDebug() << "Failed:" << failed << "test(s)";
@@ -245,7 +245,7 @@ bool Tests::GetGuardedPositionsTest1()
     Board board = Board::StartPosition();
     Rules rules = Rules(&board);
 
-    PositionCollection guarded = BitboardHelper::GetPositions(rules.GetGuardedPositions2(FigureSide::White));
+    PositionCollection guarded = BitboardHelper::GetPositions(rules.GetGuardedPositions(FigureSide::White));
 
     return guarded.count() == 22;
 }
@@ -255,7 +255,7 @@ bool Tests::GetGuardedPositionsTest2()
     Board board = Board::StartPosition();
     Rules rules = Rules(&board);
 
-    PositionCollection guarded = BitboardHelper::GetPositions(rules.GetGuardedPositions2(FigureSide::Black));
+    PositionCollection guarded = BitboardHelper::GetPositions(rules.GetGuardedPositions(FigureSide::Black));
 
     return guarded.count() == 22;
 }
@@ -267,7 +267,7 @@ bool Tests::GetGuardedPositionsTest3()
 
     board.AddAliveFigure(new Figure(FigureSide::White, FigureType::Knight, PositionHelper::FromString("e5")));
 
-    PositionCollection guarded = BitboardHelper::GetPositions(rules.GetGuardedPositions2(FigureSide::White));
+    PositionCollection guarded = BitboardHelper::GetPositions(rules.GetGuardedPositions(FigureSide::White));
 
     return guarded.count() == 8;
 }
@@ -278,7 +278,7 @@ bool Tests::GetGuardedPositionsTest4()
 
     board.AddAliveFigure(new Figure(FigureSide::White, FigureType::Rock, PositionHelper::FromString("e4")));
 
-    PositionCollection guarded = BitboardHelper::GetPositions(rules.GetGuardedPositions2(FigureSide::White));
+    PositionCollection guarded = BitboardHelper::GetPositions(rules.GetGuardedPositions(FigureSide::White));
 
     return guarded.count() == 14;
 }
@@ -289,7 +289,7 @@ bool Tests::GetGuardedPositionsTest5()
 
     board.AddAliveFigure(new Figure(FigureSide::White, FigureType::Queen, PositionHelper::FromString("b2")));
 
-    PositionCollection guarded = BitboardHelper::GetPositions(rules.GetGuardedPositions2(FigureSide::White));
+    PositionCollection guarded = BitboardHelper::GetPositions(rules.GetGuardedPositions(FigureSide::White));
 
     return guarded.count() == 23;
 }
@@ -300,7 +300,7 @@ bool Tests::GetGuardedPositionsTest6()
 
     board.AddAliveFigure(new Figure(FigureSide::White, FigureType::Pawn, PositionHelper::FromString("h7")));
 
-    PositionCollection guarded = BitboardHelper::GetPositions(rules.GetGuardedPositions2(FigureSide::White));
+    PositionCollection guarded = BitboardHelper::GetPositions(rules.GetGuardedPositions(FigureSide::White));
 
     return guarded.count() == 1;
 }

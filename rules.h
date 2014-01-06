@@ -40,7 +40,6 @@ class Rules
     BITBOARD _GetQueenPossibleDestinations(Figure* figure) const;
     BITBOARD _GetKingPossibleDestinations2(Figure* figure) const;
 
-    Move CreateMove(POSITION from, POSITION to);
     MoveCollection CreateMoves(POSITION from, POSITION to);
 
     // GetOnLinePositions function
@@ -62,27 +61,54 @@ class Rules
     //
     // EXAMPLE: function runned with xMult = 0, yMult = 1 and lenLimit = 2 (...,0,1,2) returns
     // pawn first move possibilities;
-    BITBOARD GetOnLinePositions2(POSITION position, FigureSide side, int xMult, int yMult, int lenLimit) const;
+    BITBOARD GetOnLinePositions(POSITION position, FigureSide side, int xMult, int yMult, int lenLimit) const;
     Figure* GetObstacleInDirection(POSITION position, FigureSide side, int xMult, int yMult) const;
 
     // Returns positions that guarded for specified figure.
     // Position is guarded when figure can kill another figure on that position.
     // Bitboard implementation.
-    BITBOARD GetGuardedPositions2        (Figure* figure) const;
-    BITBOARD GetPawnGuardedPositions2    (Figure* figure) const;
-    BITBOARD GetKinghtGuardedPositions2  (Figure* figure) const;
-    BITBOARD GetBishopGuardedPositions2  (Figure* figure) const;
-    BITBOARD GetRockGuardedPositions2    (Figure* figure) const;
-    BITBOARD GetQueenGuardedPositions2   (Figure* figure) const;
-    BITBOARD GetKingGuardedPositions2    (Figure* figure) const;
+    BITBOARD GetGuardedPositions        (Figure* figure) const;
+    BITBOARD GetPawnGuardedPositions    (Figure* figure) const;
+    BITBOARD GetKinghtGuardedPositions  (Figure* figure) const;
+    BITBOARD GetBishopGuardedPositions  (Figure* figure) const;
+    BITBOARD GetRockGuardedPositions    (Figure* figure) const;
+    BITBOARD GetQueenGuardedPositions   (Figure* figure) const;
+    BITBOARD GetKingGuardedPositions    (Figure* figure) const;
 
-    BITBOARD GetGuardedPositions2(FigureSide side) const;
+    BITBOARD GetGuardedPositions(FigureSide side) const;
 public:
     Rules(Board* board);
 
     FigureSide OpponentSide(FigureSide side) const;    
 
-    MoveCollection GetPossibleMoves(FigureSide side);
+    MoveCollection GetPossibleMoves(FigureSide side);    
+
+    bool IsUnderCheck(FigureSide side) const;
+    bool IsPassiveEndGame() const;
+
+    // Because make move uses pointers to figure hence
+    // if you have two different instances of boards (GUI) e.g.
+    // you should use FindMove first, and then call this method with finded
+    // Move instance - it will always contains correct references
+    void MakeMove(Move move);    
+    void UnMakeMove(Move move);
+
+    // !! FOLLOWING METHODS INTENDED TO USE IN GUI ONLY
+    // Following methods is incredible slow to use it
+    // in normal board processing situations
+    // The only reason for these methods is ability to create
+    // GUI interaction more easy.
+
+    // !! USE IN GUI ONLY !!
+    // It performs search for possible moves and find the move
+    // that was intended to made.
+    // Triple of arguments uniquly identifies turn.
+    // PromotedTo argument resolves ambiguity with pawn promotions moves...
+    QList<Move> FindMoves(POSITION from, POSITION to);
+
+    // This implementation first of all performs FindMove and then, if move has been found makes it
+    // or throws an exception
+    void MakeMove(POSITION from, POSITION to, FigureType promotedTo = FigureType::Unspecified);
 
     // !! USE IN GUI ONLY !!
     // Very slow: evaluates possible moves for all figures and then extrude it for specified figure
@@ -91,19 +117,6 @@ public:
     // !! USE IN GUI ONLY !!
     // Very slow: evaluates possible destination for all figures and then extrude it for specified figure
     PositionList GetPossibleDestinations(Figure* figure);
-
-    bool IsUnderCheck(FigureSide side) const;
-    bool IsPassiveEndGame() const;
-
-    void MakeMove(Move move);    
-
-    // This function created to be called by GUI
-    // It performs search for possible moves and find the move
-    // that was intended to made.
-    // Triple of arguments uniquly identifies turn.
-    // PromotedTo argument resolves ambiguity with pawn promotions moves...
-    void MakeMove(POSITION from, POSITION to, FigureType promotedTo = FigureType::Unspecified);
-    void UnMakeMove(Move move);
 
     friend class Tests;
 };
