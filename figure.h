@@ -3,14 +3,14 @@
 
 #include <QString>
 #include <QChar>
-#include <string.h>
 
 #include "figureposition.h"
+#include "enumshelper.h"
 
 #define FIGURE_TYPE_COUNT 6
 #define SIDE_COUNT 2
 
-enum FigureType
+enum class FigureType
 {
     Pawn    = 0,
     Knight  = 1,
@@ -18,14 +18,14 @@ enum FigureType
     Rock    = 3,
     King    = 4,
     Queen   = 5,
-
-    Unspecified = -1
+    Invalid = -1
 };
 
-enum FigureSide
+enum class FigureSide
 {
     White = 0,
-    Black = 1
+    Black = 1,
+    Invalid = -1
 };
 
 struct Figure
@@ -36,18 +36,16 @@ struct Figure
     int MovesCount;
 
     Figure(FigureSide side, FigureType type, POSITION position);
-    Figure(FigureSide side, FigureType type, std::string position);
     Figure(const Figure& another);
 
     QChar GetUnicodeChessChar() const;
-    QString GetName() const;
 };
 
 inline QDebug operator<<(QDebug debug, const Figure& f)
 {
     debug.nospace() << "Figure("
-        << f.GetName() << " at "
-        << f.Position << ")";
+        << EnumsHelper::ToString(f.Type) << " at "
+        << PositionHelper::ToString(f.Position) << ")";
     return debug.space();
 }
 #endif // FIGURE_H

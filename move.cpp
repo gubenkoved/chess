@@ -5,10 +5,10 @@ Move::Move()
 {
     From = POSITION();
     To = POSITION();
-    Type = Invalid;
+    Type = MoveType::Invalid;
     MovingFigure = NULL;
     CapturedFigure = NULL;
-    PromotedTo = FigureType::Unspecified;
+    PromotedTo = FigureType::Invalid;
 }
 
 Move::Move(MoveType type, POSITION from, POSITION to, Figure* figure, Figure* captured)
@@ -18,7 +18,7 @@ Move::Move(MoveType type, POSITION from, POSITION to, Figure* figure, Figure* ca
     Type = type;
     MovingFigure = figure;
     CapturedFigure = captured;
-    PromotedTo = FigureType::Unspecified;
+    PromotedTo = FigureType::Invalid;
 }
 
 Move::Move(const Move &another)

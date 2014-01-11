@@ -108,7 +108,7 @@ public:
 
     // This implementation first of all performs FindMove and then, if move has been found makes it
     // or throws an exception
-    void MakeMove(POSITION from, POSITION to, FigureType promotedTo = FigureType::Unspecified);
+    void MakeMove(POSITION from, POSITION to, FigureType promotedTo = FigureType::Invalid);
 
     // !! USE IN GUI ONLY !!
     // Very slow: evaluates possible moves for all figures and then extrude it for specified figure

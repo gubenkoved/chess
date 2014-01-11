@@ -77,6 +77,11 @@ void Board::AddDeadFigure(Figure *figure)
     //m_deadFiguresMap[figure->Position.GetSerialNumber()].append(figure);
 }
 
+int Board::GetPlyCount() const
+{
+    return m_history.count();
+}
+
 int Board::GetAfterLastCaptureOrPawnMoveHalfMoveCount() const
 {    
     int halfMoveCounter = 0;
@@ -316,45 +321,45 @@ Board Board::StartPosition()
 
 void Board::SetupStartPosition()
 {
-    AddAliveFigure(new Figure(FigureSide::White, FigureType::Queen, "d1"));
-    AddAliveFigure(new Figure(FigureSide::White, FigureType::Rock, "a1"));
-    AddAliveFigure(new Figure(FigureSide::White, FigureType::Rock, "h1"));
-    AddAliveFigure(new Figure(FigureSide::White, FigureType::Knight, "b1"));
-    AddAliveFigure(new Figure(FigureSide::White, FigureType::Knight, "g1"));
-    AddAliveFigure(new Figure(FigureSide::White, FigureType::Bishop, "c1"));
-    AddAliveFigure(new Figure(FigureSide::White, FigureType::Bishop, "f1"));
-    AddAliveFigure(new Figure(FigureSide::White, FigureType::King, "e1"));
+    AddAliveFigure(new Figure(FigureSide::White, FigureType::Queen, PositionHelper::FromString("d1")));
+    AddAliveFigure(new Figure(FigureSide::White, FigureType::Rock, PositionHelper::FromString("a1")));
+    AddAliveFigure(new Figure(FigureSide::White, FigureType::Rock, PositionHelper::FromString("h1")));
+    AddAliveFigure(new Figure(FigureSide::White, FigureType::Knight, PositionHelper::FromString("b1")));
+    AddAliveFigure(new Figure(FigureSide::White, FigureType::Knight, PositionHelper::FromString("g1")));
+    AddAliveFigure(new Figure(FigureSide::White, FigureType::Bishop, PositionHelper::FromString("c1")));
+    AddAliveFigure(new Figure(FigureSide::White, FigureType::Bishop, PositionHelper::FromString("f1")));
+    AddAliveFigure(new Figure(FigureSide::White, FigureType::King, PositionHelper::FromString("e1")));
 
-    AddAliveFigure(new Figure(FigureSide::White, FigureType::Pawn, "a2"));
-    AddAliveFigure(new Figure(FigureSide::White, FigureType::Pawn, "b2"));
-    AddAliveFigure(new Figure(FigureSide::White, FigureType::Pawn, "c2"));
-    AddAliveFigure(new Figure(FigureSide::White, FigureType::Pawn, "d2"));
-    AddAliveFigure(new Figure(FigureSide::White, FigureType::Pawn, "e2"));
-    AddAliveFigure(new Figure(FigureSide::White, FigureType::Pawn, "f2"));
-    AddAliveFigure(new Figure(FigureSide::White, FigureType::Pawn, "g2"));
-    AddAliveFigure(new Figure(FigureSide::White, FigureType::Pawn, "h2"));
+    AddAliveFigure(new Figure(FigureSide::White, FigureType::Pawn, PositionHelper::FromString("a2")));
+    AddAliveFigure(new Figure(FigureSide::White, FigureType::Pawn, PositionHelper::FromString("b2")));
+    AddAliveFigure(new Figure(FigureSide::White, FigureType::Pawn, PositionHelper::FromString("c2")));
+    AddAliveFigure(new Figure(FigureSide::White, FigureType::Pawn, PositionHelper::FromString("d2")));
+    AddAliveFigure(new Figure(FigureSide::White, FigureType::Pawn, PositionHelper::FromString("e2")));
+    AddAliveFigure(new Figure(FigureSide::White, FigureType::Pawn, PositionHelper::FromString("f2")));
+    AddAliveFigure(new Figure(FigureSide::White, FigureType::Pawn, PositionHelper::FromString("g2")));
+    AddAliveFigure(new Figure(FigureSide::White, FigureType::Pawn, PositionHelper::FromString("h2")));
 
-    AddAliveFigure(new Figure(FigureSide::Black, FigureType::Queen, "d8"));
-    AddAliveFigure(new Figure(FigureSide::Black, FigureType::Rock, "a8"));
-    AddAliveFigure(new Figure(FigureSide::Black, FigureType::Rock, "h8"));
-    AddAliveFigure(new Figure(FigureSide::Black, FigureType::Knight, "b8"));
-    AddAliveFigure(new Figure(FigureSide::Black, FigureType::Knight, "g8"));
-    AddAliveFigure(new Figure(FigureSide::Black, FigureType::Bishop, "f8"));
-    AddAliveFigure(new Figure(FigureSide::Black, FigureType::Bishop, "c8"));
-    AddAliveFigure(new Figure(FigureSide::Black, FigureType::King, "e8"));
+    AddAliveFigure(new Figure(FigureSide::Black, FigureType::Queen, PositionHelper::FromString("d8")));
+    AddAliveFigure(new Figure(FigureSide::Black, FigureType::Rock, PositionHelper::FromString("a8")));
+    AddAliveFigure(new Figure(FigureSide::Black, FigureType::Rock, PositionHelper::FromString("h8")));
+    AddAliveFigure(new Figure(FigureSide::Black, FigureType::Knight, PositionHelper::FromString("b8")));
+    AddAliveFigure(new Figure(FigureSide::Black, FigureType::Knight, PositionHelper::FromString("g8")));
+    AddAliveFigure(new Figure(FigureSide::Black, FigureType::Bishop, PositionHelper::FromString("f8")));
+    AddAliveFigure(new Figure(FigureSide::Black, FigureType::Bishop, PositionHelper::FromString("c8")));
+    AddAliveFigure(new Figure(FigureSide::Black, FigureType::King, PositionHelper::FromString("e8")));
 
-    AddAliveFigure(new Figure(FigureSide::Black, FigureType::Pawn, "a7"));
-    AddAliveFigure(new Figure(FigureSide::Black, FigureType::Pawn, "b7"));
-    AddAliveFigure(new Figure(FigureSide::Black, FigureType::Pawn, "c7"));
-    AddAliveFigure(new Figure(FigureSide::Black, FigureType::Pawn, "d7"));
-    AddAliveFigure(new Figure(FigureSide::Black, FigureType::Pawn, "e7"));
-    AddAliveFigure(new Figure(FigureSide::Black, FigureType::Pawn, "f7"));
-    AddAliveFigure(new Figure(FigureSide::Black, FigureType::Pawn, "g7"));
-    AddAliveFigure(new Figure(FigureSide::Black, FigureType::Pawn, "h7"));
+    AddAliveFigure(new Figure(FigureSide::Black, FigureType::Pawn, PositionHelper::FromString("a7")));
+    AddAliveFigure(new Figure(FigureSide::Black, FigureType::Pawn, PositionHelper::FromString("b7")));
+    AddAliveFigure(new Figure(FigureSide::Black, FigureType::Pawn, PositionHelper::FromString("c7")));
+    AddAliveFigure(new Figure(FigureSide::Black, FigureType::Pawn, PositionHelper::FromString("d7")));
+    AddAliveFigure(new Figure(FigureSide::Black, FigureType::Pawn, PositionHelper::FromString("e7")));
+    AddAliveFigure(new Figure(FigureSide::Black, FigureType::Pawn, PositionHelper::FromString("f7")));
+    AddAliveFigure(new Figure(FigureSide::Black, FigureType::Pawn, PositionHelper::FromString("g7")));
+    AddAliveFigure(new Figure(FigureSide::Black, FigureType::Pawn, PositionHelper::FromString("h7")));
 }
 
 void Board::SetupKings()
 {
-    AddAliveFigure(new Figure(FigureSide::White, FigureType::King, "e1"));
-    AddAliveFigure(new Figure(FigureSide::Black, FigureType::King, "e8"));
+    AddAliveFigure(new Figure(FigureSide::White, FigureType::King, PositionHelper::FromString("e1")));
+    AddAliveFigure(new Figure(FigureSide::Black, FigureType::King, PositionHelper::FromString("e8")));
 }

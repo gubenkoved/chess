@@ -30,7 +30,7 @@ symbian:TARGET.CAPABILITY += NetworkServices
 # CONFIG += qt-components
 CONFIG += console
 
-# I've added this to use Scoped::Enums
+# I've added this to use strongly typed enums (enum class)
 CONFIG += c++11
 
 QT += gui declarative
@@ -53,7 +53,8 @@ SOURCES += main.cpp \
     bitboardhelper.cpp \
     positionhash.cpp \
     figureposition.cpp \
-    puzzle.cpp
+    puzzle.cpp \
+    enumshelper.cpp
 
 # Please do not modify the following two lines. Required for deployment.
 include(qmlapplicationviewer/qmlapplicationviewer.pri)
@@ -77,7 +78,8 @@ HEADERS += \
     bitboardhelper.h \
     positionhash.h \
     figureposition.h \
-    puzzle.h
+    puzzle.h \
+    enumshelper.h
 
 OTHER_FILES += \
     ToDo.txt \

@@ -16,6 +16,7 @@ AI::AI(Board* board, Rules *rules)
     MaxCurrentDepthToExtendSearchOnCaptures = 1;
 
     UseMovesOrdering = true;
+    //UseTranspositionTable = true;
     UseTranspositionTable = false;
 
     InitStaticFigurePositionEstimations();
@@ -267,7 +268,7 @@ int AI::AlphaBetaNegamax(FigureSide side, int depth, int alpha, int beta, int& a
     {
         // if position evaluated before with equal or bigger depth use it as estimation
         const TranspositionTableEntry* hashEntry = m_transpositionTable->FindEntry(m_board->GetCurrentPositionHash());
-        if (hashEntry != NULL && hashEntry->Depth >= depth)
+        if (hashEntry != NULL && hashEntry->Depth == depth)
         {
             return hashEntry->Estimation;
         }
@@ -353,12 +354,12 @@ int AI::AlphaBetaNegamax(FigureSide side, int depth, int alpha, int beta, int& a
             bestMove = new Move(move);
         }
 
-#ifdef QT_DEBUG
+//#ifdef QT_DEBUG
         if (isTopLevel)
         {
             qDebug() << "  " << move << "estimation: " << estimation << "alpha: " << alpha;
         }
-#endif
+//#endif
 
         if (alpha >= beta)
         {

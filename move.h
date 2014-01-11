@@ -1,12 +1,13 @@
 #ifndef MOVE_H
 #define MOVE_H
 
-#include "typedefs.h"
 #include "figure.h"
 #include "figureposition.h"
 #include "exception.h"
+#include "enumshelper.h"
+#include "typedefs.h"
 
-enum MoveType
+enum class MoveType
 {
     Normal, // just move from one to another position
     Capture, // capture enemy figure
@@ -38,24 +39,10 @@ struct Move
 
 inline QDebug operator<<(QDebug debug, const Move& m)
 {
-    QString moveTypeCode;
-    switch (m.Type)
-    {
-        case Normal:        moveTypeCode = "Normal";        break;
-        case Capture:       moveTypeCode = "Capture";       break;
-        case EnPassant:     moveTypeCode = "EnPassant";     break;
-        case LongCastling:  moveTypeCode = "LongCastling";  break;
-        case ShortCastling: moveTypeCode = "ShortCastling"; break;
-        case PawnPromotion: moveTypeCode = "PawnPromotion"; break;
-        case LongPawn:      moveTypeCode = "LongPawn";      break;
-        case Invalid:       moveTypeCode = "Invalid";       break;
-        default: throw Exception("Unknown move type");
-    }    
-
     debug << "Move("
-        << m.MovingFigure->GetName()
-        << moveTypeCode
-        << m.PromotedTo
+        << EnumsHelper::ToString(m.MovingFigure->Type)
+        << EnumsHelper::ToString(m.Type)
+        << EnumsHelper::ToString(m.PromotedTo)
         << "turn from"
         << PositionHelper::ToString(m.From) << "to"
         << PositionHelper::ToString(m.To) << ")";

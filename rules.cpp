@@ -217,8 +217,21 @@ bool Rules::IsUnderCheck(FigureSide side) const
 
 bool Rules::IsPassiveEndGame() const
 {
-    return m_board->GetCurrentPositionCount() >= 3
-            || m_board->GetAfterLastCaptureOrPawnMoveHalfMoveCount() >= 50;
+    // position repeadted three times
+    if (m_board->GetCurrentPositionCount() >= 3)
+        return true;
+
+    // performance optimization
+    if (m_board->GetPlyCount() >= 50)
+    {
+        // if 50 or more plys after last pawn move or capture passed
+        if (m_board->GetAfterLastCaptureOrPawnMoveHalfMoveCount() >= 50)
+        {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 BITBOARD Rules::GetGuardedPositions(Figure *figure) const
@@ -437,7 +450,7 @@ BITBOARD Rules::_GetPawnPossibleDestinations(Figure *figure) const
         destinations = BitboardHelper::AddPosition(destinations, pCaptureRight);
     }
 
-    // shot and long moves
+    // short and long moves
     POSITION pShort = ForwardFor(figure->Position, figure->Side, 0, 1);
     if (!m_board->HasFigureAt(pShort))
     {
