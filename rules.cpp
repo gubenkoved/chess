@@ -407,28 +407,13 @@ BITBOARD Rules::_GetPossibleDestinations(Figure *figure) const
         case FigureType::Bishop:    dests = _GetBishopPossibleDestinations(figure);  break;
         case FigureType::Rock:      dests = _GetRockPossibleDestinations(figure);    break;
         case FigureType::Queen:     dests = _GetQueenPossibleDestinations(figure);   break;
-        case FigureType::King:      dests = _GetKingPossibleDestinations2(figure);   break;
+        case FigureType::King:      dests = _GetKingPossibleDestinations(figure);   break;
 
         default: throw Exception("Unknown figure type");
     }
 
+    // remove self-capture destinations
     return BitboardHelper::Substract(dests, m_board->GetBitboardFor(figure->Side));
-}
-
-void Rules::DeleteSelfCaptureDesination(PositionCollection& destinations, FigureSide selfSide) const
-{
-    PositionCollection::iterator it = destinations.begin();
-    while (it != destinations.end())
-    {
-        if (m_board->HasFigureAt(*it, selfSide)) // if same side figure here
-        {
-            it = destinations.erase(it); // erase it
-        }
-        else
-        {
-            ++it;
-        }
-    }
 }
 
 BITBOARD Rules::_GetPawnPossibleDestinations(Figure *figure) const
@@ -523,49 +508,58 @@ BITBOARD Rules::_GetQueenPossibleDestinations(Figure *figure) const
     return GetQueenGuardedPositions(figure);
 }
 
-BITBOARD Rules::_GetKingPossibleDestinations2(Figure *king) const
+BITBOARD Rules::_GetKingPossibleDestinations(Figure *king) const
 {
     BITBOARD destinations = GetKingGuardedPositions(king);
 
     POSITION kPosition = king->Position;
     FigureSide kSide = king->Side;
 
-    BITBOARD opponentGuarded = GetGuardedPositions(OpponentSide(kSide));
-
-    // check for short castling
-    POSITION r1 = PositionHelper::Shift(king->Position, 1, 0);
-    POSITION r2 = PositionHelper::Shift(king->Position, 2, 0);
-    Figure* rRock = m_board->FigureAt(PositionHelper::Create(8, FirstHorizonatalYFor(kSide)));
-
-    if (king->MovesCount == 0
-            && rRock != NULL
-            && rRock->MovesCount == 0
-            && !m_board->HasFigureAt(r1) && !m_board->HasFigureAt(r2)
-            && !BitboardHelper::Contains(opponentGuarded, kPosition) // castling from check is forbidden
-            && !BitboardHelper::Contains(opponentGuarded, r1)   // castling through guarded cells is forbidden
-            && !BitboardHelper::Contains(opponentGuarded, r2))  // also
-
+    // available castling check
+    if (king->MovesCount == 0)
     {
-            destinations = BitboardHelper::AddPosition(destinations, r2);
-    }
+        bool guardedPositionsCalculated = false;
+        BITBOARD opponentGuarded; // it calculation is expensive, so we trying to caluclate it when it really needed
 
-    // long castling checks
-    POSITION l1 = PositionHelper::Shift(king->Position, -1, 0);
-    POSITION l2 = PositionHelper::Shift(king->Position, -2, 0);
-    POSITION l3 = PositionHelper::Shift(king->Position, -3, 0);
-    Figure* lRock = m_board->FigureAt(PositionHelper::Create(1, FirstHorizonatalYFor(king->Side)));
+        // check for short castling
+        POSITION r1 = PositionHelper::Shift(king->Position, 1, 0);
+        POSITION r2 = PositionHelper::Shift(king->Position, 2, 0);
+        Figure* rRock = m_board->FigureAt(PositionHelper::Create(8, FirstHorizonatalYFor(kSide)));
 
-    if (king->MovesCount == 0
-            && lRock != NULL
-            && lRock->MovesCount == 0
-            && !m_board->HasFigureAt(l1) && !m_board->HasFigureAt(l2) && !m_board->HasFigureAt(l3)
-            && !BitboardHelper::Contains(opponentGuarded, kPosition) // castling from check is forbidden
-            && !BitboardHelper::Contains(opponentGuarded, l1)   // castling through guarded cells is forbidden
-            && !BitboardHelper::Contains(opponentGuarded, l2)   // also
-            && !BitboardHelper::Contains(opponentGuarded, l3))  // also
+        if (rRock != NULL && rRock->MovesCount == 0 && !m_board->HasFigureAt(r1) && !m_board->HasFigureAt(r2)) // these checks is cheep
+        {
+            // short castling potentially possible, calcuate opponent's guarded positions
+            opponentGuarded = GetGuardedPositions(OpponentSide(kSide));
+            guardedPositionsCalculated = true;
 
-    {
-            destinations = BitboardHelper::AddPosition(destinations, l2);
+            if (!BitboardHelper::Contains(opponentGuarded, kPosition) // castling from check is forbidden
+                && !BitboardHelper::Contains(opponentGuarded, r1)   // castling through guarded cells is forbidden
+                && !BitboardHelper::Contains(opponentGuarded, r2))  // also
+            {
+                destinations = BitboardHelper::AddPosition(destinations, r2);
+            }
+        }
+
+        // long castling checks
+        POSITION l1 = PositionHelper::Shift(king->Position, -1, 0);
+        POSITION l2 = PositionHelper::Shift(king->Position, -2, 0);
+        POSITION l3 = PositionHelper::Shift(king->Position, -3, 0);
+        Figure* lRock = m_board->FigureAt(PositionHelper::Create(1, FirstHorizonatalYFor(king->Side)));
+
+        if (lRock != NULL && lRock->MovesCount == 0 && !m_board->HasFigureAt(l1) && !m_board->HasFigureAt(l2) && !m_board->HasFigureAt(l3)) // cheap checks
+        {
+            // long castling potentially possible, calcuate opponent's guarded positions if it have not already done
+            if (!guardedPositionsCalculated)
+                opponentGuarded = GetGuardedPositions(OpponentSide(kSide));
+
+            if (!BitboardHelper::Contains(opponentGuarded, kPosition) // castling from check is forbidden
+                && !BitboardHelper::Contains(opponentGuarded, l1)   // castling through guarded cells is forbidden
+                && !BitboardHelper::Contains(opponentGuarded, l2)   // also
+                && !BitboardHelper::Contains(opponentGuarded, l3))  // also
+            {
+                destinations = BitboardHelper::AddPosition(destinations, l2);
+            }
+        }
     }
 
     return destinations;

@@ -499,7 +499,7 @@ int AI::AlphaBetaNegamaxPseudolegal(FigureSide side, int depth, int alpha, int b
     //#ifdef QT_DEBUG
             if (isTopLevel)
             {
-                qDebug() << "  " << move << "estimation: " << estimation << "alpha: " << alpha;
+                qDebug() << "  " << move << "estimation:" << estimation << "alpha:" << alpha;
             }
     //#endif
 

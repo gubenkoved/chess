@@ -23,27 +23,20 @@ class Rules
     bool IsUnderCheckImpl(FigureSide side) const;
     bool IsUnderCheckFastImpl(FigureSide side) const;    
 
-    // DeleteMovesToCheck
-    // -------------------
-    // Function erases all moves which causes check to turning player
+    // removes all moves which causes check to turning player;
+    // this method is only used when legal moves generation requested
     void DeleteMovesToCheck(MoveCollection& moves);
-    // NOTE: ...PossibleDestinations function family returns NOT FULLY VALID destination yet!
-    // because it SHOULD BE filtered by DeleteMovesToCheck and DeleteSelfCaptureDesination functions
-    // to avoid moves, that causes check to turning side and self-capture turns
-    // ONLY FOR PRIVATE USAGE!
-    void DeleteSelfCaptureDesination(PositionCollection& destinations, FigureSide selfSide) const;
+
     BITBOARD _GetPossibleDestinations(Figure* figure) const;
     BITBOARD _GetPawnPossibleDestinations(Figure* figure) const;
     BITBOARD _GetKnightPossibleDestinations(Figure* figure) const;
     BITBOARD _GetBishopPossibleDestinations(Figure* figure) const;
     BITBOARD _GetRockPossibleDestinations(Figure* figure) const;
     BITBOARD _GetQueenPossibleDestinations(Figure* figure) const;
-    BITBOARD _GetKingPossibleDestinations2(Figure* figure) const;
+    BITBOARD _GetKingPossibleDestinations(Figure* figure) const;
 
     MoveCollection CreateMoves(POSITION from, POSITION to);
 
-    // GetOnLinePositions function
-    // ---------------------------
     // This function was written because many of figures can be described in general manner.
     // e.g.
     //  - bishop can guard in 4 diagonal lines (forward-right, forward-left, backward-right, backward-left) to
