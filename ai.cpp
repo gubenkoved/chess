@@ -473,7 +473,7 @@ int AI::AlphaBetaNegamaxPseudolegal(FigureSide side, int depth, int alpha, int b
         m_rules->UnMakeMove(move);
 
         // incorrect move was found => we should skip it processing
-        if (estimation != INCORRECT_PARENT_MOVE_FOUND_ESTIMATION)
+        if (estimation != -INCORRECT_PARENT_MOVE_FOUND_ESTIMATION)
         {
             ++correctMovesAmount;
             bestEstimation = std::max(estimation, bestEstimation);
