@@ -81,7 +81,7 @@ public:
 
     FigureSide OpponentSide(FigureSide side) const;    
 
-    MoveCollection GetPossibleMoves(FigureSide side);    
+    MoveCollection GetPossibleMoves(FigureSide side, bool generateLegalOnly = true);
 
     bool IsUnderCheck(FigureSide side) const;
     bool IsPassiveEndGame() const;

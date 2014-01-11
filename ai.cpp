@@ -290,17 +290,23 @@ int AI::AlphaBetaNegamax(FigureSide side, int depth, int alpha, int beta, int& a
         return 0; // draw game
     }
 
+    // requested depth exceeded, return non-terminal position estimation
     if (depth == 0)
     {
-        analyzed++;
-
-        // non-terminal position estimation
+        analyzed++;        
         return GetRelativeEstimationFor(side);
     }
 
+    // generates only legal possingle moves
     MoveCollection possibleMoves = m_rules->GetPossibleMoves(side);
-    int possibleMovesCount = possibleMoves.count();
 
+    // when there are no possible moves for side -> end game (terminal) position
+    if (possibleMoves.count() == 0) // is terminal node
+    {
+        return GetTerminalPositionEstimation(side, depth);
+    }
+
+    int possibleMovesCount = possibleMoves.count();
     QVector<PrioritizedMove> prioritizedMoves(possibleMovesCount);
     for (int i = 0; i < possibleMovesCount; ++i)
     {
@@ -311,11 +317,6 @@ int AI::AlphaBetaNegamax(FigureSide side, int depth, int alpha, int beta, int& a
     if (UseMovesOrdering)
     {
         qSort(prioritizedMoves.begin(), prioritizedMoves.end(), MoveByPriorityGreaterThan);
-    }
-
-    if (possibleMoves.count() == 0) // is terminal node
-    {
-        return GetTerminalPositionEstimation(side, depth);
     }
 
     int bestEstimation = -INT_MAX;
@@ -350,6 +351,7 @@ int AI::AlphaBetaNegamax(FigureSide side, int depth, int alpha, int beta, int& a
         {
             alpha = estimation;
 
+            // alpha increased -> store best move
             if (isTopLevel)
             {
                 if (bestMove != NULL)
@@ -359,10 +361,10 @@ int AI::AlphaBetaNegamax(FigureSide side, int depth, int alpha, int beta, int& a
             }
         }
 
-        if (isTopLevel && bestMove == NULL) // fill best move if it is not filled yet
-        {
-            bestMove = new Move(move);
-        }
+//        if (isTopLevel && bestMove == NULL) // fill best move if it is not filled yet
+//        {
+//            bestMove = new Move(move);
+//        }
 
 //#ifdef QT_DEBUG
         if (isTopLevel)
@@ -389,8 +391,144 @@ int AI::AlphaBetaNegamax(FigureSide side, int depth, int alpha, int beta, int& a
     return bestEstimation;
 }
 
+// Fail-soft negamax search function
+// see: http://chessprogramming.wikispaces.com/Alpha-Beta
+//      http://chessprogramming.wikispaces.com/Fail-Soft
+int AI::AlphaBetaNegamaxPseudolegal(FigureSide side, int depth, int alpha, int beta, int& analyzed, Move*& bestMove, bool isTopLevel)
+{
+    if (UseTranspositionTable)
+    {
+        // if position evaluated before with equal or bigger depth use it as estimation
+        const TranspositionTableEntry* hashEntry = m_transpositionTable->FindEntry(m_board->GetCurrentPositionHash());
+        if (hashEntry != NULL && hashEntry->Depth >= depth)
+        {
+            return hashEntry->Estimation;
+        }
+    }
+
+    // checks passive end game rule
+    if (m_rules->IsPassiveEndGame())
+    {
+        return 0; // draw game
+    }
+
+    if (depth == 0)
+    {
+        analyzed++;
+
+        // non-terminal position estimation
+        return GetRelativeEstimationFor(side);
+    }
+
+    MoveCollection possibleMoves = m_rules->GetPossibleMoves(side, false);
+
+    // pseudolegal moves was generated;
+    // it's resulted in this additional checks for king captures
+    foreach(const Move& move, possibleMoves)
+    {
+        if (move.CapturedFigure != NULL && move.CapturedFigure->Type == FigureType::King)
+        {
+            // king was captured -> invalidate previous move after that this inocorrect situation became possible
+            return INCORRECT_PARENT_MOVE_FOUND_ESTIMATION;
+        }
+    }
+
+    int possibleMovesCount = possibleMoves.count();
+    QVector<PrioritizedMove> prioritizedMoves(possibleMovesCount);
+    for (int i = 0; i < possibleMovesCount; ++i)
+    {
+        prioritizedMoves[i] = CalculatePriority(possibleMoves.at(i));
+    }
+
+    // moves sort to increase alpha beta pruning productivity
+    if (UseMovesOrdering)
+    {
+        qSort(prioritizedMoves.begin(), prioritizedMoves.end(), MoveByPriorityGreaterThan);
+    }
+
+    int bestEstimation = -INT_MAX;
+    int correctMovesAmount = 0;
+    foreach(const PrioritizedMove& prioritizedPossibleMove, prioritizedMoves)
+    {
+        Move move = prioritizedPossibleMove.UnderlyingMove;
+
+        // temporary make move
+        m_rules->MakeMove(move);
+
+        int estimation;
+
+        // extend search depth when move is capture
+        if (ExtendSearchDepthOnCaptures
+                && depth <= MaxCurrentDepthToExtendSearchOnCaptures
+                && move.CapturedFigure != NULL)
+        {
+            estimation = -AlphaBetaNegamaxPseudolegal(m_rules->OpponentSide(side), depth, -beta, -alpha, analyzed, bestMove, false);
+        }
+        else
+        {
+            estimation = -AlphaBetaNegamaxPseudolegal(m_rules->OpponentSide(side), depth - 1, -beta, -alpha, analyzed, bestMove, false);
+        }
+
+        // unmake temporary move
+        m_rules->UnMakeMove(move);
+
+        // incorrect move was found => we should skip it processing
+        if (estimation != INCORRECT_PARENT_MOVE_FOUND_ESTIMATION)
+        {
+            ++correctMovesAmount;
+            bestEstimation = std::max(estimation, bestEstimation);
+
+            if (estimation > alpha)
+            {
+                alpha = estimation;
+
+                if (isTopLevel)
+                {
+                    if (bestMove != NULL)
+                        delete bestMove;
+
+                    bestMove = new Move(move);
+                }
+            }
+
+//            if (isTopLevel && bestMove == NULL) // fill best move if it is not filled yet
+//            {
+//                bestMove = new Move(move);
+//            }
+
+    //#ifdef QT_DEBUG
+            if (isTopLevel)
+            {
+                qDebug() << "  " << move << "estimation: " << estimation << "alpha: " << alpha;
+            }
+    //#endif
+
+            if (alpha >= beta)
+            {
+                // alpha prune
+                //return beta; // fail-hard
+                return alpha; // fail-soft
+            }
+        }
+    }
+
+    if (correctMovesAmount == 0) // is terminal node
+    {
+        return GetTerminalPositionEstimation(side, depth);
+    }
+
+    // store exact mathches only, see: http://en.wikipedia.org/wiki/Negamax
+    if (UseTranspositionTable)
+    {
+        m_transpositionTable->Store(m_board->GetCurrentPositionHash(), bestEstimation, depth);
+    }
+
+    // no alpha-prune occured, return exact estimation
+    return bestEstimation;
+}
+
 // alpha beta serach initializer
-Move AI::BestMoveByAlphaBeta(FigureSide side, int depth, int& bestEstimation, int& analyzed)
+Move AI::BestMoveByAlphaBeta(FigureSide side, int depth, int& bestEstimation, int& analyzed, bool usePseudolegalMoveGeneration)
 {
 #ifdef QT_DEBUG
     //qDebug() << "AI::BestMoveByAlphaBeta started";
@@ -401,7 +539,13 @@ Move AI::BestMoveByAlphaBeta(FigureSide side, int depth, int& bestEstimation, in
     Move* bestMove = NULL;
     analyzed = 0;
 
-    bestEstimation = AlphaBetaNegamax(side, depth, -INT_MAX, +INT_MAX, analyzed, bestMove, true);
+    if (usePseudolegalMoveGeneration)
+    {
+        bestEstimation = AlphaBetaNegamaxPseudolegal(side, depth, -INT_MAX, +INT_MAX, analyzed, bestMove, true);
+    } else
+    {
+        bestEstimation = AlphaBetaNegamax(side, depth, -INT_MAX, +INT_MAX, analyzed, bestMove, true);
+    }
 
     if (bestMove == NULL)
     {

@@ -647,7 +647,7 @@ BITBOARD Rules::GetGuardedPositions(FigureSide side) const
     return bitboard;
 }
 
-MoveCollection Rules::GetPossibleMoves(FigureSide side)
+MoveCollection Rules::GetPossibleMoves(FigureSide side, bool generateLegalOnly)
 {
     FigureList figures = m_board->FiguresAt(side);
     MoveCollection moves;
@@ -672,7 +672,10 @@ MoveCollection Rules::GetPossibleMoves(FigureSide side)
         }
     }
 
-    DeleteMovesToCheck(moves);
+    if (generateLegalOnly)
+    {
+        DeleteMovesToCheck(moves);
+    }
 
     return moves;
 }

@@ -27,79 +27,79 @@ void Tests::TestAll()
 
     int passed = 0, failed = 0;
 
-//    TEST_EXPAND(TestFigurePosition1)
-//    TEST_EXPAND(TestFigurePosition2)
-//    TEST_EXPAND(TestFigurePosition3)
-//    TEST_EXPAND(TestFigurePosition4)
-//    TEST_EXPAND(TestFigurePosition5)
+    TEST_EXPAND(TestFigurePosition1)
+    TEST_EXPAND(TestFigurePosition2)
+    TEST_EXPAND(TestFigurePosition3)
+    TEST_EXPAND(TestFigurePosition4)
+    TEST_EXPAND(TestFigurePosition5)
 
-//    TEST_EXPAND(BoardStartPositionTest)
-//    TEST_EXPAND(BoardGetSideFiguresTest)
+    TEST_EXPAND(BoardStartPositionTest)
+    TEST_EXPAND(BoardGetSideFiguresTest)
 
-//    TEST_EXPAND(GetGuardedPositionsTest1)
-//    TEST_EXPAND(GetGuardedPositionsTest2)
-//    TEST_EXPAND(GetGuardedPositionsTest3)
-//    TEST_EXPAND(GetGuardedPositionsTest4)
-//    TEST_EXPAND(GetGuardedPositionsTest5)
-//    TEST_EXPAND(GetGuardedPositionsTest6)
+    TEST_EXPAND(GetGuardedPositionsTest1)
+    TEST_EXPAND(GetGuardedPositionsTest2)
+    TEST_EXPAND(GetGuardedPositionsTest3)
+    TEST_EXPAND(GetGuardedPositionsTest4)
+    TEST_EXPAND(GetGuardedPositionsTest5)
+    TEST_EXPAND(GetGuardedPositionsTest6)
 
-//    TEST_EXPAND(MoveFigureTest)
+    TEST_EXPAND(MoveFigureTest)
 
-//    TEST_EXPAND(MakeMoveTest1)
-//    TEST_EXPAND(MakeMoveTest2)
+    TEST_EXPAND(MakeMoveTest1)
+    TEST_EXPAND(MakeMoveTest2)
 
-//    TEST_EXPAND(MoveFindingTest1)
-//    TEST_EXPAND(MoveFindingTest2)
-//    TEST_EXPAND(MoveFindingTest3)
+    TEST_EXPAND(MoveFindingTest1)
+    TEST_EXPAND(MoveFindingTest2)
+    TEST_EXPAND(MoveFindingTest3)
 
-//    TEST_EXPAND(EnPassonTest1)
-//    TEST_EXPAND(EnPassonTest2)
+    TEST_EXPAND(EnPassonTest1)
+    TEST_EXPAND(EnPassonTest2)
 
-//    TEST_EXPAND(BoardDeepCopyTest);
+    TEST_EXPAND(BoardDeepCopyTest);
 
-//    TEST_EXPAND(ToFENTest1);
-//    TEST_EXPAND(ToFENTest2);
-//    TEST_EXPAND(ToFENTest3);
-//    TEST_EXPAND(ToFENTest4);
+    TEST_EXPAND(ToFENTest1);
+    TEST_EXPAND(ToFENTest2);
+    TEST_EXPAND(ToFENTest3);
+    TEST_EXPAND(ToFENTest4);
 
 //    TEST_EXPAND(FromFENTest1);
 //    TEST_EXPAND(FromFENTest2);
 //    TEST_EXPAND(FromFENTest3);
 //    TEST_EXPAND(FromFENTest4);
 
-//    TEST_EXPAND(PerftTest1)
-//    TEST_EXPAND(PerftTest2)
-//    TEST_EXPAND(PerftTest3)
-//    TEST_EXPAND(PerftTest4)
+    TEST_EXPAND(PerftTest1)
+    TEST_EXPAND(PerftTest2)
+    TEST_EXPAND(PerftTest3)
+    TEST_EXPAND(PerftTest4)
 
-//    TEST_EXPAND(ABFromStartD1)
-//    TEST_EXPAND(ABFromStartD2)
-//    TEST_EXPAND(ABFromStartD3)
-//    TEST_EXPAND(ABFromStartD4)
-    //TEST_EXPAND(ABFromStartD5)
-    //TEST_EXPAND(ABFromStartD6)
+    TEST_EXPAND(ABFromStartD1)
+    TEST_EXPAND(ABFromStartD2)
+    TEST_EXPAND(ABFromStartD3)
+    TEST_EXPAND(ABFromStartD4)
+    TEST_EXPAND(ABFromStartD5)
+    TEST_EXPAND(ABFromStartD6)
 
 
     //TEST_EXPAND(ABAfter6PlyD4)
     TEST_EXPAND(ABAfter6PlyD5)
     //TEST_EXPAND(ABAfter6PlyD6)
 
-//    TEST_EXPAND(AlphaBetaTest1)
-//    TEST_EXPAND(AlphaBetaTest2)
-//    TEST_EXPAND(AlphaBetaTest3)
-    //TEST_EXPAND(AlphaBetaTest4)
+    TEST_EXPAND(AlphaBetaTest1)
+    TEST_EXPAND(AlphaBetaTest2)
+    TEST_EXPAND(AlphaBetaTest3)
+    TEST_EXPAND(AlphaBetaTest4)
 
-//    TEST_EXPAND(AlphaBetaTest_2_1)
-//    TEST_EXPAND(AlphaBetaTest_2_2)
-//    TEST_EXPAND(AlphaBetaTest_2_3)
-    //TEST_EXPAND(AlphaBetaTest_2_4)
+    TEST_EXPAND(AlphaBetaTest_2_1)
+    TEST_EXPAND(AlphaBetaTest_2_2)
+    TEST_EXPAND(AlphaBetaTest_2_3)
+    TEST_EXPAND(AlphaBetaTest_2_4)
 
-//    TEST_EXPAND(PositionCountingTest1)
-//    TEST_EXPAND(PositionCountingTest2)
+    TEST_EXPAND(PositionCountingTest1)
+    TEST_EXPAND(PositionCountingTest2)
 
-//    TEST_EXPAND(BoardSerializationTest)
+    TEST_EXPAND(BoardSerializationTest)
 
-//    TEST_EXPAND(WM1)
+    TEST_EXPAND(WM1)
 
 //    TEST_EXPAND(ParsePuzzlesTest)
 //    TEST_EXPAND(ReconstructBoardFromPuzzlesTest)
@@ -863,7 +863,7 @@ bool Tests::AlphaBetaTest1()
 
     int alphaBetaAnalyzed;
     int alphaBetaBestEstimation;
-    ai.BestMoveByAlphaBeta(board.GetTurningSide(), 1, alphaBetaBestEstimation, alphaBetaAnalyzed);
+    ai.BestMoveByAlphaBeta(board.GetTurningSide(), 1, alphaBetaBestEstimation, alphaBetaAnalyzed, false);
 
     int negamaxAnalyzed;
     int negamaxBestEstimation;
@@ -893,7 +893,7 @@ bool Tests::AlphaBetaTest2()
 
     int alphaBetaAnalyzed;
     int alphaBetaBestEstimation;
-    ai.BestMoveByAlphaBeta(board.GetTurningSide(), 2, alphaBetaBestEstimation, alphaBetaAnalyzed);
+    ai.BestMoveByAlphaBeta(board.GetTurningSide(), 2, alphaBetaBestEstimation, alphaBetaAnalyzed, false);
 
     int negamaxAnalyzed;
     int negamaxBestEstimation;
@@ -922,7 +922,7 @@ bool Tests::AlphaBetaTest3()
 
     int alphaBetaAnalyzed;
     int alphaBetaBestEstimation;
-    ai.BestMoveByAlphaBeta(board.GetTurningSide(), 3, alphaBetaBestEstimation, alphaBetaAnalyzed);
+    ai.BestMoveByAlphaBeta(board.GetTurningSide(), 3, alphaBetaBestEstimation, alphaBetaAnalyzed, false);
 
     int negamaxAnalyzed;
     int negamaxBestEstimation;
@@ -952,7 +952,7 @@ bool Tests::AlphaBetaTest4()
 
     int alphaBetaAnalyzed;
     int alphaBetaBestEstimation;
-    ai.BestMoveByAlphaBeta(board.GetTurningSide(), 4, alphaBetaBestEstimation, alphaBetaAnalyzed);
+    ai.BestMoveByAlphaBeta(board.GetTurningSide(), 4, alphaBetaBestEstimation, alphaBetaAnalyzed, false);
 
     int negamaxAnalyzed;
     int negamaxBestEstimation;
@@ -985,7 +985,7 @@ bool Tests::AlphaBetaTest_2_1()
 
     int alphaBetaAnalyzed;
     int alphaBetaBestEstimation;
-    ai.BestMoveByAlphaBeta(board.GetTurningSide(), 1, alphaBetaBestEstimation, alphaBetaAnalyzed);
+    ai.BestMoveByAlphaBeta(board.GetTurningSide(), 1, alphaBetaBestEstimation, alphaBetaAnalyzed, false);
 
     int negamaxAnalyzed;
     int negamaxBestEstimation;
@@ -1018,7 +1018,7 @@ bool Tests::AlphaBetaTest_2_2()
 
     int alphaBetaAnalyzed;
     int alphaBetaBestEstimation;
-    ai.BestMoveByAlphaBeta(board.GetTurningSide(), 2, alphaBetaBestEstimation, alphaBetaAnalyzed);
+    ai.BestMoveByAlphaBeta(board.GetTurningSide(), 2, alphaBetaBestEstimation, alphaBetaAnalyzed, false);
 
     int negamaxAnalyzed;
     int negamaxBestEstimation;
@@ -1051,7 +1051,7 @@ bool Tests::AlphaBetaTest_2_3()
 
     int alphaBetaAnalyzed;
     int alphaBetaBestEstimation;
-    ai.BestMoveByAlphaBeta(board.GetTurningSide(), 3, alphaBetaBestEstimation, alphaBetaAnalyzed);
+    ai.BestMoveByAlphaBeta(board.GetTurningSide(), 3, alphaBetaBestEstimation, alphaBetaAnalyzed, false);
 
     int negamaxAnalyzed;
     int negamaxBestEstimation;
@@ -1084,7 +1084,7 @@ bool Tests::AlphaBetaTest_2_4()
 
     int alphaBetaAnalyzed;
     int alphaBetaBestEstimation;
-    ai.BestMoveByAlphaBeta(board.GetTurningSide(), 4, alphaBetaBestEstimation, alphaBetaAnalyzed);
+    ai.BestMoveByAlphaBeta(board.GetTurningSide(), 4, alphaBetaBestEstimation, alphaBetaAnalyzed, false);
 
     int negamaxAnalyzed;
     int negamaxBestEstimation;
