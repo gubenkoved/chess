@@ -9,8 +9,8 @@
 
 enum class MoveType
 {
-    Normal, // just move from one to another position
-    Capture, // capture enemy figure
+    Normal, // non-special ruled move with capture or not
+    //Capture, // capture enemy figure
     LongPawn, // first pawn long step
     LongCastling, // long castling
     ShortCastling, // short castling
@@ -39,13 +39,15 @@ struct Move
 
 inline QDebug operator<<(QDebug debug, const Move& m)
 {
-    debug << "Move("
+    debug << "Move( by"
         << EnumsHelper::ToString(m.MovingFigure->Type)
         << EnumsHelper::ToString(m.Type)
-        << EnumsHelper::ToString(m.PromotedTo)
-        << "turn from"
+        << (m.Type == MoveType::PawnPromotion ? EnumsHelper::ToString(m.PromotedTo) : "")
+        << "from"
         << PositionHelper::ToString(m.From) << "to"
-        << PositionHelper::ToString(m.To) << ")";
+        << PositionHelper::ToString(m.To)
+        << (m.CapturedFigure != NULL ? EnumsHelper::ToString(m.CapturedFigure->Type) + " captured" : "")
+        << ")";
 
     return debug;
 }

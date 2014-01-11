@@ -21,7 +21,7 @@ class ChessApp : public QObject
     bool m_aiThinking;
     bool m_boardChangedSinceAiStart;
 
-    static const int DEPTH = 5;
+    static const int DEPTH = 4;
 
     PositionList ToDestinations(MoveCollection list);
     void CheckForGameOver();

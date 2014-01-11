@@ -3,10 +3,6 @@
 
 #include <QString>
 
-//#include "figure.h"
-//#include "move.h"
-//#include "puzzle.h"
-
 enum class FigureSide;
 enum class FigureType;
 enum class MoveType;

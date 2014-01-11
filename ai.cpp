@@ -213,20 +213,30 @@ AI::PrioritizedMove AI::CalculatePriority(const Move& move)
     PrioritizedMove prioritizedMove;
     prioritizedMove.UnderlyingMove = move;
 
-    // claculate priority class
-    switch (move.Type)
+    // calculates priority class
+    if (move.Type == MoveType::PawnPromotion)
     {
-        case MoveType::PawnPromotion:   prioritizedMove.PriorityClass = 10; break;
-        case MoveType::Capture:         prioritizedMove.PriorityClass = 8; break;
-        case MoveType::EnPassant:       prioritizedMove.PriorityClass = 7; break;
-        case MoveType::LongCastling:    prioritizedMove.PriorityClass = 6; break;
-        case MoveType::ShortCastling:   prioritizedMove.PriorityClass = 6; break;
-        case MoveType::LongPawn:        prioritizedMove.PriorityClass = 4; break;
-        default:                    prioritizedMove.PriorityClass = 0; break;
+        prioritizedMove.PriorityClass = 10;
+    }
+    else if (move.CapturedFigure != NULL)
+    {
+        prioritizedMove.PriorityClass = 8;
+    }
+    else if (move.IsCastling())
+    {
+        prioritizedMove.PriorityClass = 6;
+    }
+    else if (move.Type == MoveType::LongPawn)
+    {
+        prioritizedMove.PriorityClass = 4;
+    }
+    else
+    {
+        prioritizedMove.PriorityClass = 2;
     }
 
     // calculate priority value
-    if (move.Type == MoveType::Capture)// captures sort
+    if (move.CapturedFigure != NULL)// captures sort
     {
         // MVV/LVA (Most Valuable Victim - Least Valuable Aggressor) captures sort
         int captureProfit =
@@ -268,7 +278,7 @@ int AI::AlphaBetaNegamax(FigureSide side, int depth, int alpha, int beta, int& a
     {
         // if position evaluated before with equal or bigger depth use it as estimation
         const TranspositionTableEntry* hashEntry = m_transpositionTable->FindEntry(m_board->GetCurrentPositionHash());
-        if (hashEntry != NULL && hashEntry->Depth == depth)
+        if (hashEntry != NULL && hashEntry->Depth >= depth)
         {
             return hashEntry->Estimation;
         }
@@ -322,7 +332,7 @@ int AI::AlphaBetaNegamax(FigureSide side, int depth, int alpha, int beta, int& a
         // extend search depth when move is capture
         if (ExtendSearchDepthOnCaptures
                 && depth <= MaxCurrentDepthToExtendSearchOnCaptures
-                && (move.Type == MoveType::Capture || move.Type == MoveType::EnPassant))
+                && move.CapturedFigure != NULL)
         {
             estimation = -AlphaBetaNegamax(m_rules->OpponentSide(side), depth, -beta, -alpha, analyzed, bestMove, false);
         }

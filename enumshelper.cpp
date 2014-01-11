@@ -21,13 +21,13 @@ QString EnumsHelper::ToString(FigureType figureType)
 {
     switch (figureType)
     {
-        case FigureType::Pawn: return "Pawn";
-        case FigureType::Bishop: return "Bishop";
-        case FigureType::Knight: return "Knight";
-        case FigureType::Rock: return "Rock";
-        case FigureType::Queen: return "Queen";
-        case FigureType::King: return "King";
-        case FigureType::Invalid: return "Invalid";
+        case FigureType::Pawn:      return "Pawn";
+        case FigureType::Bishop:    return "Bishop";
+        case FigureType::Knight:    return "Knight";
+        case FigureType::Rock:      return "Rock";
+        case FigureType::Queen:     return "Queen";
+        case FigureType::King:      return "King";
+        case FigureType::Invalid:   return "Invalid";
 
         default: throw Exception("Unknown enum value");
     }
@@ -37,14 +37,13 @@ QString EnumsHelper::ToString(MoveType moveType)
 {
     switch(moveType)
     {
-        case MoveType::Normal: return "Normal";
-        case MoveType::Capture: return "Capture";
-        case MoveType::LongPawn: return "LongPawn";
-        case MoveType::ShortCastling: return "ShortCastling";
-        case MoveType::LongCastling: return "LongCastrling";
-        case MoveType::PawnPromotion: return "PawnPromotions";
-        case MoveType::EnPassant: return "EnPassant";
-        case MoveType::Invalid: return "Invalid";
+        case MoveType::Normal:          return "Normal";
+        case MoveType::LongPawn:        return "LongPawn";
+        case MoveType::ShortCastling:   return "ShortCastling";
+        case MoveType::LongCastling:    return "LongCastling";
+        case MoveType::PawnPromotion:   return "PawnPromotion";
+        case MoveType::EnPassant:       return "EnPassant";
+        case MoveType::Invalid:         return "Invalid";
 
         default: throw Exception("Unknown enum value");
     }

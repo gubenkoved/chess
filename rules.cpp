@@ -601,7 +601,7 @@ MoveCollection Rules::CreateMoves(POSITION from, POSITION to)
         pawnPromotionToBishop.PromotedTo = FigureType::Bishop;
 
         moves << pawnPromotionToQueen << pawnPromotionToKnight << pawnPromotionToRock << pawnPromotionToBishop;
-    } else // single move
+    } else // single move generated in this section
     {
         // long king step -> castling
         if (figureType == FigureType::King && abs(PositionHelper::X(to) - PositionHelper::X(from)) == 2)
@@ -622,12 +622,9 @@ MoveCollection Rules::CreateMoves(POSITION from, POSITION to)
             moveType = MoveType::EnPassant;
             captured = m_board->FigureAt(ForwardFor(to, figure->Side, 0, -1));
         }
-        else // only Normal and Capture turns
+        else // other, not special moves
         {
-            if (captured != NULL)
-                moveType = MoveType::Capture;
-            else
-                moveType = MoveType::Normal;
+            moveType = MoveType::Normal;
         }
 
         moves << Move(moveType, from, to, figure, captured);

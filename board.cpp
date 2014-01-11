@@ -88,7 +88,7 @@ int Board::GetAfterLastCaptureOrPawnMoveHalfMoveCount() const
 
     for (int i = m_history.count() - 1; i >= 0; --i)
     {
-        if (m_history[i].Type == MoveType::Capture || m_history[i].MovingFigure->Type == FigureType::Pawn)
+        if (m_history[i].CapturedFigure != NULL || m_history[i].MovingFigure->Type == FigureType::Pawn)
         {
             return halfMoveCounter;
         }
