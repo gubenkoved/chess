@@ -10,6 +10,8 @@ AsyncAI::AsyncAI(Board* board, QObject *parent) :
     m_depth = -1;
     m_side = FigureSide::White;
     m_sourceBoard = board;
+
+    ExtendSearchDepthOnCaptures = true;
 }
 
 void AsyncAI::StartBestMoveSearch(FigureSide side, int depth)
@@ -26,6 +28,8 @@ void AsyncAI::run()
     Board board = Board(*m_sourceBoard);
     Rules rules = Rules(&board);
     AI ai = AI(&board, &rules);
+
+    ai.ExtendSearchDepthOnCaptures = ExtendSearchDepthOnCaptures;
 
     int bestEstimation;
     int analyzed;

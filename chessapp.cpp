@@ -15,8 +15,9 @@ ChessApp::ChessApp(QObject *parent)
     : QObject(parent)
 {
     m_board = new Board();
-    m_board->SetupStartPosition();
-    //m_board = new Board(FEN::PositionFromFEN("4B3/5P1k/4KP1b/6R1/8/8/8/8"));
+    //m_board->SetupStartPosition();
+    m_board = new Board(FEN::PositionFromFEN("2kr2br/2pq4/2n1p1p1/pBppPpNp/Pb1P3P/1P2P3/N3Q1P1/R4RK1"));
+
 
     m_rules = new Rules(m_board);
     m_asyncAI = new AsyncAI(m_board);
@@ -169,7 +170,8 @@ void ChessApp::Step(int fromX, int fromY, int toX, int toY)
         m_boardChangedSinceAiStart = true;
     }
 
-    m_rules->MakeMove(PositionHelper::Create(fromX, fromY), PositionHelper::Create(toX, toY));
+    // always promete to queen
+    m_rules->MakeMove(PositionHelper::Create(fromX, fromY), PositionHelper::Create(toX, toY), FigureType::Queen);
 
     FigureSide turningSide = m_board->GetTurningSide();
 
